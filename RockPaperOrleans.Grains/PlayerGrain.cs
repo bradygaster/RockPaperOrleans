@@ -20,11 +20,6 @@ namespace RockPaperOrleans.Grains
 
         public Task<Player> Get() => Task.FromResult(Player.State);
 
-        public Task Play(Play play)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task RecordLoss()
         {
             Player.State.LossCount += 1;
