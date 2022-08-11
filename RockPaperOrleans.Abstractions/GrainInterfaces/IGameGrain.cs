@@ -4,8 +4,9 @@ namespace RockPaperOrleans.Abstractions
 {
     public interface IGameGrain : IGrainWithGuidKey
     {
-        Task EnlistPlayers(Player player1, Player player2);
-        Task Go(Throw thrown);
+        Task SelectPlayers(IMatchmakingGrain matchmakingGrain);
+        Task NotifyPlayers(Tuple<IPlayer, IPlayer> players);
+        Task SubmitPlay(Throw playerThrew);
         Task Score();
     }
 }

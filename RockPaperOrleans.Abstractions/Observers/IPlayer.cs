@@ -1,10 +1,11 @@
 ﻿using Orleans;
 
-namespace RockPaperOrleans.Abstractions.Observers
+namespace RockPaperOrleans.Abstractions
 {
     public interface IPlayer : IGrainObserver
     {
-        Task OnOpponentSelected(Player player);
+        Task<Player> Get();
+        Task OnSelected(Game game);
         Task<Play> Play();
     }
 }

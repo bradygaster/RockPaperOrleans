@@ -2,7 +2,7 @@
 {
     public interface IGameControllerGrain
     {
-        Task<Game> StartNewGame();
+        Task<IGameGrain> StartNewGame();
         Task<Game> CurrentGame();
     }
 }

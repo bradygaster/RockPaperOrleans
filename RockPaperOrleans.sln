@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.32726.493
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RockPaperOrleans.Abstractions", "RockPaperOrleans.Abstractions\RockPaperOrleans.Abstractions.csproj", "{63F1A148-D45B-4E6F-811A-3926D9F3A9B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockPaperOrleans.Abstractions", "RockPaperOrleans.Abstractions\RockPaperOrleans.Abstractions.csproj", "{63F1A148-D45B-4E6F-811A-3926D9F3A9B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RockPaperOrleans.Grains", "RockPaperOrleans.Grains\RockPaperOrleans.Grains.csproj", "{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{63F1A148-D45B-4E6F-811A-3926D9F3A9B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63F1A148-D45B-4E6F-811A-3926D9F3A9B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63F1A148-D45B-4E6F-811A-3926D9F3A9B1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
