@@ -1,6 +1,8 @@
-﻿namespace RockPaperOrleans.Abstractions.Observers
+﻿using Orleans;
+
+namespace RockPaperOrleans.Abstractions.Observers
 {
-    public interface IPlayer
+    public interface IPlayer : IGrainObserver
     {
         Task OnOpponentSelected(Player player);
         Task<Play> Play();
