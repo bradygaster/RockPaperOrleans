@@ -1,4 +1,4 @@
-﻿namespace RockPaperOrleans.Abstractions.GrainInterfaces
+﻿namespace RockPaperOrleans.Abstractions
 {
     public interface IGameControllerGrain
     {

@@ -1,9 +1,12 @@
 ﻿using Orleans;
 
-namespace RockPaperOrleans.Abstractions.GrainInterfaces
+namespace RockPaperOrleans.Abstractions
 {
-    internal interface IPlayerGrain : IGrainWithStringKey
+    public interface IPlayerGrain : IGrainWithStringKey
     {
         Task Play(Play play);
+        Task RecordWin();
+        Task RecordLoss();
+        Task<Player> Get();
     }
 }
