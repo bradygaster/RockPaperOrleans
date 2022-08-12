@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockPaperOrleans.Abstractio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RockPaperOrleans.Grains", "RockPaperOrleans.Grains\RockPaperOrleans.Grains.csproj", "{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Silo", "Silo\Silo.csproj", "{8384FD71-445F-45ED-AEF4-698D8A46A7D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{BAA727CD-A215-4D9A-AADF-5C47984DB341}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1E69979-85C8-4061-BCFA-ED7C6DBAFF33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8384FD71-445F-45ED-AEF4-698D8A46A7D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8384FD71-445F-45ED-AEF4-698D8A46A7D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8384FD71-445F-45ED-AEF4-698D8A46A7D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8384FD71-445F-45ED-AEF4-698D8A46A7D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAA727CD-A215-4D9A-AADF-5C47984DB341}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAA727CD-A215-4D9A-AADF-5C47984DB341}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAA727CD-A215-4D9A-AADF-5C47984DB341}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAA727CD-A215-4D9A-AADF-5C47984DB341}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

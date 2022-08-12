@@ -13,14 +13,10 @@
     {
         public static string TiePlayerName = "Tie";
 
-        public Tie()
-        {
-            Name = TiePlayerName;
-        }
+        public Tie() 
+            => Name = TiePlayerName;
 
         public override bool Equals(object? obj)
-        {
-            return this.Name.ToLower().Equals((obj as Player)?.Name);
-        }
+            => this.Name.ToLower().Equals((obj as Player)?.Name);
     }
 }
