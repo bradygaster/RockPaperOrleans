@@ -9,23 +9,33 @@ namespace Orleans.Hosting
 {
     public static class SiloBuilderExtensions
     {
-        public static IAzureSiloBuilder HostInAzure(this ISiloBuilder builder)
+        public static IAzureSiloBuilder HostInAzure(this ISiloBuilder builder, IConfiguration configuration)
         {
             builder
                 .Configure<SiloOptions>(options =>
                 {
-                    options.SiloName = "Silo";
+                    options.SiloName = string.Format(configuration.GetValue<string>(
+                        OrleansOnAzureConfiguration.EnvironmentVariableNames.SiloNameTemplate
+                    ), Environment.MachineName);
                 })
                 .Configure<ClusterOptions>(options =>
                 {
-                    options.ClusterId = "dev";
-                    options.ServiceId = "RockPaperOrleans";
+                    options.ClusterId = configuration.GetValue<string>(
+                        OrleansOnAzureConfiguration.EnvironmentVariableNames.ClusterId
+                    );
+                    options.ServiceId = configuration.GetValue<string>(
+                        OrleansOnAzureConfiguration.EnvironmentVariableNames.ServiceId
+                    );
                 })
                 .Configure<EndpointOptions>(options =>
                 {
                     options.AdvertisedIPAddress = IPAddress.Loopback;
-                    options.SiloPort = 11111;
-                    options.GatewayPort = 30000;
+                    options.SiloPort = configuration.GetValue<int>(
+                        OrleansOnAzureConfiguration.EnvironmentVariableNames.SiloPort
+                    );
+                    options.GatewayPort = configuration.GetValue<int>(
+                        OrleansOnAzureConfiguration.EnvironmentVariableNames.GatewayPort
+                    );
                 });
 
             IAzureSiloBuilder result = null;
@@ -62,9 +72,15 @@ namespace Orleans.Hosting
             SiloBuilder.UseCosmosDBMembership((CosmosDBClusteringOptions clusteringOptions) =>
             {
                 clusteringOptions.ConnectionMode = Microsoft.Azure.Cosmos.ConnectionMode.Direct;
-                clusteringOptions.AccountEndpoint =Configuration.GetValue<string>("AccountEndpoint");
-                clusteringOptions.AccountKey = Configuration.GetValue<string>("AccountKey");
-                clusteringOptions.DB = Configuration.GetValue<string>("DB");
+                clusteringOptions.AccountEndpoint = Configuration.GetValue<string>(
+                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountEndpoint
+                    );
+                clusteringOptions.AccountKey = Configuration.GetValue<string>(
+                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountKey
+                    );
+                clusteringOptions.DB = Configuration.GetValue<string>(
+                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbDatabase
+                    );
                 clusteringOptions.CanCreateResources = true;
             });
 
@@ -75,9 +91,15 @@ namespace Orleans.Hosting
         {
             SiloBuilder.AddCosmosDBGrainStorageAsDefault((CosmosDBStorageOptions cosmosOptions) =>
             {
-                cosmosOptions.AccountEndpoint = Configuration.GetValue<string>("AccountEndpoint");
-                cosmosOptions.AccountKey = Configuration.GetValue<string>("AccountKey");
-                cosmosOptions.DB = Configuration.GetValue<string>("DB");
+                cosmosOptions.AccountEndpoint = Configuration.GetValue<string>(
+                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountEndpoint
+                    );
+                cosmosOptions.AccountKey = Configuration.GetValue<string>(
+                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountKey
+                    );
+                cosmosOptions.DB = Configuration.GetValue<string>(
+                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbDatabase
+                    );
                 cosmosOptions.CanCreateResources = true;
             });
 
