@@ -2,7 +2,7 @@
 {
     public class Game
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime Started { get; set; } = DateTime.Now;
         public DateTime Ended { get; set; } = DateTime.MaxValue;
         public Player Player1 { get; set; }

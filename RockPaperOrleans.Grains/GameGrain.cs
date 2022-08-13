@@ -1,53 +1,59 @@
 ﻿using Microsoft.Extensions.Logging;
 using Orleans;
+using Orleans.Configuration;
 using Orleans.Runtime;
 using RockPaperOrleans.Abstractions;
 
 namespace RockPaperOrleans.Grains
 {
+    [CollectionAgeLimit(Minutes = 2)]
     public class GameGrain : Grain, IGameGrain
     {
         private IPersistentState<Game> Game { get; set; }
-        public Tuple<Player, Player> Players { get; private set; }
         private ILogger<GameGrain> Logger;
 
         public GameGrain(
-            [PersistentState(nameof(GameGrain))]  IPersistentState<Game> game, 
+            [PersistentState(nameof(GameGrain))] IPersistentState<Game> game,
             ILogger<GameGrain> logger)
         {
             Game = game;
             Logger = logger;
         }
 
+        public Task<Game> GetGame() => Task.FromResult(Game.State);
+
+        public async Task SetGame(Game game)
+        {
+            Game.State.Id = this.GetPrimaryKey();
+            Game.State = game;
+            await Game.WriteStateAsync();
+        }
+
         public async Task SelectPlayers()
         {
-            var matchmaker = GrainFactory.GetGrain<IMatchmakingGrain>(Guid.Empty);
-            var lobby = await matchmaker.GetPlayersInLobby();
+            await Game.ReadStateAsync();
+            Game.State.Id = this.GetPrimaryKey();
 
-            Players = await matchmaker.ChoosePlayers(lobby);
+            Logger.LogInformation($"Getting the matchmaker for Game {Game.State.Id}");
+            var matchmaker = GrainFactory.GetGrain<IMatchmakingGrain>(this.GetPrimaryKey());
 
-            // start the game
-            Game.State.Player1 = Players.Item1;
-            Game.State.Player2 = Players.Item2;
-            Game.State.Started = DateTime.Now;
-        }
+            Logger.LogInformation($"Getting players for Game {Game.State.Id}");
+            var players = await matchmaker.ChoosePlayers();
 
-        public async Task NotifyPlayers(Tuple<IStrategy, IStrategy> players)
-        {
-            var token = CancellationToken.None;
+            if (players == null)
+            {
+                Logger.LogInformation("There aren't enough players in the lobby to field a game.");
+            }
+            else
+            {
+                Logger.LogInformation($"Players {players.Item1.Name} and {players.Item2.Name} selected for Game {Game.State.Id}.");
 
-            var player1Play = await players.Item1.Play();
-            var player2Play = await players.Item2.Play();
-        }
-
-        public Task SubmitPlay(Throw playerThrew)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task Score()
-        {
-            throw new NotImplementedException();
+                // start the game
+                Game.State.Player1 = players.Item1;
+                Game.State.Player2 = players.Item2;
+                Game.State.Started = DateTime.Now;
+                await Game.WriteStateAsync();
+            }
         }
     }
 }

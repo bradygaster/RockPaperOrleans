@@ -5,7 +5,7 @@ namespace RockPaperOrleans.Abstractions
     public interface IGameGrain : IGrainWithGuidKey
     {
         Task SelectPlayers();
-        Task SubmitPlay(Throw playerThrew);
-        Task Score();
+        Task<Game> GetGame();
+        Task SetGame(Game game);
     }
 }

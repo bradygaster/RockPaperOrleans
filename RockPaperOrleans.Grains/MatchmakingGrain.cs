@@ -5,28 +5,22 @@ namespace RockPaperOrleans.Grains
 {
     public class MatchmakingGrain : Grain, IMatchmakingGrain
     {
-        public async Task<Tuple<Player, Player>> ChoosePlayers(Player[] playersInQueue)
+        public async Task<Tuple<Player, Player>> ChoosePlayers()
         {
-            if (!(playersInQueue.Length >= 2))
+            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+            var lobby = await lobbyGrain.GetPlayersInLobby();
+
+            if (!(lobby.Count >= 2))
             {
-                throw new ArgumentException("The game requires two players.");
+                return null;
             }
 
-            var players = playersInQueue.Take(2).ToArray();
-
-            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+            var players = lobby.Take(2).ToArray();
 
             await lobbyGrain.Leave(players[0]);
             await lobbyGrain.Leave(players[1]);
 
             return new Tuple<Player, Player>(players[0], players[1]);
-        }
-
-        public async Task<Player[]> GetPlayersInLobby()
-        {
-            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-            var players = await lobbyGrain.GetPlayersInLobby();
-            return players.ToArray();
         }
     }
 }
