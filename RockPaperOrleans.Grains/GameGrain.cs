@@ -20,22 +20,24 @@ namespace RockPaperOrleans.Grains
             Logger = logger;
         }
 
-        public Task<Game> GetGame() => Task.FromResult(Game.State);
+        public async Task<Game> GetGame()
+        {
+            //await Game.ReadStateAsync();
+            return Game.State;
+        }
 
         public async Task SetGame(Game game)
         {
-            Game.State.Id = this.GetPrimaryKey();
             Game.State = game;
             await Game.WriteStateAsync();
         }
 
         public async Task SelectPlayers()
         {
-            await Game.ReadStateAsync();
-            Game.State.Id = this.GetPrimaryKey();
+            var game = await GetGame();
 
             Logger.LogInformation($"Getting the matchmaker for Game {Game.State.Id}");
-            var matchmaker = GrainFactory.GetGrain<IMatchmakingGrain>(this.GetPrimaryKey());
+            var matchmaker = GrainFactory.GetGrain<IMatchmakingGrain>(Guid.Empty);
 
             Logger.LogInformation($"Getting players for Game {Game.State.Id}");
             var players = await matchmaker.ChoosePlayers();
@@ -49,10 +51,20 @@ namespace RockPaperOrleans.Grains
                 Logger.LogInformation($"Players {players.Item1.Name} and {players.Item2.Name} selected for Game {Game.State.Id}.");
 
                 // start the game
-                Game.State.Player1 = players.Item1;
-                Game.State.Player2 = players.Item2;
-                Game.State.Started = DateTime.Now;
-                await Game.WriteStateAsync();
+                game.Player1 = players.Item1.Name;
+                game.Player2 = players.Item2.Name;
+                game.Started = DateTime.Now;
+                await SetGame(game);
+
+                // notify the players
+                await GrainFactory
+                        .GetGrain<IPlayerGrain>(players.Item1.Name)
+                            .OpponentSelected(players.Item2);
+
+                await GrainFactory
+                        .GetGrain<IPlayerGrain>(players.Item2.Name)
+                            .OpponentSelected(players.Item1);
+
             }
         }
     }

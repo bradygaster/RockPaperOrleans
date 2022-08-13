@@ -1,5 +1,6 @@
 ﻿namespace RockPaperOrleans.Abstractions
 {
+    [Serializable]
     public enum Play
     {
         Rock = 0,

@@ -1,6 +1,7 @@
 using Orleans;
 using Orleans.Hosting;
 using RockPaperOrleans.Abstractions;
+using RockPaperOrleans.Grains;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,35 +29,36 @@ public class GameEngine : BackgroundService
     {
         GrainFactory = grainFactory;
         Logger = logger;
-        GameEngineGrain = GrainFactory.GetGrain<IGameEngineGrain>(Guid.Empty);
-        MatchmakingGrain = GrainFactory.GetGrain<IMatchmakingGrain>(Guid.Empty);
     }
 
     public IGrainFactory GrainFactory { get; set; }
     public ILogger<GameEngine> Logger { get; set; }
-    public IGameEngineGrain GameEngineGrain { get; }
-    public IMatchmakingGrain MatchmakingGrain { get; private set; }
+    public IGameGrain CurrentGameGrain { get; set; }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            if(await GameEngineGrain.IsGameComplete())
+            if(CurrentGameGrain == null)
             {
-                await GameEngineGrain.StartNewGame();
+                CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
+            }
+
+            var currentGame = await CurrentGameGrain.GetGame();
+
+            if (currentGame.Player1 == null && currentGame.Player2 == null)
+            {
+                await CurrentGameGrain.SelectPlayers();
             }
             else
             {
-                var currentGame = await GameEngineGrain.CurrentGame();
-                var gameGrain = GrainFactory.GetGrain<IGameGrain>(currentGame.Id);
-
-                if(currentGame.Player1 == null && currentGame.Player2 == null)
+                if(currentGame.Rounds > currentGame.Turns.Count)
                 {
-                    await gameGrain.SelectPlayers();
+                    Logger.LogInformation("Players go here.");
                 }
                 else
                 {
-
+                    Logger.LogInformation("Score the game here.");
                 }
             }
 

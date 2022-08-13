@@ -1,5 +1,6 @@
 ﻿namespace RockPaperOrleans.Abstractions
 {
+    [Serializable]
     public class Throw
     {
         public Player Player { get; set; }
