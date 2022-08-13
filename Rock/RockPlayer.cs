@@ -1,19 +1,19 @@
 ﻿using RockPaperOrleans.Abstractions;
 
-namespace Paper
+namespace Rock
 {
-    internal class PaperPlayer : IPlayerObserver
+    internal class RockPlayer : IPlayerObserver
     {
-        public ILogger<PaperPlayer> Logger { get; set; }
+        public ILogger<RockPlayer> Logger { get; set; }
 
-        public PaperPlayer(ILogger<PaperPlayer> logger)
+        public RockPlayer(ILogger<RockPlayer> logger)
         {
             Logger = logger;
         }
 
         public Task OnOpponentSelected(Player opponent)
         {
-            Logger.LogInformation($"{nameof(PaperPlayer)} playing against {opponent.Name}");
+            Logger.LogInformation($"{nameof(RockPlayer)} playing against {opponent.Name}");
             return Task.CompletedTask;
         }
 
