@@ -66,5 +66,15 @@ namespace RockPaperOrleans.Grains
             Logger.LogInformation($"{opponent.Name} has been chosen to play me, {Player.State.Name}");
             return Task.CompletedTask;
         }
+
+        public async Task<Play> Go()
+        {
+            if (PlayerObserver != null)
+            {
+                return await PlayerObserver.Go();
+            }
+
+            return Play.Unknown;
+        }
     }
 }

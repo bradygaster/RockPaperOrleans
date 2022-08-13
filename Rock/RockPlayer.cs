@@ -28,5 +28,11 @@ namespace Rock
             Logger.LogInformation($"{player.Name} signed out.");
             return Task.CompletedTask;
         }
+
+        public Task<Play> Go()
+        {
+            Logger.LogInformation("I like rocks!");
+            return Task.FromResult(Play.Rock);
+        }
     }
 }

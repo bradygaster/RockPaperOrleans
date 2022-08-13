@@ -4,5 +4,6 @@
     public class Turn
     {
         public List<Throw> Throws { get; set; } = new();
+        public string Winner { get; set; }
     }
 }

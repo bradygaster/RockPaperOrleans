@@ -28,5 +28,11 @@ namespace Paper
             Logger.LogInformation($"{player.Name} signed out.");
             return Task.CompletedTask;
         }
+
+        public Task<Play> Go()
+        {
+            Logger.LogInformation("Playing paper, like always!");
+            return Task.FromResult(Play.Paper);
+        }
     }
 }

@@ -7,5 +7,6 @@ namespace RockPaperOrleans.Abstractions
         Task OnPlayerSignedIn(Player player);
         Task OnPlayerSignedOut(Player player);
         Task OnOpponentSelected(Player opponent);
+        Task<Play> Go();
     }
 }

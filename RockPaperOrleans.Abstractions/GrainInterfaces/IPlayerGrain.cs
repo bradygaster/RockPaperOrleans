@@ -10,5 +10,6 @@ namespace RockPaperOrleans.Abstractions
         Task SignIn(IPlayerObserver observer);
         Task SignOut();
         Task OpponentSelected(Player opponent);
+        Task<Play> Go();
     }
 }

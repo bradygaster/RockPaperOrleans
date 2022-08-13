@@ -37,15 +37,16 @@ public class GameEngine : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var newGame = () => CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            if(CurrentGameGrain == null)
-            {
-                CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
-            }
+            // start a new game if we don't have one yet
+            if (CurrentGameGrain == null) newGame();
 
             var currentGame = await CurrentGameGrain.GetGame();
 
+            // select players if they're unselected so far
             if (currentGame.Player1 == null && currentGame.Player2 == null)
             {
                 await CurrentGameGrain.SelectPlayers();
@@ -54,15 +55,16 @@ public class GameEngine : BackgroundService
             {
                 if(currentGame.Rounds > currentGame.Turns.Count)
                 {
-                    Logger.LogInformation("Players go here.");
+                    await CurrentGameGrain.Go();
                 }
                 else
                 {
-                    Logger.LogInformation("Score the game here.");
+                    await CurrentGameGrain.Score();
+                    newGame();
                 }
             }
 
-            await Task.Delay(5000);
+            //await Task.Delay(5000);
         }
     }
 }

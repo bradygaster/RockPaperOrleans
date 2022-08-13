@@ -7,5 +7,7 @@ namespace RockPaperOrleans.Abstractions
         Task SelectPlayers();
         Task<Game> GetGame();
         Task SetGame(Game game);
+        Task Go();
+        Task Score();
     }
 }

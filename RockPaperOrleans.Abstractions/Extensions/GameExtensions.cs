@@ -2,11 +2,11 @@
 {
     public static class GameExtensions
     {
-        public static Player ScoreTurn(this Turn turn)
+        public static string ScoreTurn(this Turn turn)
         {
             // if both players through X, tie game
             if (turn.Throws[0].Play == turn.Throws[1].Play)
-                return Player.Tie;
+                return null;
 
             // who threw what
             var rock = turn.Throws.FirstOrDefault(x => x.Play == Play.Rock);
@@ -26,7 +26,7 @@
                 return scissors.Player;
 
             // no idea how we'd ever get here
-            return Player.Tie;
+            return null;
         }
     }
 }
