@@ -17,6 +17,14 @@ namespace RockPaperOrleans.Grains
 
         private IPersistentState<Player> Player { get; set; }
         public ILogger<PlayerGrain> Logger { get; set; }
+        public IPlayerObserver PlayerObserver { get; set; }
+
+        public override async Task OnActivateAsync()
+        {
+            Player.State.Name = this.GetGrainIdentity().PrimaryKeyString;
+
+            await base.OnActivateAsync();
+        }
 
         public Task<Player> Get() => Task.FromResult(Player.State);
 
@@ -30,6 +38,26 @@ namespace RockPaperOrleans.Grains
         {
             Player.State.WinCount += 1;
             await Player.WriteStateAsync();
+        }
+
+        public Task SignIn(IPlayerObserver observer)
+        {
+            Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");
+            PlayerObserver = observer;
+            return Task.CompletedTask;
+        }
+
+        public Task SignOut()
+        {
+            Logger.LogInformation($"Player {Player.State.Name} has signed out.");
+            PlayerObserver = null;
+            return Task.CompletedTask;
+        }
+
+        public Task OpponentSelected(Player opponent)
+        {
+            Logger.LogInformation($"{opponent.Name} has been chosen to play me, {Player.State.Name}");
+            return Task.CompletedTask;
         }
     }
 }
