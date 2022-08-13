@@ -21,24 +21,24 @@ namespace RockPaperOrleans.Grains
         public Task<List<Player>> GetPlayersInLobby() 
             => Task.FromResult(Players.State);
 
-        public Task Enter(Player player)
+        public async Task Enter(Player player)
         {
             if(!Players.State.Any(x => x.Name == player.Name))
             {
+                Logger.LogInformation($"{player.Name} has entered the lobby.");
                 Players.State.Add(player);
+                await Players.WriteStateAsync();
             }
-
-            return Task.CompletedTask;
         }
 
-        public Task Leave(Player player)
+        public async Task Leave(Player player)
         {
             if (Players.State.Any(x => x.Name == player.Name))
             {
-                Players.State.Remove(player);
+                Logger.LogInformation($"{player.Name} has left the lobby.");
+                Players.State.RemoveAll(x => x.Name == player.Name);
+                await Players.WriteStateAsync();
             }
-
-            return Task.CompletedTask;
         }
     }
 }

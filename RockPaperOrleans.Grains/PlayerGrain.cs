@@ -40,18 +40,25 @@ namespace RockPaperOrleans.Grains
             await Player.WriteStateAsync();
         }
 
-        public Task SignIn(IPlayerObserver observer)
+        public async Task SignIn(IPlayerObserver observer)
         {
             Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");
             PlayerObserver = observer;
-            return Task.CompletedTask;
+            await PlayerObserver.OnPlayerSignedIn(Player.State);
+
+            // enter the lobby
+            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+            await lobbyGrain.Enter(Player.State);
         }
 
-        public Task SignOut()
+        public async Task SignOut()
         {
             Logger.LogInformation($"Player {Player.State.Name} has signed out.");
             PlayerObserver = null;
-            return Task.CompletedTask;
+
+            // leave the lobby
+            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+            await lobbyGrain.Leave(Player.State);
         }
 
         public Task OpponentSelected(Player opponent)
