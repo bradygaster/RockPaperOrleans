@@ -21,4 +21,8 @@
 		<PackageReference Include="OrleansDashboard" Version="3.6.2" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\RockPaperOrleans.Abstractions\RockPaperOrleans.Abstractions.csproj" />
+	</ItemGroup>
+
 </Project>

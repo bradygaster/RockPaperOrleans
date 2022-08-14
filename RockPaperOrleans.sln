@@ -9,9 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockPaperOrleans.Grains", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Silo", "Silo\Silo.csproj", "{8384FD71-445F-45ED-AEF4-698D8A46A7D8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{BAA727CD-A215-4D9A-AADF-5C47984DB341}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockPaperOrleans", "Infrastructure\RockPaperOrleans.csproj", "{BAA727CD-A215-4D9A-AADF-5C47984DB341}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Silos", "Silos", "{BDB46754-DFAD-4B86-B0C0-1003604FF36F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameController", "GameController", "{BDB46754-DFAD-4B86-B0C0-1003604FF36F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grains", "Grains", "{A7B41787-D202-44C0-825D-A817B9B42466}"
 EndProject

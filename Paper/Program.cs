@@ -1,7 +1,9 @@
 using Orleans;
 using Orleans.Hosting;
-using Paper;
+using RockPaperOrleans;
 using RockPaperOrleans.Abstractions;
+
+await Task.Delay(30000); // for debugging, give the silo time to warm up
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleans((context, siloBuilder) =>
@@ -14,9 +16,36 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices(services =>
     {
-        services.AddSingleton<IPlayerObserver, PaperPlayer>();
-        services.AddHostedService<Worker>();
+        services.AddSingleton<AlwaysPaper>();
+        services.AddHostedService<AlwaysPaperWorker>();
     })
     .Build();
 
 await host.RunAsync();
+
+public class AlwaysPaper : PlayerBase
+{
+    public ILogger<AlwaysPaper> Logger { get; set; }
+
+    public AlwaysPaper(ILogger<AlwaysPaper> logger)
+        => Logger = logger;
+
+    public override Task<Play> Go()
+    {
+        return Task.FromResult(Play.Paper);
+    }
+
+    public override Task OnGameWon(Player player)
+    {
+        Logger.LogInformation("Paper covers rock.");
+        return base.OnGameWon(player);
+    }
+}
+
+public class AlwaysPaperWorker : PlayerWorkerBase<AlwaysPaper>
+{
+    public AlwaysPaperWorker(AlwaysPaper playerObserver, IGrainFactory grainFactory) 
+        : base(playerObserver, grainFactory)
+    {
+    }
+}

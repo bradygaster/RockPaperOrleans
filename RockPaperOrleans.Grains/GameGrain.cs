@@ -85,13 +85,37 @@ namespace RockPaperOrleans.Grains
 
         public async Task Score()
         {
-            var player1 = await GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1).Get();
-            var player2 = await GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2).Get();
+            var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
+            var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);
+            var player1 = await player1Grain.Get();
+            var player2 = await player2Grain.Get();
+
             var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
             await lobbyGrain.Enter(player1);
             await lobbyGrain.Enter(player2);
 
-            Logger.LogInformation("Score the game here.");
+            var player1WinCount = Game.State.Turns.Count(x => x.Winner == player1.Name);
+            var player2WinCount = Game.State.Turns.Count(x => x.Winner == player2.Name);
+
+            Logger.LogInformation($"{player1.Name} won {player1WinCount} out of {Game.State.Rounds} rounds.");
+            Logger.LogInformation($"{player2.Name} won {player2WinCount} out of {Game.State.Rounds} rounds.");
+
+            if (player1WinCount > player2WinCount)
+            {
+                await player1Grain.RecordWin();
+                await player2Grain.RecordLoss();
+                Game.State.Winner = player1.Name;
+                Logger.LogInformation($"{player1.Name} wins.");
+            }
+            else
+            {
+                await player2Grain.RecordWin();
+                await player1Grain.RecordLoss();
+                Game.State.Winner = player2.Name;
+                Logger.LogInformation($"{player2.Name} wins.");
+            }
+
+            await SetGame(Game.State);
         }
     }
 }

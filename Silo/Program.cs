@@ -1,7 +1,6 @@
 using Orleans;
 using Orleans.Hosting;
 using RockPaperOrleans.Abstractions;
-using RockPaperOrleans.Grains;
 
 var builder = WebApplication.CreateBuilder(args);
 

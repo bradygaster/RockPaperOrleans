@@ -30,30 +30,45 @@ namespace RockPaperOrleans.Grains
 
         public async Task RecordLoss()
         {
-            Player.State.LossCount += 1;
-            await Player.WriteStateAsync();
+            if(PlayerObserver != null)
+            {
+                Logger.LogInformation($"Recording loss for {Player.State.Name}");
+                Player.State.LossCount += 1;
+                await PlayerObserver.OnGameLost(Player.State);
+                await Player.WriteStateAsync();
+            }
         }
 
         public async Task RecordWin()
         {
-            Player.State.WinCount += 1;
-            await Player.WriteStateAsync();
+            if (PlayerObserver != null)
+            {
+                Logger.LogInformation($"Recording win for {Player.State.Name}");
+                Player.State.WinCount += 1;
+                await PlayerObserver.OnGameWon(Player.State);
+                await Player.WriteStateAsync();
+            }
         }
 
         public async Task SignIn(IPlayerObserver observer)
         {
             Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");
-            PlayerObserver = observer;
-            await PlayerObserver.OnPlayerSignedIn(Player.State);
 
-            // enter the lobby
-            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-            await lobbyGrain.Enter(Player.State);
+            if (observer != null)
+            {
+                PlayerObserver = observer;
+                await PlayerObserver.OnPlayerSignedIn(Player.State);
+
+                // enter the lobby
+                var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+                await lobbyGrain.Enter(Player.State);
+            }
         }
 
         public async Task SignOut()
         {
             Logger.LogInformation($"Player {Player.State.Name} has signed out.");
+
             PlayerObserver = null;
 
             // leave the lobby
@@ -61,10 +76,13 @@ namespace RockPaperOrleans.Grains
             await lobbyGrain.Leave(Player.State);
         }
 
-        public Task OpponentSelected(Player opponent)
+        public async Task OpponentSelected(Player opponent)
         {
-            Logger.LogInformation($"{opponent.Name} has been chosen to play me, {Player.State.Name}");
-            return Task.CompletedTask;
+            Logger.LogInformation($"{Player.State.Name}'s opponent is {opponent.Name}.");
+            if (PlayerObserver != null)
+            {
+                await PlayerObserver.OnOpponentSelected(opponent);
+            }
         }
 
         public async Task<Play> Go()
