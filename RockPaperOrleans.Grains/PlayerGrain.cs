@@ -50,6 +50,17 @@ namespace RockPaperOrleans.Grains
             }
         }
 
+        public async Task RecordTie()
+        {
+            if (PlayerObserver != null)
+            {
+                Logger.LogInformation($"Recording tie for {Player.State.Name}");
+                Player.State.TieCount += 1;
+                await PlayerObserver.OnGameTied(Player.State);
+                await Player.WriteStateAsync();
+            }
+        }
+
         public async Task SignIn(IPlayerObserver observer)
         {
             Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");

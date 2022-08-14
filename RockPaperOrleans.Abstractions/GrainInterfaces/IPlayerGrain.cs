@@ -6,6 +6,7 @@ namespace RockPaperOrleans.Abstractions
     {
         Task RecordWin();
         Task RecordLoss();
+        Task RecordTie();
         Task<Player> Get();
         Task SignIn(IPlayerObserver observer);
         Task SignOut();

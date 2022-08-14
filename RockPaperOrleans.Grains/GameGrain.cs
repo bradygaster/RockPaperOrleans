@@ -107,12 +107,19 @@ namespace RockPaperOrleans.Grains
                 Game.State.Winner = player1.Name;
                 Logger.LogInformation($"{player1.Name} wins.");
             }
-            else
+            if (player2WinCount > player1WinCount)
             {
                 await player2Grain.RecordWin();
                 await player1Grain.RecordLoss();
                 Game.State.Winner = player2.Name;
                 Logger.LogInformation($"{player2.Name} wins.");
+            }
+            if (player2WinCount == player1WinCount)
+            {
+                await player2Grain.RecordTie();
+                await player1Grain.RecordTie();
+                Game.State.Winner = "Tie";
+                Logger.LogInformation($"{player1.Name} ties with {player2.Name}.");
             }
 
             await SetGame(Game.State);

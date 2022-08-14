@@ -2,6 +2,7 @@ using Orleans;
 using Orleans.Hosting;
 using RockPaperOrleans.Abstractions;
 using RockPaperOrleans;
+using System.ComponentModel;
 
 await Task.Delay(30000); // for debugging, give the silo time to warm up
 
@@ -16,28 +17,32 @@ IHost host = Host.CreateDefaultBuilder(args)
     })
     .ConfigureServices(services =>
     {
-        services.AddSingleton<AlwaysRock>();
-        services.AddHostedService<AlwaysRockWorker>();
+        services.AddSingleton<Rando>();
+        services.AddHostedService<RandoWorker>();
     })
     .Build();
 
 await host.RunAsync();
 
-public class AlwaysRock : PlayerBase
+public class Rando : PlayerBase
 {
-    public ILogger<AlwaysRock> Logger { get; set; }
+    public ILogger<Rando> Logger { get; set; }
 
-    public AlwaysRock(ILogger<AlwaysRock> logger)
+    public Rando(ILogger<Rando> logger)
         => Logger = logger;
+
+    Play LastPlay = Play.Rock;
 
     public override Task<Play> Go()
     {
-        return Task.FromResult(Play.Rock);
+        LastPlay = (Play)Random.Shared.Next(0, 3);
+        Logger.LogInformation($"Rando throws {LastPlay}.");
+        return Task.FromResult(LastPlay);
     }
 
     public override Task OnGameWon(Player player)
     {
-        Logger.LogInformation("Rock breaks scissors.");
+        Logger.LogInformation($"{GetType().Name} wins against {Opponent.Name}.");
         return base.OnGameWon(player);
     }
 
@@ -60,9 +65,9 @@ public class AlwaysRock : PlayerBase
     }
 }
 
-public class AlwaysRockWorker : PlayerWorkerBase<AlwaysRock>
+public class RandoWorker : PlayerWorkerBase<Rando>
 {
-    public AlwaysRockWorker(AlwaysRock playerObserver, IGrainFactory grainFactory)
+    public RandoWorker(Rando playerObserver, IGrainFactory grainFactory)
         : base(playerObserver, grainFactory)
     {
     }

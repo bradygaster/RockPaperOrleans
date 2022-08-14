@@ -40,6 +40,24 @@ public class AlwaysPaper : PlayerBase
         Logger.LogInformation("Paper covers rock.");
         return base.OnGameWon(player);
     }
+
+    public override Task OnOpponentSelected(Player opponent)
+    {
+        Logger.LogInformation($"{GetType().Name} is about to play {opponent.Name}.");
+        return base.OnOpponentSelected(opponent);
+    }
+
+    public override Task OnGameLost(Player player)
+    {
+        Logger.LogInformation($"{GetType().Name} loses to {Opponent.Name}.");
+        return base.OnGameLost(player);
+    }
+
+    public override Task OnGameTied(Player player)
+    {
+        Logger.LogInformation($"{GetType().Name} ties with {Opponent.Name}.");
+        return base.OnGameTied(player);
+    }
 }
 
 public class AlwaysPaperWorker : PlayerWorkerBase<AlwaysPaper>

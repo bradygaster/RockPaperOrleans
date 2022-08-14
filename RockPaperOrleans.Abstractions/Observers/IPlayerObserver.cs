@@ -10,5 +10,6 @@ namespace RockPaperOrleans.Abstractions
         Task OnOpponentSelected(Player opponent);
         Task OnGameWon(Player player);
         Task OnGameLost(Player player);
+        Task OnGameTied(Player player);
     }
 }
