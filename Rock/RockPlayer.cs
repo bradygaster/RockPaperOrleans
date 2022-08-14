@@ -34,5 +34,17 @@ namespace Rock
             Logger.LogInformation("I like rocks!");
             return Task.FromResult(Play.Rock);
         }
+
+        public Task OnGameWon(Player player)
+        {
+            Logger.LogInformation("I rock!");
+            return Task.FromResult(Play.Paper);
+        }
+
+        public Task OnGameLost(Player player)
+        {
+            Logger.LogInformation("That's the breaks.");
+            return Task.FromResult(Play.Paper);
+        }
     }
 }

@@ -34,5 +34,17 @@ namespace Scissors
             Logger.LogInformation("I cut things!");
             return Task.FromResult(Play.Scissors);
         }
+
+        public Task OnGameWon(Player player)
+        {
+            Logger.LogInformation("I cut it up!");
+            return Task.FromResult(Play.Paper);
+        }
+
+        public Task OnGameLost(Player player)
+        {
+            Logger.LogInformation("I got crushed.");
+            return Task.FromResult(Play.Paper);
+        }
     }
 }

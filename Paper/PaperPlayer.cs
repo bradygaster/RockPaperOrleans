@@ -34,5 +34,17 @@ namespace Paper
             Logger.LogInformation("Playing paper, like always!");
             return Task.FromResult(Play.Paper);
         }
+
+        public Task OnGameWon(Player player)
+        {
+            Logger.LogInformation("Yes, I won!");
+            return Task.FromResult(Play.Paper);
+        }
+
+        public Task OnGameLost(Player player)
+        {
+            Logger.LogInformation("Shucks");
+            return Task.FromResult(Play.Paper);
+        }
     }
 }
