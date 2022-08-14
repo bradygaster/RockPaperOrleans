@@ -1,7 +1,7 @@
 using Orleans;
 using Orleans.Hosting;
-using Rock;
 using RockPaperOrleans.Abstractions;
+using Rock;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleans((context, siloBuilder) =>
