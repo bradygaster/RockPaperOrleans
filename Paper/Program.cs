@@ -25,38 +25,11 @@ await host.RunAsync();
 
 public class AlwaysPaper : PlayerBase
 {
-    public ILogger<AlwaysPaper> Logger { get; set; }
-
-    public AlwaysPaper(ILogger<AlwaysPaper> logger)
-        => Logger = logger;
+    public AlwaysPaper(ILogger<AlwaysPaper> logger) : base(logger) { }
 
     public override Task<Play> Go()
     {
         return Task.FromResult(Play.Paper);
-    }
-
-    public override Task OnGameWon(Player player)
-    {
-        Logger.LogInformation("Paper covers rock.");
-        return base.OnGameWon(player);
-    }
-
-    public override Task OnOpponentSelected(Player opponent)
-    {
-        Logger.LogInformation($"{GetType().Name} is about to play {opponent.Name}.");
-        return base.OnOpponentSelected(opponent);
-    }
-
-    public override Task OnGameLost(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} loses to {Opponent.Name}.");
-        return base.OnGameLost(player);
-    }
-
-    public override Task OnGameTied(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} ties with {Opponent.Name}.");
-        return base.OnGameTied(player);
     }
 }
 

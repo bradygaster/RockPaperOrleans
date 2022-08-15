@@ -25,38 +25,11 @@ await host.RunAsync();
 
 public class AlwaysRock : PlayerBase
 {
-    public ILogger<AlwaysRock> Logger { get; set; }
-
-    public AlwaysRock(ILogger<AlwaysRock> logger)
-        => Logger = logger;
+    public AlwaysRock(ILogger<AlwaysRock> logger) : base(logger) { }
 
     public override Task<Play> Go()
     {
         return Task.FromResult(Play.Rock);
-    }
-
-    public override Task OnGameWon(Player player)
-    {
-        Logger.LogInformation("Rock breaks scissors.");
-        return base.OnGameWon(player);
-    }
-
-    public override Task OnOpponentSelected(Player opponent)
-    {
-        Logger.LogInformation($"{GetType().Name} is about to play {opponent.Name}.");
-        return base.OnOpponentSelected(opponent);
-    }
-
-    public override Task OnGameLost(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} loses to {Opponent.Name}.");
-        return base.OnGameLost(player);
-    }
-
-    public override Task OnGameTied(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} ties with {Opponent.Name}.");
-        return base.OnGameTied(player);
     }
 }
 

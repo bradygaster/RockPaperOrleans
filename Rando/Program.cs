@@ -26,10 +26,7 @@ await host.RunAsync();
 
 public class Rando : PlayerBase
 {
-    public ILogger<Rando> Logger { get; set; }
-
-    public Rando(ILogger<Rando> logger)
-        => Logger = logger;
+    public Rando(ILogger<Rando> logger) : base(logger) { }  
 
     Play LastPlay = Play.Rock;
 
@@ -38,30 +35,6 @@ public class Rando : PlayerBase
         LastPlay = (Play)Random.Shared.Next(0, 3);
         Logger.LogInformation($"Rando throws {LastPlay}.");
         return Task.FromResult(LastPlay);
-    }
-
-    public override Task OnGameWon(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} wins against {Opponent.Name}.");
-        return base.OnGameWon(player);
-    }
-
-    public override Task OnOpponentSelected(Player opponent)
-    {
-        Logger.LogInformation($"{GetType().Name} is about to play {opponent.Name}.");
-        return base.OnOpponentSelected(opponent);
-    }
-
-    public override Task OnGameLost(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} loses to {Opponent.Name}.");
-        return base.OnGameLost(player);
-    }
-
-    public override Task OnGameTied(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} ties with {Opponent.Name}.");
-        return base.OnGameTied(player);
     }
 }
 

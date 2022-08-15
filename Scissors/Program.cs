@@ -2,6 +2,7 @@ using Orleans;
 using Orleans.Hosting;
 using RockPaperOrleans.Abstractions;
 using RockPaperOrleans;
+using System.ComponentModel;
 
 await Task.Delay(30000); // for debugging, give the silo time to warm up
 
@@ -25,38 +26,11 @@ await host.RunAsync();
 
 public class AlwaysScissors : PlayerBase
 {
-    public ILogger<AlwaysScissors> Logger { get; set; }
-
-    public AlwaysScissors(ILogger<AlwaysScissors> logger)
-        => Logger = logger;
+    public AlwaysScissors(ILogger<AlwaysScissors> logger) : base(logger) { }
 
     public override Task<Play> Go()
     {
         return Task.FromResult(Play.Scissors);
-    }
-
-    public override Task OnGameWon(Player player)
-    {
-        Logger.LogInformation("Scissors cut paper.");
-        return base.OnGameWon(player);
-    }
-
-    public override Task OnOpponentSelected(Player opponent)
-    {
-        Logger.LogInformation($"{GetType().Name} is about to play {opponent.Name}.");
-        return base.OnOpponentSelected(opponent);
-    }
-
-    public override Task OnGameLost(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} loses to {Opponent.Name}.");
-        return base.OnGameLost(player);
-    }
-
-    public override Task OnGameTied(Player player)
-    {
-        Logger.LogInformation($"{GetType().Name} ties with {Opponent.Name}.");
-        return base.OnGameTied(player);
     }
 }
 
