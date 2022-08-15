@@ -2,23 +2,41 @@
 using Microsoft.Extensions.DependencyInjection;
 using Orleans.Clustering.CosmosDB;
 using Orleans.Configuration;
+using Orleans.Hosting;
 using Orleans.Persistence.CosmosDB;
+using RockPaperOrleans;
 using System.Net;
 
-namespace Orleans.Hosting
+namespace Microsoft.Extensions.Hosting
 {
     public static class SiloBuilderExtensions
     {
-        public static ISiloBuilder CreateOrConnectToGameCluster(this ISiloBuilder builder, IConfiguration configuration)
+        public static ISiloBuilder EnlistPlayer<TPlayer>(this ISiloBuilder builder, IConfiguration configuration) 
+            where TPlayer : PlayerBase
         {
-            builder.HostInAzure(configuration)
+            builder.CreateOrConnectToGameCluster(configuration)
+                    .UseCosmosDbClustering()
+                    .UseCosmosDbGrainStorage();
+
+            builder.ConfigureServices(services =>
+            {
+                services.AddSingleton<TPlayer>();
+                services.AddHostedService<PlayerWorkerBase<TPlayer>>();
+            });
+
+            return builder;
+        }
+
+        public static ISiloBuilder CreateGameEngine(this ISiloBuilder builder, IConfiguration configuration)
+        {
+            builder.CreateOrConnectToGameCluster(configuration)
                     .UseCosmosDbClustering()
                     .UseCosmosDbGrainStorage();
 
             return builder;
         }
 
-        public static IAzureSiloBuilder HostInAzure(this ISiloBuilder builder, IConfiguration configuration)
+        private static IAzureSiloBuilder CreateOrConnectToGameCluster(this ISiloBuilder builder, IConfiguration configuration)
         {
             builder
                 .Configure<SiloOptions>(options =>

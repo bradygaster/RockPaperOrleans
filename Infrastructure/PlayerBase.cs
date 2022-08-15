@@ -17,38 +17,38 @@ namespace RockPaperOrleans
 
         public virtual Task OnPlayerSignedIn(Player player)
         {
-            Logger.LogInformation($"{GetType().Name} signed in.");
+            Logger.LogInformation($"{player.Name} signed in.");
             return Task.CompletedTask;
         }
 
         public virtual Task OnPlayerSignedOut(Player player)
         {
-            Logger.LogInformation($"{GetType().Name} signed out.");
+            Logger.LogInformation($"{player.Name} signed out.");
             return Task.CompletedTask;
         }
 
-        public virtual Task OnOpponentSelected(Player opponent)
+        public virtual Task OnOpponentSelected(Player player, Player opponent)
         {
             Opponent = opponent;
-            Logger.LogInformation($"{GetType().Name} is about to play {opponent.Name}.");
+            Logger.LogInformation($"{player.Name} is about to play {opponent.Name}.");
             return Task.CompletedTask;
         }
 
         public virtual Task OnGameWon(Player player)
         {
-            Logger.LogInformation($"{GetType().Name} wins against {Opponent.Name}.");
+            Logger.LogInformation($"{player.Name} wins against {Opponent.Name}.");
             return Task.CompletedTask;
         }
 
         public virtual Task OnGameLost(Player player)
         {
-            Logger.LogInformation($"{GetType().Name} loses to {Opponent.Name}.");
+            Logger.LogInformation($"{player.Name} loses to {Opponent.Name}.");
             return Task.CompletedTask;
         }
 
         public virtual Task OnGameTied(Player player)
         {
-            Logger.LogInformation($"{GetType().Name} ties with {Opponent.Name}.");
+            Logger.LogInformation($"{player.Name} ties with {Opponent.Name}.");
             return Task.CompletedTask;
         }
     }

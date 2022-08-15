@@ -92,7 +92,7 @@ namespace RockPaperOrleans.Grains
             Logger.LogInformation($"{Player.State.Name}'s opponent is {opponent.Name}.");
             if (PlayerObserver != null)
             {
-                await PlayerObserver.OnOpponentSelected(opponent);
+                await PlayerObserver.OnOpponentSelected(Player.State, opponent);
             }
         }
 
