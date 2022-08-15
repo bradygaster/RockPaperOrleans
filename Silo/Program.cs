@@ -8,9 +8,7 @@ builder.Host.UseOrleans((context, siloBuilder) =>
 {
     siloBuilder
         .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false)
-        .HostInAzure(context.Configuration)
-            .UseCosmosDbClustering()
-            .UseCosmosDbGrainStorage();
+        .CreateOrConnectToGameCluster(context.Configuration);
 });
 
 builder.Services.AddServicesForSelfHostedDashboard();

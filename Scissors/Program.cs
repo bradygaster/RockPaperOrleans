@@ -1,8 +1,7 @@
 using Orleans;
 using Orleans.Hosting;
-using RockPaperOrleans.Abstractions;
 using RockPaperOrleans;
-using System.ComponentModel;
+using RockPaperOrleans.Abstractions;
 
 await Task.Delay(30000); // for debugging, give the silo time to warm up
 
@@ -11,14 +10,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         siloBuilder
             .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false)
-            .HostInAzure(context.Configuration)
-                .UseCosmosDbClustering()
-                .UseCosmosDbGrainStorage();
+            .CreateOrConnectToGameCluster(context.Configuration);
     })
     .ConfigureServices(services =>
     {
         services.AddSingleton<AlwaysScissors>();
-        services.AddHostedService<AlwaysScissorsWorker>();
+        services.AddHostedService<PlayerWorkerBase<AlwaysScissors>>();
     })
     .Build();
 
@@ -31,13 +28,5 @@ public class AlwaysScissors : PlayerBase
     public override Task<Play> Go()
     {
         return Task.FromResult(Play.Scissors);
-    }
-}
-
-public class AlwaysScissorsWorker : PlayerWorkerBase<AlwaysScissors>
-{
-    public AlwaysScissorsWorker(AlwaysScissors playerObserver, IGrainFactory grainFactory)
-        : base(playerObserver, grainFactory)
-    {
     }
 }

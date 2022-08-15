@@ -10,14 +10,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         siloBuilder
             .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false)
-            .HostInAzure(context.Configuration)
-                .UseCosmosDbClustering()
-                .UseCosmosDbGrainStorage();
+            .CreateOrConnectToGameCluster(context.Configuration);
     })
     .ConfigureServices(services =>
     {
         services.AddSingleton<AlwaysPaper>();
-        services.AddHostedService<AlwaysPaperWorker>();
+        services.AddHostedService<PlayerWorkerBase<AlwaysPaper>>();
     })
     .Build();
 
@@ -30,13 +28,5 @@ public class AlwaysPaper : PlayerBase
     public override Task<Play> Go()
     {
         return Task.FromResult(Play.Paper);
-    }
-}
-
-public class AlwaysPaperWorker : PlayerWorkerBase<AlwaysPaper>
-{
-    public AlwaysPaperWorker(AlwaysPaper playerObserver, IGrainFactory grainFactory) 
-        : base(playerObserver, grainFactory)
-    {
     }
 }

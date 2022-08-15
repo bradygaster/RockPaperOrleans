@@ -9,6 +9,15 @@ namespace Orleans.Hosting
 {
     public static class SiloBuilderExtensions
     {
+        public static ISiloBuilder CreateOrConnectToGameCluster(this ISiloBuilder builder, IConfiguration configuration)
+        {
+            builder.HostInAzure(configuration)
+                    .UseCosmosDbClustering()
+                    .UseCosmosDbGrainStorage();
+
+            return builder;
+        }
+
         public static IAzureSiloBuilder HostInAzure(this ISiloBuilder builder, IConfiguration configuration)
         {
             builder

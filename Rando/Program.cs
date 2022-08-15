@@ -1,8 +1,7 @@
 using Orleans;
 using Orleans.Hosting;
-using RockPaperOrleans.Abstractions;
 using RockPaperOrleans;
-using System.ComponentModel;
+using RockPaperOrleans.Abstractions;
 
 await Task.Delay(30000); // for debugging, give the silo time to warm up
 
@@ -11,14 +10,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         siloBuilder
             .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false)
-            .HostInAzure(context.Configuration)
-                .UseCosmosDbClustering()
-                .UseCosmosDbGrainStorage();
+            .CreateOrConnectToGameCluster(context.Configuration);
     })
     .ConfigureServices(services =>
     {
         services.AddSingleton<Rando>();
-        services.AddHostedService<RandoWorker>();
+        services.AddHostedService<PlayerWorkerBase<Rando>>();
     })
     .Build();
 
@@ -35,13 +32,5 @@ public class Rando : PlayerBase
         LastPlay = (Play)Random.Shared.Next(0, 3);
         Logger.LogInformation($"Rando throws {LastPlay}.");
         return Task.FromResult(LastPlay);
-    }
-}
-
-public class RandoWorker : PlayerWorkerBase<Rando>
-{
-    public RandoWorker(Rando playerObserver, IGrainFactory grainFactory)
-        : base(playerObserver, grainFactory)
-    {
     }
 }

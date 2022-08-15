@@ -10,14 +10,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         siloBuilder
             .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false)
-            .HostInAzure(context.Configuration)
-                .UseCosmosDbClustering()
-                .UseCosmosDbGrainStorage();
+            .CreateOrConnectToGameCluster(context.Configuration);
     })
     .ConfigureServices(services =>
     {
         services.AddSingleton<AlwaysRock>();
-        services.AddHostedService<AlwaysRockWorker>();
+        services.AddHostedService<PlayerWorkerBase<AlwaysRock>>();
     })
     .Build();
 
@@ -30,13 +28,5 @@ public class AlwaysRock : PlayerBase
     public override Task<Play> Go()
     {
         return Task.FromResult(Play.Rock);
-    }
-}
-
-public class AlwaysRockWorker : PlayerWorkerBase<AlwaysRock>
-{
-    public AlwaysRockWorker(AlwaysRock playerObserver, IGrainFactory grainFactory)
-        : base(playerObserver, grainFactory)
-    {
     }
 }
