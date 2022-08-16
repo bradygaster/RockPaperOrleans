@@ -11,13 +11,9 @@ namespace Microsoft.Extensions.Hosting
 {
     public static class SiloBuilderExtensions
     {
-        public static ISiloBuilder EnlistPlayer<TPlayer>(this ISiloBuilder builder, IConfiguration configuration) 
+        public static ISiloBuilder EnlistPlayer<TPlayer>(this ISiloBuilder builder) 
             where TPlayer : PlayerBase
         {
-            builder.CreateOrConnectToGameCluster(configuration)
-                    .UseCosmosDbClustering()
-                    .UseCosmosDbGrainStorage();
-
             builder.ConfigureServices(services =>
             {
                 services.AddSingleton<TPlayer>();
@@ -27,7 +23,7 @@ namespace Microsoft.Extensions.Hosting
             return builder;
         }
 
-        public static ISiloBuilder CreateGameEngine(this ISiloBuilder builder, IConfiguration configuration)
+        public static ISiloBuilder PlayRockPaperOrleans(this ISiloBuilder builder, IConfiguration configuration)
         {
             builder.CreateOrConnectToGameCluster(configuration)
                     .UseCosmosDbClustering()

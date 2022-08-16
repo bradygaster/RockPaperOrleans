@@ -6,8 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseOrleans((context, siloBuilder) =>
 {
     siloBuilder
-        .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false)
-        .CreateGameEngine(context.Configuration);
+        .PlayRockPaperOrleans(context.Configuration)
+        .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false);
 });
 
 builder.Services.AddServicesForSelfHostedDashboard();

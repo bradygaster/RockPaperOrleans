@@ -6,7 +6,9 @@ await Task.Delay(30000); // for debugging, give the silo time to warm up
 IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleans((context, siloBuilder) =>
     {
-        siloBuilder.EnlistPlayer<AlwaysRock>(context.Configuration);
+        siloBuilder
+            .PlayRockPaperOrleans(context.Configuration)
+            .EnlistPlayer<AlwaysRock>();
     })
     .Build();
 
