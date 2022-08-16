@@ -26,7 +26,68 @@ namespace RockPaperOrleans.Grains
             await base.OnActivateAsync();
         }
 
+        public async Task<Play> Go()
+        {
+            if (PlayerObserver != null)
+            {
+                return await PlayerObserver.Go();
+            }
+
+            return Play.Unknown;
+        }
+
         public Task<Player> Get() => Task.FromResult(Player.State);
+
+        public async Task SignIn(IPlayerObserver observer)
+        {
+            Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");
+
+            if (observer != null)
+            {
+                PlayerObserver = observer;
+                Player.State.IsActive = true;
+                await PlayerObserver.OnPlayerSignedIn(Player.State);
+
+                var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+                await lobbyGrain.Enter(Player.State);
+            }
+        }
+
+        public async Task SignOut()
+        {
+            Player.State.IsActive = false;
+
+            Logger.LogInformation($"Player {Player.State.Name} has signed out.");
+
+            PlayerObserver = null;
+
+            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+            await lobbyGrain.Leave(Player.State);
+        }
+
+        public Task<bool> IsPlayerOnline()
+        {
+            return Task.FromResult<bool>(Player.State.IsActive);
+        }
+
+        public async Task OpponentSelected(Player opponent)
+        {
+            Logger.LogInformation($"{Player.State.Name}'s opponent is {opponent.Name}.");
+            if (PlayerObserver != null)
+            {
+                await PlayerObserver.OnOpponentSelected(Player.State, opponent);
+            }
+        }
+
+        public async Task TurnComplete(Turn turn)
+        {
+            if (PlayerObserver != null)
+            {
+                Logger.LogInformation($"Recording loss for {Player.State.Name}");
+                Player.State.LossCount += 1;
+                await PlayerObserver.OnTurnCompleted(turn);
+            }
+        }
 
         public async Task RecordLoss()
         {
@@ -58,61 +119,6 @@ namespace RockPaperOrleans.Grains
                 Player.State.TieCount += 1;
                 await PlayerObserver.OnGameTied(Player.State);
                 await Player.WriteStateAsync();
-            }
-        }
-
-        public async Task SignIn(IPlayerObserver observer)
-        {
-            Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");
-
-            if (observer != null)
-            {
-                PlayerObserver = observer;
-                await PlayerObserver.OnPlayerSignedIn(Player.State);
-
-                // enter the lobby
-                var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-                await lobbyGrain.Enter(Player.State);
-            }
-        }
-
-        public async Task SignOut()
-        {
-            Logger.LogInformation($"Player {Player.State.Name} has signed out.");
-
-            PlayerObserver = null;
-
-            // leave the lobby
-            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-            await lobbyGrain.Leave(Player.State);
-        }
-
-        public async Task OpponentSelected(Player opponent)
-        {
-            Logger.LogInformation($"{Player.State.Name}'s opponent is {opponent.Name}.");
-            if (PlayerObserver != null)
-            {
-                await PlayerObserver.OnOpponentSelected(Player.State, opponent);
-            }
-        }
-
-        public async Task<Play> Go()
-        {
-            if (PlayerObserver != null)
-            {
-                return await PlayerObserver.Go();
-            }
-
-            return Play.Unknown;
-        }
-
-        public async Task TurnComplete(Turn turn)
-        {
-            if (PlayerObserver != null)
-            {
-                Logger.LogInformation($"Recording loss for {Player.State.Name}");
-                Player.State.LossCount += 1;
-                await PlayerObserver.OnTurnCompleted(turn);
             }
         }
     }

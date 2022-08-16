@@ -13,5 +13,6 @@ namespace RockPaperOrleans.Abstractions
         Task OpponentSelected(Player opponent);
         Task<Play> Go();
         Task TurnComplete(Turn turn);
+        Task<bool> IsPlayerOnline();
     }
 }

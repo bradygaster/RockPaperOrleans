@@ -69,6 +69,10 @@ namespace RockPaperOrleans.Grains
             var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
             var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);
 
+            if (!(await player1Grain.IsPlayerOnline()
+                && await player2Grain.IsPlayerOnline()))
+                await Score();
+
             var player1Play = await player1Grain.Go();
             var player2Play = await player2Grain.Go();
 
@@ -92,8 +96,12 @@ namespace RockPaperOrleans.Grains
             var player2 = await player2Grain.Get();
 
             var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-            await lobbyGrain.Enter(player1);
-            await lobbyGrain.Enter(player2);
+
+            if (await player1Grain.IsPlayerOnline())
+                await lobbyGrain.Enter(player1);
+
+            if (await player2Grain.IsPlayerOnline())
+                await lobbyGrain.Enter(player2);
 
             var player1WinCount = Game.State.Turns.Count(x => x.Winner == player1.Name);
             var player2WinCount = Game.State.Turns.Count(x => x.Winner == player2.Name);
