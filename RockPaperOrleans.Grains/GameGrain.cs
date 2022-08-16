@@ -20,14 +20,18 @@ namespace RockPaperOrleans.Grains
             Logger = logger;
         }
 
+        public override Task OnActivateAsync()
+        {
+            Game.State.Id = this.GetGrainIdentity().PrimaryKey;
+
+            return base.OnActivateAsync();
+        }
+
         public Task<Game> GetGame()
             => Task.FromResult(Game.State);
 
-        public async Task SetGame(Game game)
-        {
-            Game.State = game;
-            await Game.WriteStateAsync();
-        }
+        public async Task SetGame(Game game) 
+            => Game.State = game;
 
         public async Task SelectPlayers()
         {

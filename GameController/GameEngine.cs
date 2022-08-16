@@ -1,7 +1,7 @@
 ﻿using Orleans;
 using RockPaperOrleans.Abstractions;
 
-namespace Silo
+namespace GameController
 {
     public class GameEngine : BackgroundService
     {

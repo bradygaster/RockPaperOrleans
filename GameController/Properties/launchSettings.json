@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Silo": {
+    "GameController": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

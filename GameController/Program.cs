@@ -1,5 +1,5 @@
 using Orleans;
-using Silo;
+using GameController;
 
 var builder = WebApplication.CreateBuilder(args);
 
