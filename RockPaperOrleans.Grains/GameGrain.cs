@@ -66,13 +66,11 @@ namespace RockPaperOrleans.Grains
 
         public async Task Go()
         {
-            var player1Play = await GrainFactory
-                    .GetGrain<IPlayerGrain>(Game.State.Player1)
-                        .Go();
+            var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
+            var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);
 
-            var player2Play = await GrainFactory
-                    .GetGrain<IPlayerGrain>(Game.State.Player2)
-                        .Go();
+            var player1Play = await player1Grain.Go();
+            var player2Play = await player2Grain.Go();
 
             var turn = new Turn();
             turn.Throws.Add(new Throw { Play = player1Play, Player = Game.State.Player1 });
@@ -81,6 +79,9 @@ namespace RockPaperOrleans.Grains
 
             Game.State.Turns.Add(turn);
             await SetGame(Game.State);
+
+            await player1Grain.TurnComplete(turn);
+            await player2Grain.TurnComplete(turn);
         }
 
         public async Task Score()

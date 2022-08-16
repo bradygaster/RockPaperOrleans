@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RockPaperOrleans.Abstractions;
+using System.Numerics;
 
 namespace RockPaperOrleans
 {
@@ -31,6 +32,20 @@ namespace RockPaperOrleans
         {
             Opponent = opponent;
             Logger.LogInformation($"{player.Name} is about to play {opponent.Name}.");
+            return Task.CompletedTask;
+        }
+
+        public Task OnTurnCompleted(Turn turn)
+        {
+            if(string.IsNullOrEmpty(turn.Winner) || turn.Winner.ToLower() == "tie")
+            {
+                Logger.LogInformation($"{turn.Throws[0].Player} ties this round with {turn.Throws[1].Player}, throwing {turn.Throws[0].Play}.");
+            }
+            else
+            {
+                Logger.LogInformation($"{turn.Winner} wins round against {turn.Throws.First(x => x.Player != turn.Winner).Player}, throwing {turn.Throws.First(x => x.Player == turn.Winner).Play}.");
+            }
+
             return Task.CompletedTask;
         }
 

@@ -44,7 +44,7 @@ namespace Silo
                     }
                 }
 
-                await Task.Delay(1000);
+                await Task.Delay(250);
             }
         }
     }

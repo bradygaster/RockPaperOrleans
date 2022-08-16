@@ -15,13 +15,5 @@ await host.RunAsync();
 public class Rando : PlayerBase
 {
     public Rando(ILogger<Rando> logger) : base(logger) { }  
-
-    Play LastPlay = Play.Rock;
-
-    public override Task<Play> Go()
-    {
-        LastPlay = (Play)Random.Shared.Next(0, 3);
-        Logger.LogInformation($"Rando throws {LastPlay}.");
-        return Task.FromResult(LastPlay);
-    }
+    public override Task<Play> Go() => Task.FromResult((Play)Random.Shared.Next(0, 3));
 }

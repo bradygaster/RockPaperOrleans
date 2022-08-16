@@ -17,7 +17,5 @@ public class AlwaysPaper : PlayerBase
     public AlwaysPaper(ILogger<AlwaysPaper> logger) : base(logger) { }
 
     public override Task<Play> Go()
-    {
-        return Task.FromResult(Play.Paper);
-    }
+        => Task.FromResult(Play.Paper);
 }

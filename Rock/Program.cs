@@ -16,8 +16,6 @@ public class AlwaysRock : PlayerBase
 {
     public AlwaysRock(ILogger<AlwaysRock> logger) : base(logger) { }
 
-    public override Task<Play> Go()
-    {
-        return Task.FromResult(Play.Rock);
-    }
+    public override Task<Play> Go() 
+        => Task.FromResult(Play.Rock);
 }

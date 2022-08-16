@@ -105,5 +105,15 @@ namespace RockPaperOrleans.Grains
 
             return Play.Unknown;
         }
+
+        public async Task TurnComplete(Turn turn)
+        {
+            if (PlayerObserver != null)
+            {
+                Logger.LogInformation($"Recording loss for {Player.State.Name}");
+                Player.State.LossCount += 1;
+                await PlayerObserver.OnTurnCompleted(turn);
+            }
+        }
     }
 }

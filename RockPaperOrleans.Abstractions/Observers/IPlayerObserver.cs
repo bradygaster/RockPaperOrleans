@@ -11,5 +11,6 @@ namespace RockPaperOrleans.Abstractions
         Task OnGameWon(Player player);
         Task OnGameLost(Player player);
         Task OnGameTied(Player player);
+        Task OnTurnCompleted(Turn turn);
     }
 }

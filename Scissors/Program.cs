@@ -17,7 +17,5 @@ public class AlwaysScissors : PlayerBase
     public AlwaysScissors(ILogger<AlwaysScissors> logger) : base(logger) { }
 
     public override Task<Play> Go()
-    {
-        return Task.FromResult(Play.Scissors);
-    }
+        => Task.FromResult(Play.Scissors);
 }

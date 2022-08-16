@@ -12,5 +12,6 @@ namespace RockPaperOrleans.Abstractions
         Task SignOut();
         Task OpponentSelected(Player opponent);
         Task<Play> Go();
+        Task TurnComplete(Turn turn);
     }
 }
