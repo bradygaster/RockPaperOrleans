@@ -44,7 +44,7 @@ namespace GameController
                     }
                 }
 
-                await Task.Delay(5000);
+                await Task.Delay(1000);
             }
         }
     }
