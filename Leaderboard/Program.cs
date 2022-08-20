@@ -1,17 +1,29 @@
-using Leaderboard.Data;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using Leaderboard.Hubs;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor.Services;
+using Orleans;
+using RockPaperOrleans.Abstractions;
+using RockPaperOrleans.Grains;
+using System.Security.Cryptography.Xml;
+
+await Task.Delay(20000); // for debugging, give the silo time to warm up
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseOrleans((context, siloBuilder) =>
+{
+    siloBuilder
+        .PlayRockPaperOrleans(context.Configuration);
+});
 
 StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddSingleton<ILeaderboardGrainObserver, LeaderboardObserver>();
+builder.Services.AddHostedService<LeaderboardObserverWorker>();
+builder.Services.AddSignalR();
+
 builder.Services.AddMudServices();
 
 var app = builder.Build();
@@ -20,17 +32,41 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
+app.MapHub<LeaderboardHub>("hubs/leaderboard");
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 
 app.Run();
+
+public class LeaderboardObserverWorker : IHostedService
+{
+    public ILeaderboardGrainObserver LeaderboardObserver { get; }
+    public IGrainFactory GrainFactory { get; set; }
+    public ILeaderboardGrain Leaderboard { get; private set; }
+
+    public LeaderboardObserverWorker(ILeaderboardGrainObserver leaderboardObserver,
+        IGrainFactory grainFactory)
+    {
+        LeaderboardObserver = leaderboardObserver;
+        GrainFactory = grainFactory;
+    }
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+        var reference = await GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
+        await Leaderboard.Subscribe(reference);
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+        var reference = await GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
+        await Leaderboard.UnSubscribe(reference);
+    }
+}

@@ -8,7 +8,8 @@ IHost host = Host.CreateDefaultBuilder(args)
     {
         siloBuilder
             .PlayRockPaperOrleans(context.Configuration)
-            .EnlistPlayer<Rando>();
+            .EnlistPlayer<Rando>()
+            .EnlistPlayer<SlowRando>();
     })
     .Build();
 
@@ -18,4 +19,15 @@ public class Rando : PlayerBase
 {
     public Rando(ILogger<Rando> logger) : base(logger) { }  
     public override Task<Play> Go() => Task.FromResult((Play)Random.Shared.Next(0, 3));
+}
+
+// simulate a player taking a few seconds to run
+public class SlowRando : PlayerBase
+{
+    public SlowRando(ILogger<Rando> logger) : base(logger) { }
+    public override async Task<Play> Go()
+    {
+        await Task.Delay(Random.Shared.Next(3000, 5000));
+        return (Play)Random.Shared.Next(0, 3);
+    }
 }

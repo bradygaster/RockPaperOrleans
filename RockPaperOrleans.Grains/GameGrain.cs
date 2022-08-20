@@ -30,7 +30,7 @@ namespace RockPaperOrleans.Grains
         public Task<Game> GetGame()
             => Task.FromResult(Game.State);
 
-        public async Task SetGame(Game game) 
+        public async Task SetGame(Game game)
             => Game.State = game;
 
         public async Task SelectPlayers()
@@ -65,6 +65,10 @@ namespace RockPaperOrleans.Grains
                 await GrainFactory
                         .GetGrain<IPlayerGrain>(players.Item2.Name)
                             .OpponentSelected(players.Item1);
+
+                // notify the leaderboard
+                var leaderBoard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+                await leaderBoard.GameStarted(game);
             }
         }
 
@@ -72,15 +76,19 @@ namespace RockPaperOrleans.Grains
         {
             var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
             var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);
+            var leaderBoard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
 
             if (!(await player1Grain.IsPlayerOnline()
                 && await player2Grain.IsPlayerOnline()))
                 await Score();
 
+
+            var turn = new Turn();
+            await leaderBoard.TurnStarted(turn, Game.State);
+
             var player1Play = await player1Grain.Go();
             var player2Play = await player2Grain.Go();
 
-            var turn = new Turn();
             turn.Throws.Add(new Throw { Play = player1Play, Player = Game.State.Player1 });
             turn.Throws.Add(new Throw { Play = player2Play, Player = Game.State.Player2 });
             turn.Winner = turn.ScoreTurn();
@@ -90,6 +98,7 @@ namespace RockPaperOrleans.Grains
 
             await player1Grain.TurnComplete(turn);
             await player2Grain.TurnComplete(turn);
+            await leaderBoard.TurnCompleted(turn, Game.State);
         }
 
         public async Task Score()
@@ -136,6 +145,9 @@ namespace RockPaperOrleans.Grains
             }
 
             await SetGame(Game.State);
+
+            var leaderBoard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+            await leaderBoard.GameCompleted(Game.State);
         }
     }
 }

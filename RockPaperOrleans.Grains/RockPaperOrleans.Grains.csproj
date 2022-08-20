@@ -18,5 +18,9 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\RockPaperOrleans.Abstractions\RockPaperOrleans.Abstractions.csproj" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Orleans_CodeGenInputs Remove="LeaderboardGrain.cs" />
+	</ItemGroup>
 
 </Project>

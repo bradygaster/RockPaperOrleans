@@ -1,7 +1,84 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.SignalR.Client
+@using RockPaperOrleans.Abstractions
+@inject NavigationManager _navigationManager
 
-<PageTitle>Index</PageTitle>
+<PageTitle>#RPO dashboard</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Hello, world!</MudText>
-<MudText Class="mb-8">Welcome to your new app, powered by MudBlazor!</MudText>
-<MudAlert Severity="Severity.Normal">You can find documentation and examples on our website here: <MudLink Href="https://mudblazor.com" Typo="Typo.body2" Color="Color.Inherit"><b>www.mudblazor.com</b></MudLink></MudAlert>
+<MudText Typo="Typo.h3" GutterBottom="true">Rock, Paper, Orleans</MudText>
+<MudText Class="mb-8">Welcome to the leaderboard. Here you can keep up with all the players, their histories, and recent games.</MudText>
+
+@if (_game != null)
+{
+    <MudStack>
+        @if (_game != null && _turn != null)
+        {
+            <MudText Typo="Typo.h2">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
+        }
+        <MudStack Row="true">
+            <MudCard>
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.h6">@_game.Player1</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                <MudCardContent>
+                    <MudText Typo="Typo.h4">@(_turn != null && _turn.Throws.Any() ? _turn.Throws[0].Play : "...")</MudText>
+                        <MudText>Player Win/Loss History</MudText>
+                    </MudCardContent>
+                </MudCard>
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@_game.Player2</MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.h4">@(_turn != null && _turn.Throws.Any() ? _turn.Throws[1].Play : "...")</MudText>
+                        <MudText>Player Win/Loss History</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudStack>
+    </MudStack>
+}
+
+@code
+{
+    Game _game;
+    Turn _turn;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var hubConnection = new HubConnectionBuilder().WithUrl(_navigationManager.ToAbsoluteUri("/hubs/leaderboard")).Build();
+
+        hubConnection.On<Game>("OnGameStarted", (game) =>
+        {
+            _game = game;
+            StateHasChanged();
+        });
+
+        hubConnection.On<Turn, Game>("OnTurnStarted", (turn, game) =>
+        {
+            _turn = turn;
+            _game = game;
+
+            StateHasChanged();
+        });
+
+        hubConnection.On<Turn, Game>("OnTurnCompleted", (turn, game) =>
+        {
+            _turn = turn;
+            _game = game;
+
+            StateHasChanged();
+        });
+
+        hubConnection.On<Game>("OnGameCompleted", (game) =>
+        {
+            _game = game;
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+    }
+}
