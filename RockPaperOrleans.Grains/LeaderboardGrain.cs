@@ -17,11 +17,11 @@ namespace RockPaperOrleans.Grains
             return Task.CompletedTask;
         }
 
-        public async Task GameStarted(Game game)
+        public async Task GameStarted(Game game, Player player1, Player player2)
         {
             foreach (var leaderBoardObserver in Observers)
             {
-                await leaderBoardObserver.OnGameStarted(game);
+                await leaderBoardObserver.OnGameStarted(game, player1, player2);
             }
         }
 

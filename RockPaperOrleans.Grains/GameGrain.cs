@@ -68,7 +68,7 @@ namespace RockPaperOrleans.Grains
 
                 // notify the leaderboard
                 var leaderBoard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-                await leaderBoard.GameStarted(game);
+                await leaderBoard.GameStarted(game, players.Item1, players.Item2);
             }
         }
 

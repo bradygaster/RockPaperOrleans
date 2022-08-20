@@ -4,7 +4,7 @@ namespace RockPaperOrleans.Abstractions
 {
     public interface ILeaderboardGrainObserver : IGrainObserver
     {
-        Task OnGameStarted(Game game);
+        Task OnGameStarted(Game game, Player player1, Player player2);
         Task OnTurnStarted(Turn turn, Game game);
         Task OnTurnCompleted(Turn turn, Game game);
         Task OnGameCompleted(Game game);

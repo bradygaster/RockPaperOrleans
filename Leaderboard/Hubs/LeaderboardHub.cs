@@ -12,9 +12,9 @@ namespace Leaderboard.Hubs
             Hub = hub;
         }
 
-        public async Task OnGameStarted(Game game)
+        public async Task OnGameStarted(Game game, Player player1, Player player2)
         {
-            await Hub.Clients.All.OnGameStarted(game);
+            await Hub.Clients.All.OnGameStarted(game, player1, player2);
         }
 
         public async Task OnTurnStarted(Turn turn, Game game)
@@ -35,9 +35,9 @@ namespace Leaderboard.Hubs
 
     public class LeaderboardHub : Hub<ILeaderboardGrainObserver>
     {
-        public async Task OnGameStarted(Game game)
+        public async Task OnGameStarted(Game game, Player player1, Player player2)
         {
-            await Clients.All.OnGameStarted(game);
+            await Clients.All.OnGameStarted(game, player1, player2);
         }
 
         public async Task OnTurnStarted(Turn turn, Game game)
