@@ -12,5 +12,6 @@ namespace RockPaperOrleans.Abstractions
         Task Subscribe(ILeaderboardGrainObserver observer);
         Task UnSubscribe(ILeaderboardGrainObserver observer);
         Task LobbyUpdated(List<Player> playersInLobby);
+        Task<List<Player>> GetAllPlayers();
     }
 }

@@ -16,7 +16,7 @@
         {
             // if both players through X, tie game
             if (turn.Throws[0].Play == turn.Throws[1].Play)
-                return null;
+                return "Tie";
 
             // who threw what
             var rock = turn.Throws.FirstOrDefault(x => x.Play == Play.Rock);

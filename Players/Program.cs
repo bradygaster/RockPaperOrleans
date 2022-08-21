@@ -1,7 +1,7 @@
 using RockPaperOrleans;
 using RockPaperOrleans.Abstractions;
 
-await Task.Delay(30000); // for debugging, give the silo time to warm up
+await Task.Delay(20000); // for debugging, give the silo time to warm up
 
 IHost host = Host.CreateDefaultBuilder(args)
     .UseOrleans((context, siloBuilder) =>

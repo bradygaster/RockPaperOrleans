@@ -1,4 +1,5 @@
 ﻿using Orleans;
+using Orleans.Runtime;
 using RockPaperOrleans.Abstractions;
 
 namespace RockPaperOrleans.Grains
@@ -6,6 +7,13 @@ namespace RockPaperOrleans.Grains
     public class LeaderboardGrain : Grain, ILeaderboardGrain
     {
         public HashSet<ILeaderboardGrainObserver> Observers { get; set; } = new();
+        public IManagementGrain ManagementGrain { get; set; }
+
+        public override Task OnActivateAsync()
+        {
+            ManagementGrain = GrainFactory.GetGrain<IManagementGrain>(0);
+            return Task.CompletedTask;
+        }
 
         public Task Subscribe(ILeaderboardGrainObserver observer)
         {
@@ -73,6 +81,14 @@ namespace RockPaperOrleans.Grains
             {
                 await leaderBoardObserver.OnLobbyUpdated(playersInLobby);
             }
+
+            var playersInGame = await GetAllPlayers();
+        }
+
+        public async Task<List<Player>> GetAllPlayers()
+        {
+            var playerGrains = await ManagementGrain.GetDetailedGrainStatistics(types: new string[] { typeof(PlayerGrain).FullName });
+            return new List<Player>();
         }
     }
 }

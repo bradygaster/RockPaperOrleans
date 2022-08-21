@@ -5,94 +5,164 @@
 
 <PageTitle>#RPO dashboard</PageTitle>
 
-<MudText Typo="Typo.h3" GutterBottom="true">Rock, Paper, Orleans</MudText>
-<MudText Class="mb-8">Welcome to the leaderboard. Here you can keep up with all the players, their histories, and recent games.</MudText>
-
 @if (_game != null)
 {
-    <MudStack>
-        @if (_game != null && _turn != null)
-        {
-            <MudText Typo="Typo.h3">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
-        }
-        <MudStack Row="true">
-            <MudCard style="width: 300px; height: 400px; padding: 10px;">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudStack Row="true">
-                            <MudStack>
-                                <MudText Typo="Typo.h6">@_player1.Name</MudText>
-                                <MudText>@_player1.WinCount wins, @_player1.LossCount losses</MudText>
-                            </MudStack>
-                            @if (_turn == null || !_turn.Throws.Any())
-                            {
-                                <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-                            }
+    <MudGrid>
+        <MudItem xs="8">
+            <MudGrid>
+                @if (_game != null && _turn != null)
+                {
+                    <MudItem xs="12">
+                        <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-8">
+                            <MudText Typo="Typo.h3">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
+                        </MudPaper>
+                    </MudItem>
+                }
+
+                <MudItem xs="6">
+                    <MudPaper Class="mud-theme-info d-flex align-center justify-center mud-width-full py-8">
+                        <MudStack Class="align-center">
+                            <MudText Typo="Typo.subtitle1">@_player1?.Name</MudText>
+                            <MudText Class="">@_player1?.WinCount wins, @_player1?.LossCount losses</MudText>
                         </MudStack>
-                    </CardHeaderContent>
-                </MudCardHeader>
-                @if (!(_turn == null || !_turn.Throws.Any()))
-                {
-                    if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
-                    {
-                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}.png")" />
-                    }
-                    else if (_turn.Winner == _player1?.Name)
-                    {
-                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}-win.png")" />
-                    }
-                    else
-                    {
-                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" />
-                    }
-                }
-            </MudCard>
-            <MudCard style="width: 300px; height: 400px; padding: 10px;">
-                <MudCardHeader>
-                    <CardHeaderContent>
-                        <MudStack Row="true">
-                            <MudStack>
-                                <MudText Typo="Typo.h6">@_player2.Name</MudText>
-                                <MudText>@_player2.WinCount wins, @_player2.LossCount losses</MudText>
-                            </MudStack>
-                            @if (_turn == null || !_turn.Throws.Any())
-                            {
-                                <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
-                            }
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudPaper Class="mud-theme-info d-flex align-center justify-center mud-width-full py-8">
+                        <MudStack Class="align-center">
+                            <MudText Typo="Typo.subtitle1">@_player2?.Name</MudText>
+                            <MudText>@_player2?.WinCount wins, @_player2?.LossCount losses</MudText>
                         </MudStack>
-                    </CardHeaderContent>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudPaper Class="--mud-palette-success-text d-flex align-center justify-center mud-width-full py-2">
+                        @if (_turn == null || !_turn.Throws.Any())
+                        {
+                            <MudProgressCircular Color="Color.Primary" Style="height:280px;width:280px;" Indeterminate="true" Class="object-center" />
+                        }
+                        @if (!(_turn == null || !_turn.Throws.Any()))
+                        {
+                            @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
+                            {
+                                <MudImage Height="280" Src="@($"{_turn.Throws[0].Play.ToString()}.png")" Class="object-center" />
+                            }
+                            @if (_turn.Winner == _player1?.Name)
+                            {
+                                <MudImage Height="280" Src="@($"{_turn.Throws[0].Play.ToString()}-win.png")" Class="object-center" />
+                            }
+                            @if (_turn.Winner == _player2?.Name)
+                            {
+                                <MudImage Height="280" Src="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" Class="object-center" />
+                            }
+                        }
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudPaper Class="--mud-palette-success-text d-flex align-center justify-center mud-width-full py-2">
+                        @if (_turn == null || !_turn.Throws.Any())
+                        {
+                            <MudProgressCircular Color="Color.Primary" Style="height:280px;width:280px;" Indeterminate="true" Class="object-center" />
+                        }
+                        @if (!(_turn == null || !_turn.Throws.Any()))
+                        {
+                            @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
+                            {
+                                <MudImage Height="280" Src="@($"{_turn.Throws[1].Play.ToString()}.png")" Class="object-center" />
+                            }
+                            @if (_turn.Winner == _player2?.Name)
+                            {
+                                <MudImage Height="280" Src="@($"{_turn.Throws[1].Play.ToString()}-win.png")" Class="object-center" />
+                            }
+                            @if (_turn.Winner == _player1?.Name)
+                            {
+                                <MudImage Height="280" Src="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" Class="object-center" />
+                            }
+                        }
+                    </MudPaper>
+                </MudItem>
+
+                @for (int i = 0; i < _game.Rounds; i++)
+                {
+                    var index = i + 1;
+                    var player1Theme = "mud-theme-info";
+                    var player2Theme = "mud-theme-info";
+                    var player1Label = $"Round {index}";
+                    var player2Label = $"Round {index}";
+
+                    if(_game.Turns.Count >= index)
+                    {
+                        if (string.IsNullOrEmpty(_game.Turns[i].Winner))
+                        {
+                            player2Theme = "mud-theme-info";
+                            player1Theme = "mud-theme-info";
+                            player2Label = "Scoring...";
+                            player1Label = "Scoring...";
+                        }
+                        if (_game.Turns[i].Winner == _player1?.Name)
+                        {
+                            player1Theme = "mud-theme-success";
+                            player2Theme = "mud-theme-error";
+                            player1Label = "Winner";
+                            player2Label = "Loser";
+                        }
+                        if (_game.Turns[i].Winner == _player2?.Name)
+                        {
+                            player2Theme = "mud-theme-success";
+                            player1Theme = "mud-theme-error";
+                            player2Label = "Winner";
+                            player1Label = "Loser";
+                        }
+                        if (_game.Turns[i].Winner != _player1?.Name &&
+                        _game.Turns[i].Winner != _player2?.Name &&
+                        !string.IsNullOrEmpty(_game.Turns[i].Winner))
+                        {
+                            player2Theme = "mud-theme-info";
+                            player1Theme = "mud-theme-info";
+                            player2Label = _game.Turns[i].Winner;
+                            player1Label = _game.Turns[i].Winner;
+                        }
+                    }
+
+                    <MudItem xs="6">
+                        <MudPaper Class="@($"{player1Theme} d-flex align-center justify-center mud-width-full py-1")">
+                            <MudText Typo="Typo.h3">@player1Label</MudText>
+                        </MudPaper>
+                    </MudItem>
+
+                    <MudItem xs="6">
+                        <MudPaper Class="@($"{player2Theme} d-flex align-center justify-center mud-width-full py-1")">
+                            <MudText Typo="Typo.h3">@player2Label</MudText>
+                        </MudPaper>
+                    </MudItem>
+                }
+
+            </MudGrid>
+        </MudItem>
+        <MudItem xs="4">
+            <MudItem xs="12">
+                <MudCard Class="mud-theme-info">
+                <MudCardHeader>
+                    <MudText Typo="Typo.h6">Lobby</MudText>
                 </MudCardHeader>
-                @if (!(_turn == null || !_turn.Throws.Any()))
-                {
-                    if (_turn.Winner != _player2?.Name && _turn.Winner != _player1?.Name)
-                    {
-                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}.png")" />
-                    }
-                    else if (_turn.Winner == _player2?.Name)
-                    {
-                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}-win.png")" />
-                    }
-                    else
-                    {
-                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" />
-                    }
-                }
+                <MudCardContent>
+                    <MudList>
+                        @foreach (var player in _playersInLobby)
+                        {
+                            <MudListItem Icon="@Icons.Material.Outlined.AccessTimeFilled" Text="@player.Name" />
+                            <MudDivider />
+                        }
+                    </MudList>
+                </MudCardContent>
             </MudCard>
-            <MudPaper Width="300px">
-                <MudList Clickable="true">
-                    <MudListSubheader>
-                        <MudText Typo="Typo.h6">Players in the Lobby</MudText>
-                        <MudDivider />
-                    </MudListSubheader>
-                    @foreach (var player in _playersInLobby)
-                {
-                    <MudListItem Text="@player.Name"/>
-                    <MudDivider />
-                }
-                </MudList>
-            </MudPaper>
-        </MudStack>
-    </MudStack>
+        </MudItem>
+        </MudItem>
+    </MudGrid>
+
+    
 }
 @code
 {

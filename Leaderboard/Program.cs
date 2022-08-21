@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor.Services;
 using Orleans;
 using RockPaperOrleans.Abstractions;
-using RockPaperOrleans.Grains;
-using System.Security.Cryptography.Xml;
 
-await Task.Delay(20000); // for debugging, give the silo time to warm up
+await Task.Delay(10000); // for debugging, give the silo time to warm up
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseOrleans((context, siloBuilder) =>
