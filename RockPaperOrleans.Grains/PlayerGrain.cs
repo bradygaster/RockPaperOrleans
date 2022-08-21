@@ -89,35 +89,35 @@ namespace RockPaperOrleans.Grains
             }
         }
 
-        public async Task RecordLoss()
+        public async Task RecordLoss(Player opponent)
         {
             if(PlayerObserver != null)
             {
                 Logger.LogInformation($"Recording loss for {Player.State.Name}");
                 Player.State.LossCount += 1;
-                await PlayerObserver.OnGameLost(Player.State);
+                await PlayerObserver.OnGameLost(Player.State, opponent);
                 await Player.WriteStateAsync();
             }
         }
 
-        public async Task RecordWin()
+        public async Task RecordWin(Player opponent)
         {
             if (PlayerObserver != null)
             {
                 Logger.LogInformation($"Recording win for {Player.State.Name}");
                 Player.State.WinCount += 1;
-                await PlayerObserver.OnGameWon(Player.State);
+                await PlayerObserver.OnGameWon(Player.State, opponent);
                 await Player.WriteStateAsync();
             }
         }
 
-        public async Task RecordTie()
+        public async Task RecordTie(Player opponent)
         {
             if (PlayerObserver != null)
             {
                 Logger.LogInformation($"Recording tie for {Player.State.Name}");
                 Player.State.TieCount += 1;
-                await PlayerObserver.OnGameTied(Player.State);
+                await PlayerObserver.OnGameTied(Player.State, opponent);
                 await Player.WriteStateAsync();
             }
         }

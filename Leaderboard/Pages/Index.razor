@@ -13,35 +13,52 @@
     <MudStack>
         @if (_game != null && _turn != null)
         {
-            <MudText Typo="Typo.h2">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
+            <MudText Typo="Typo.h3">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
         }
         <MudStack Row="true">
-            <MudCard>
+            <MudCard style="width: 300px; height: 400px; padding: 10px;">
                 <MudCardHeader>
                     <CardHeaderContent>
-                        <MudText Typo="Typo.h6">@_player1.Name</MudText>
+                        <MudStack Row="true">
+                            <MudStack>
+                                <MudText Typo="Typo.h6">@_player1.Name</MudText>
+                                <MudText>@_player1.WinCount wins, @_player1.LossCount losses</MudText>
+                            </MudStack>
+                            @if (_turn == null || !_turn.Throws.Any())
+                            {
+                                <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+                            }
+                        </MudStack>
                     </CardHeaderContent>
                 </MudCardHeader>
-                <MudCardContent>
-                    <MudText Typo="Typo.h4">@(_turn != null && _turn.Throws.Any() ? _turn.Throws[0].Play : "...")</MudText>
-                        <MudText>@_player1.WinCount wins, @_player1.LossCount losses</MudText>
-                    </MudCardContent>
-                </MudCard>
-                <MudCard>
-                    <MudCardHeader>
-                        <CardHeaderContent>
-                            <MudText Typo="Typo.h6">@_player2.Name</MudText>
-                        </CardHeaderContent>
-                    </MudCardHeader>
-                    <MudCardContent>
-                        <MudText Typo="Typo.h4">@(_turn != null && _turn.Throws.Any() ? _turn.Throws[1].Play : "...")</MudText>
-                        <MudText>@_player2.WinCount wins, @_player2.LossCount losses</MudText>
-                    </MudCardContent>
-                </MudCard>
-            </MudStack>
+                @if(!(_turn == null || !_turn.Throws.Any()))
+                {
+                    <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}.png")" />
+                }
+            </MudCard>
+            <MudCard style="width: 300px; height: 400px; padding: 10px;">
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudStack Row="true">
+                            <MudStack>
+                                <MudText Typo="Typo.h6">@_player2.Name</MudText>
+                                <MudText>@_player2.WinCount wins, @_player2.LossCount losses</MudText>
+                            </MudStack>
+                            @if (_turn == null || !_turn.Throws.Any())
+                            {
+                                <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+                            }
+                        </MudStack>
+                    </CardHeaderContent>
+                </MudCardHeader>
+                @if (!(_turn == null || !_turn.Throws.Any()))
+                {
+                    <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}.png")" />
+                }
+            </MudCard>
+        </MudStack>
     </MudStack>
 }
-
 @code
 {
     Game _game;

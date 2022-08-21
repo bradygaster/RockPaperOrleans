@@ -4,9 +4,9 @@ namespace RockPaperOrleans.Abstractions
 {
     public interface IPlayerGrain : IGrainWithStringKey
     {
-        Task RecordWin();
-        Task RecordLoss();
-        Task RecordTie();
+        Task RecordWin(Player opponent);
+        Task RecordLoss(Player opponent);
+        Task RecordTie(Player opponent);
         Task<Player> Get();
         Task SignIn(IPlayerObserver observer);
         Task SignOut();

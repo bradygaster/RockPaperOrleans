@@ -8,9 +8,9 @@ namespace RockPaperOrleans.Abstractions
         Task OnPlayerSignedIn(Player player);
         Task OnPlayerSignedOut(Player player);
         Task OnOpponentSelected(Player player, Player opponent);
-        Task OnGameWon(Player player);
-        Task OnGameLost(Player player);
-        Task OnGameTied(Player player);
+        Task OnGameWon(Player player, Player opponent);
+        Task OnGameLost(Player player, Player opponent);
+        Task OnGameTied(Player player, Player opponent);
         Task OnTurnCompleted(Turn turn);
     }
 }

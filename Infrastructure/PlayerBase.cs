@@ -5,7 +5,6 @@ namespace RockPaperOrleans
 {
     public abstract class PlayerBase : IPlayerObserver
     {
-        public Player Opponent { get; private set; }
         public ILogger Logger { get; set; }
 
         protected PlayerBase(ILogger logger)
@@ -29,7 +28,6 @@ namespace RockPaperOrleans
 
         public virtual Task OnOpponentSelected(Player player, Player opponent)
         {
-            Opponent = opponent;
             Logger.LogInformation($"{player.Name} is about to play {opponent.Name}.");
             return Task.CompletedTask;
         }
@@ -48,21 +46,21 @@ namespace RockPaperOrleans
             return Task.CompletedTask;
         }
 
-        public virtual Task OnGameWon(Player player)
+        public virtual Task OnGameWon(Player player, Player opponent)
         {
-            Logger.LogInformation($"{player.Name} wins against {Opponent.Name}.");
+            Logger.LogInformation($"{player.Name} wins against {opponent.Name}.");
             return Task.CompletedTask;
         }
 
-        public virtual Task OnGameLost(Player player)
+        public virtual Task OnGameLost(Player player, Player opponent)
         {
-            Logger.LogInformation($"{player.Name} loses to {Opponent.Name}.");
+            Logger.LogInformation($"{player.Name} loses to {opponent.Name}.");
             return Task.CompletedTask;
         }
 
-        public virtual Task OnGameTied(Player player)
+        public virtual Task OnGameTied(Player player, Player opponent)
         {
-            Logger.LogInformation($"{player.Name} ties with {Opponent.Name}.");
+            Logger.LogInformation($"{player.Name} ties with {opponent.Name}.");
             return Task.CompletedTask;
         }
     }

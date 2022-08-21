@@ -124,22 +124,22 @@ namespace RockPaperOrleans.Grains
 
             if (player1WinCount > player2WinCount)
             {
-                await player1Grain.RecordWin();
-                await player2Grain.RecordLoss();
+                await player1Grain.RecordWin(player2);
+                await player2Grain.RecordLoss(player1);
                 Game.State.Winner = player1.Name;
                 Logger.LogInformation($"{player1.Name} wins.");
             }
             if (player2WinCount > player1WinCount)
             {
-                await player2Grain.RecordWin();
-                await player1Grain.RecordLoss();
+                await player2Grain.RecordWin(player1);
+                await player1Grain.RecordLoss(player2);
                 Game.State.Winner = player2.Name;
                 Logger.LogInformation($"{player2.Name} wins.");
             }
             if (player2WinCount == player1WinCount)
             {
-                await player2Grain.RecordTie();
-                await player1Grain.RecordTie();
+                await player2Grain.RecordTie(player1);
+                await player1Grain.RecordTie(player2);
                 Game.State.Winner = "Tie";
                 Logger.LogInformation($"{player1.Name} ties with {player2.Name}.");
             }
