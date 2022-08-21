@@ -36,7 +36,8 @@ namespace RockPaperOrleans.Grains
             return Play.Unknown;
         }
 
-        public Task<Player> Get() => Task.FromResult(Player.State);
+        public Task<Player> Get() 
+            => Task.FromResult(Player.State);
 
         public async Task SignIn(IPlayerObserver observer)
         {
@@ -83,8 +84,7 @@ namespace RockPaperOrleans.Grains
         {
             if (PlayerObserver != null)
             {
-                Logger.LogInformation($"Recording loss for {Player.State.Name}");
-                Player.State.LossCount += 1;
+                Logger.LogInformation($"Turn complete.");
                 await PlayerObserver.OnTurnCompleted(turn);
             }
         }

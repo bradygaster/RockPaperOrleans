@@ -8,6 +8,7 @@ namespace RockPaperOrleans.Abstractions
         Task<Game> GetGame();
         Task SetGame(Game game);
         Task Go();
-        Task Score();
+        Task ScoreTurn();
+        Task ScoreGame();
     }
 }

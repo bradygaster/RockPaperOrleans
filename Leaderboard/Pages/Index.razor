@@ -33,7 +33,18 @@
                 </MudCardHeader>
                 @if(!(_turn == null || !_turn.Throws.Any()))
                 {
-                    <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}.png")" />
+                    if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
+                    {
+                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}.png")" />
+                    }
+                    else if (_turn.Winner == _player1?.Name)
+                    {
+                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}-win.png")" />
+                    }
+                    else
+                    {
+                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" />
+                    }
                 }
             </MudCard>
             <MudCard style="width: 300px; height: 400px; padding: 10px;">
@@ -53,7 +64,18 @@
                 </MudCardHeader>
                 @if (!(_turn == null || !_turn.Throws.Any()))
                 {
-                    <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}.png")" />
+                    if (_turn.Winner != _player2?.Name && _turn.Winner != _player1?.Name)
+                    {
+                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}.png")" />
+                    }
+                    else if (_turn.Winner == _player2?.Name)
+                    {
+                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}-win.png")" />
+                    }
+                    else
+                    {
+                        <MudCardMedia Height="280" Image="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" />
+                    }
                 }
             </MudCard>
         </MudStack>
@@ -87,6 +109,14 @@
         });
 
         hubConnection.On<Turn, Game>("OnTurnCompleted", (turn, game) =>
+        {
+            _turn = turn;
+            _game = game;
+
+            StateHasChanged();
+        });
+
+        hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
         {
             _turn = turn;
             _game = game;

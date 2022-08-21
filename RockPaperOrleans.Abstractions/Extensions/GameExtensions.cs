@@ -2,6 +2,16 @@
 {
     public static class GameExtensions
     {
+        public static bool HasPlayers(this Game game)
+        {
+            return !(game.Player1 == null && game.Player2 == null);
+        }
+
+        public static bool IsGameComplete(this Game game )
+        {
+            return game.Rounds > game.Turns.Count;
+        }
+
         public static string ScoreTurn(this Turn turn)
         {
             // if both players through X, tie game

@@ -41,6 +41,14 @@ namespace RockPaperOrleans.Grains
             }
         }
 
+        public async Task TurnScored(Turn turn, Game game)
+        {
+            foreach (var leaderBoardObserver in Observers)
+            {
+                await leaderBoardObserver.OnTurnScored(turn, game);
+            }
+        }
+
         public async Task GameCompleted(Game game)
         {
             foreach (var leaderBoardObserver in Observers)

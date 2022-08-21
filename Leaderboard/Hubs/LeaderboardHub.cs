@@ -27,6 +27,11 @@ namespace Leaderboard.Hubs
             await Hub.Clients.All.OnTurnCompleted(turn, game);
         }
 
+        public async Task OnTurnScored(Turn turn, Game game)
+        {
+            await Hub.Clients.All.OnTurnScored(turn, game);
+        }
+
         public async Task OnGameCompleted(Game game)
         {
             await Hub.Clients.All.OnGameCompleted(game);
@@ -48,6 +53,11 @@ namespace Leaderboard.Hubs
         public async Task OnTurnCompleted(Turn turn, Game game)
         {
             await Clients.All.OnTurnCompleted(turn, game);
+        }
+
+        public async Task OnTurnScored(Turn turn, Game game)
+        {
+            await Clients.All.OnTurnScored(turn, game);
         }
 
         public async Task OnGameCompleted(Game game)

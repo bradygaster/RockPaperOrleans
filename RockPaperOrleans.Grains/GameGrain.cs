@@ -80,8 +80,7 @@ namespace RockPaperOrleans.Grains
 
             if (!(await player1Grain.IsPlayerOnline()
                 && await player2Grain.IsPlayerOnline()))
-                await Score();
-
+                await ScoreGame();
 
             var turn = new Turn();
             await leaderBoard.TurnStarted(turn, Game.State);
@@ -91,17 +90,31 @@ namespace RockPaperOrleans.Grains
 
             turn.Throws.Add(new Throw { Play = player1Play, Player = Game.State.Player1 });
             turn.Throws.Add(new Throw { Play = player2Play, Player = Game.State.Player2 });
-            turn.Winner = turn.ScoreTurn();
-
             Game.State.Turns.Add(turn);
-            await SetGame(Game.State);
 
-            await player1Grain.TurnComplete(turn);
-            await player2Grain.TurnComplete(turn);
+            await SetGame(Game.State);
             await leaderBoard.TurnCompleted(turn, Game.State);
         }
 
-        public async Task Score()
+        public async Task ScoreTurn()
+        {
+            var turn = Game.State.Turns.Last();
+            turn.Winner = turn.ScoreTurn();
+
+            await GrainFactory
+                    .GetGrain<IPlayerGrain>(Game.State.Player1)
+                        .TurnComplete(turn);
+
+            await GrainFactory
+                    .GetGrain<IPlayerGrain>(Game.State.Player2)
+                        .TurnComplete(turn);
+
+            await GrainFactory
+                    .GetGrain<ILeaderboardGrain>(Guid.Empty)
+                        .TurnScored(turn, Game.State);
+        }
+
+        public async Task ScoreGame()
         {
             var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
             var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);

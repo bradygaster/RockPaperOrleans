@@ -27,7 +27,7 @@ public class SlowRando : PlayerBase
     public SlowRando(ILogger<Rando> logger) : base(logger) { }
     public override async Task<Play> Go()
     {
-        await Task.Delay(Random.Shared.Next(3000, 5000));
+        await Task.Delay(Random.Shared.Next(250, 1000));
         return (Play)Random.Shared.Next(0, 3);
     }
 }
