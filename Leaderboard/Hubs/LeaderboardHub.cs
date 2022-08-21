@@ -36,6 +36,11 @@ namespace Leaderboard.Hubs
         {
             await Hub.Clients.All.OnGameCompleted(game);
         }
+
+        public async Task OnLobbyUpdated(List<Player> playersInLobby)
+        {
+            await Hub.Clients.All.OnLobbyUpdated(playersInLobby);
+        }
     }
 
     public class LeaderboardHub : Hub<ILeaderboardGrainObserver>
@@ -63,6 +68,11 @@ namespace Leaderboard.Hubs
         public async Task OnGameCompleted(Game game)
         {
             await Clients.All.OnGameCompleted(game);
+        }
+
+        public async Task OnLobbyUpdated(List<Player> playersInLobby)
+        {
+            await Clients.All.OnLobbyUpdated(playersInLobby);
         }
     }
 }

@@ -9,5 +9,6 @@ namespace RockPaperOrleans.Abstractions
         Task OnTurnCompleted(Turn turn, Game game);
         Task OnTurnScored(Turn turn, Game game);
         Task OnGameCompleted(Game game);
+        Task OnLobbyUpdated(List<Player> playersInLobby);
     }
 }

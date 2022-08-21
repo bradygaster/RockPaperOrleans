@@ -31,7 +31,7 @@
                         </MudStack>
                     </CardHeaderContent>
                 </MudCardHeader>
-                @if(!(_turn == null || !_turn.Throws.Any()))
+                @if (!(_turn == null || !_turn.Throws.Any()))
                 {
                     if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                     {
@@ -78,6 +78,19 @@
                     }
                 }
             </MudCard>
+            <MudPaper Width="300px">
+                <MudList Clickable="true">
+                    <MudListSubheader>
+                        <MudText Typo="Typo.h6">Players in the Lobby</MudText>
+                        <MudDivider />
+                    </MudListSubheader>
+                    @foreach (var player in _playersInLobby)
+                {
+                    <MudListItem Text="@player.Name"/>
+                    <MudDivider />
+                }
+                </MudList>
+            </MudPaper>
         </MudStack>
     </MudStack>
 }
@@ -87,6 +100,7 @@
     Turn _turn;
     Player _player1;
     Player _player2;
+    List<Player> _playersInLobby = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,6 +141,12 @@
         hubConnection.On<Game>("OnGameCompleted", (game) =>
         {
             _game = game;
+            StateHasChanged();
+        });
+
+        hubConnection.On<List<Player>>("OnLobbyUpdated", (playersInLobby) =>
+        {
+            _playersInLobby = playersInLobby;
             StateHasChanged();
         });
 

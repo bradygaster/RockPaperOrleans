@@ -25,7 +25,7 @@ namespace RockPaperOrleans.Grains
                 return null;
             }
 
-            var players = lobby.Take(2).ToArray();
+            var players = lobby.OrderBy(x => Guid.NewGuid()).Take(2).ToArray();
 
             await lobbyGrain.Leave(players[0]);
             await lobbyGrain.Leave(players[1]);

@@ -66,5 +66,13 @@ namespace RockPaperOrleans.Grains
 
             return Task.CompletedTask;
         }
+
+        public async Task LobbyUpdated(List<Player> playersInLobby)
+        {
+            foreach (var leaderBoardObserver in Observers)
+            {
+                await leaderBoardObserver.OnLobbyUpdated(playersInLobby);
+            }
+        }
     }
 }

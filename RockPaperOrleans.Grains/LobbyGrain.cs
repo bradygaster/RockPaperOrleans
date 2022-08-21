@@ -27,7 +27,7 @@ namespace RockPaperOrleans.Grains
             {
                 Logger.LogInformation($"{player.Name} has entered the lobby.");
                 Players.State.Add(player);
-                await Players.WriteStateAsync();
+                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(Players.State);
             }
         }
 
@@ -37,7 +37,7 @@ namespace RockPaperOrleans.Grains
             {
                 Logger.LogInformation($"{player.Name} has left the lobby.");
                 Players.State.RemoveAll(x => x.Name == player.Name);
-                await Players.WriteStateAsync();
+                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(Players.State);
             }
         }
     }
