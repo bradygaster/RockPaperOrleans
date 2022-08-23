@@ -13,6 +13,10 @@ IHost host = Host.CreateDefaultBuilder(args)
             .EnlistPlayer<AlwaysRock>()
             .EnlistPlayer<AlwaysScissors>();
     })
+    .ConfigureServices((services) =>
+    {
+        services.AddWorkerAppApplicationInsights("Players Silo");
+    })
     .Build();
 
 await host.RunAsync();

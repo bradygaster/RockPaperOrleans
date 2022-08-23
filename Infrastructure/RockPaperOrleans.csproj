@@ -21,6 +21,8 @@
 		<PackageReference Include="Orleans.Clustering.CosmosDB" Version="3.0.4" />
 		<PackageReference Include="Orleans.Persistence.CosmosDB" Version="3.0.3" />
 		<PackageReference Include="OrleansDashboard" Version="3.6.2" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.21.0" />
 	</ItemGroup>
 
 	<ItemGroup>

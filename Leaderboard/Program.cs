@@ -16,12 +16,12 @@ builder.Host.UseOrleans((context, siloBuilder) =>
 StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 // Add services to the container.
+builder.Services.AddWebAppApplicationInsights("Leaderboard");
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ILeaderboardGrainObserver, LeaderboardObserver>();
 builder.Services.AddHostedService<LeaderboardObserverWorker>();
 builder.Services.AddSignalR();
-
 builder.Services.AddMudServices();
 
 var app = builder.Build();

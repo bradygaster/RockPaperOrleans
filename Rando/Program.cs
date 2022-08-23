@@ -11,6 +11,10 @@ IHost host = Host.CreateDefaultBuilder(args)
             .EnlistPlayer<Rando>()
             .EnlistPlayer<SlowRando>();
     })
+    .ConfigureServices((services) =>
+    {
+        services.AddWorkerAppApplicationInsights("Rando Silo");
+    })
     .Build();
 
 await host.RunAsync();
