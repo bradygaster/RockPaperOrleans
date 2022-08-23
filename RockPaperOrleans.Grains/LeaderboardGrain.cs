@@ -87,6 +87,7 @@ namespace RockPaperOrleans.Grains
         {
             foreach (var leaderBoardObserver in Observers)
             {
+                playersOnline = playersOnline.OrderByDescending(x => x.PercentWon).ToList();
                 await leaderBoardObserver.OnPlayersOnlineUpdated(playersOnline);
             }
         }

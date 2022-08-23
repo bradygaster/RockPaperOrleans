@@ -29,7 +29,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Infrastructure\RockPaperOrleans.csproj" />
 		<ProjectReference Include="..\RockPaperOrleans.Abstractions\RockPaperOrleans.Abstractions.csproj" />
-		<ProjectReference Include="..\RockPaperOrleans.Grains\RockPaperOrleans.Grains.csproj" />
 	</ItemGroup>
 
 </Project>

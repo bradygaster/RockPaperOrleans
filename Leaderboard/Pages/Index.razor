@@ -154,8 +154,7 @@
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
                         <MudText Typo="Typo.subtitle1">@player.Name</MudText>
                     </MudPaper>
-                    <MudChip Text="@($"{player.WinCount} Wins")" Variant="Variant.Text" Color="Color.Success" SelectedColor="Color.Primary"></MudChip>
-                    <MudChip Text="@($"{player.LossCount} Losses")" Variant="Variant.Text" Color="Color.Error" SelectedColor="Color.Primary"></MudChip>
+                    <MudChip Text="@($"{player.PercentWon}%")" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
                 </MudPaper>
             }
 
@@ -171,7 +170,6 @@
     Turn? _turn;
     Player? _player1;
     Player? _player2;
-    List<Player> _playersInLobby = new();
     List<Player> _playersOnline = new();
 
     protected override async Task OnInitializedAsync()
@@ -186,31 +184,10 @@
             StateHasChanged();
         });
 
-        /*
-         * turned these off to minimize flicker in the UI
-
-        hubConnection.On<Turn, Game>("OnTurnStarted", (turn, game) =>
-        {
-            _turn = turn;
-            _game = game;
-
-            StateHasChanged();
-        });
-
-        hubConnection.On<Turn, Game>("OnTurnCompleted", (turn, game) =>
-        {
-            _turn = turn;
-            _game = game;
-
-            StateHasChanged();
-        });
-         */
-
         hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
         {
             _turn = turn;
             _game = game;
-
             StateHasChanged();
         });
 
@@ -220,26 +197,9 @@
             StateHasChanged();
         });
 
-        hubConnection.On<Player>("OnPlayerScoresUpdated", (player) =>
-        {
-            if(_playersOnline.Any(x => x == player))
-            {
-                _playersOnline.RemoveAll(x => x == player);
-                _playersOnline.Add(player);
-            }
-            _playersOnline = _playersOnline.OrderByDescending(x => x.WinCount).ToList();
-            StateHasChanged();
-        });
-
-        hubConnection.On<List<Player>>("OnLobbyUpdated", (playersInLobby) =>
-        {
-            _playersInLobby = playersInLobby;
-            StateHasChanged();
-        });
-
         hubConnection.On<List<Player>>("OnPlayersOnlineUpdated", (playersOnline) =>
         {
-            _playersOnline = playersOnline.OrderByDescending(x => x.WinCount).ToList();
+            _playersOnline = playersOnline;
             StateHasChanged();
         });
 

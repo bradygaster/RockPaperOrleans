@@ -97,8 +97,9 @@ namespace RockPaperOrleans.Grains
                 Logger.LogInformation($"Recording loss for {Player.State.Name}");
                 Player.State.TotalGamesPlayed += 1;
                 Player.State.LossCount += 1;
-                await PlayerObserver.OnGameLost(Player.State, opponent);
+                Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
                 await Player.WriteStateAsync();
+                await PlayerObserver.OnGameLost(Player.State, opponent);
                 await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
             }
         }
@@ -110,8 +111,9 @@ namespace RockPaperOrleans.Grains
                 Logger.LogInformation($"Recording win for {Player.State.Name}");
                 Player.State.TotalGamesPlayed += 1;
                 Player.State.WinCount += 1;
-                await PlayerObserver.OnGameWon(Player.State, opponent);
+                Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
                 await Player.WriteStateAsync();
+                await PlayerObserver.OnGameWon(Player.State, opponent);
                 await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
             }
         }
@@ -123,8 +125,9 @@ namespace RockPaperOrleans.Grains
                 Logger.LogInformation($"Recording tie for {Player.State.Name}");
                 Player.State.TotalGamesPlayed += 1;
                 Player.State.TieCount += 1;
-                await PlayerObserver.OnGameTied(Player.State, opponent);
+                Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
                 await Player.WriteStateAsync();
+                await PlayerObserver.OnGameTied(Player.State, opponent);
                 await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
             }
         }

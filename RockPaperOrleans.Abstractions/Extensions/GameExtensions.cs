@@ -2,6 +2,21 @@
 {
     public static class GameExtensions
     {
+        public static double CalculateWinPercentage(this Player player)
+        {
+            try
+            {
+                double pct = (double)player.WinCount / (double)player.TotalGamesPlayed;
+                return Math.Round(pct * 100, 0);
+            }
+            catch
+            {
+                return 0;
+            }
+
+            return 0;
+        }
+
         public static bool HasPlayers(this Game game)
         {
             return !(game.Player1 == null && game.Player2 == null);
