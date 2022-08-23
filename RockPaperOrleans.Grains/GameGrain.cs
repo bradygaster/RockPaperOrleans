@@ -30,8 +30,8 @@ namespace RockPaperOrleans.Grains
         public Task<Game> GetGame()
             => Task.FromResult(Game.State);
 
-        public async Task SetGame(Game game)
-            => Game.State = game;
+        public Task SetGame(Game game)
+            => Task.FromResult(Game.State = game);
 
         public async Task SelectPlayers()
         {
@@ -121,14 +121,6 @@ namespace RockPaperOrleans.Grains
             var player1 = await player1Grain.Get();
             var player2 = await player2Grain.Get();
 
-            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-
-            if (await player1Grain.IsPlayerOnline())
-                await lobbyGrain.Enter(player1);
-
-            if (await player2Grain.IsPlayerOnline())
-                await lobbyGrain.Enter(player2);
-
             var player1WinCount = Game.State.Turns.Count(x => x.Winner == player1.Name);
             var player2WinCount = Game.State.Turns.Count(x => x.Winner == player2.Name);
 
@@ -158,6 +150,18 @@ namespace RockPaperOrleans.Grains
             }
 
             await SetGame(Game.State);
+
+            // refresh the win/loss data points
+            player1 = await player1Grain.Get();
+            player2 = await player2Grain.Get();
+
+            var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
+
+            if (await player1Grain.IsPlayerOnline())
+                await lobbyGrain.EnterLobby(player1);
+
+            if (await player2Grain.IsPlayerOnline())
+                await lobbyGrain.EnterLobby(player2);
 
             var leaderBoard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
             await leaderBoard.GameCompleted(Game.State);

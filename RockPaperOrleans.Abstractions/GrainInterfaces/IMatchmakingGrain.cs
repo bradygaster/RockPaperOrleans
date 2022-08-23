@@ -4,6 +4,6 @@ namespace RockPaperOrleans.Abstractions
 {
     public interface IMatchmakingGrain : IGrainWithGuidKey
     {
-        Task<Tuple<Player, Player>> ChoosePlayers();
+        Task<Tuple<Player, Player>?> ChoosePlayers();
     }
 }

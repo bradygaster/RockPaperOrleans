@@ -13,7 +13,7 @@ namespace RockPaperOrleans.Grains
             Logger = logger;
         }
 
-        public async Task<Tuple<Player, Player>> ChoosePlayers()
+        public async Task<Tuple<Player, Player>?> ChoosePlayers()
         {
             var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
             var lobby = await lobbyGrain.GetPlayersInLobby();
@@ -27,8 +27,8 @@ namespace RockPaperOrleans.Grains
 
             var players = lobby.OrderBy(x => Guid.NewGuid()).Take(2).ToArray();
 
-            await lobbyGrain.Leave(players[0]);
-            await lobbyGrain.Leave(players[1]);
+            await lobbyGrain.EnterGame(players[0]);
+            await lobbyGrain.EnterGame(players[1]);
 
             return new Tuple<Player, Player>(players[0], players[1]);
         }

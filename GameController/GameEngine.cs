@@ -13,12 +13,12 @@ namespace GameController
 
         public IGrainFactory GrainFactory { get; set; }
         public ILogger<GameEngine> Logger { get; set; }
-        public IGameGrain CurrentGameGrain { get; set; }
+        public IGameGrain? CurrentGameGrain { get; set; }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var newGame = () => CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
-            var delay = 500;
+            var delay = 100;
 
             while (!stoppingToken.IsCancellationRequested)
             {

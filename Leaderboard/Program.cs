@@ -46,7 +46,7 @@ public class LeaderboardObserverWorker : IHostedService
 {
     public ILeaderboardGrainObserver LeaderboardObserver { get; }
     public IGrainFactory GrainFactory { get; set; }
-    public ILeaderboardGrain Leaderboard { get; private set; }
+    public ILeaderboardGrain? Leaderboard { get; private set; }
 
     public LeaderboardObserverWorker(ILeaderboardGrainObserver leaderboardObserver,
         IGrainFactory grainFactory)

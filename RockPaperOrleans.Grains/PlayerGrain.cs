@@ -17,7 +17,7 @@ namespace RockPaperOrleans.Grains
 
         private IPersistentState<Player> Player { get; set; }
         public ILogger<PlayerGrain> Logger { get; set; }
-        public IPlayerObserver PlayerObserver { get; set; }
+        public IPlayerObserver? PlayerObserver { get; set; }
 
         public override async Task OnActivateAsync()
         {
@@ -50,7 +50,9 @@ namespace RockPaperOrleans.Grains
                 await PlayerObserver.OnPlayerSignedIn(Player.State);
 
                 var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-                await lobbyGrain.Enter(Player.State);
+                await lobbyGrain.SignIn(Player.State);
+                await lobbyGrain.EnterLobby(Player.State);
+                await Player.WriteStateAsync();
             }
         }
 
@@ -63,13 +65,12 @@ namespace RockPaperOrleans.Grains
             PlayerObserver = null;
 
             var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-            await lobbyGrain.Leave(Player.State);
+            await lobbyGrain.SignOut(Player.State);
+            await Player.WriteStateAsync();
         }
 
         public Task<bool> IsPlayerOnline()
-        {
-            return Task.FromResult<bool>(Player.State.IsActive);
-        }
+            => Task.FromResult<bool>(Player.State.IsActive);
 
         public async Task OpponentSelected(Player opponent)
         {
@@ -97,6 +98,7 @@ namespace RockPaperOrleans.Grains
                 Player.State.LossCount += 1;
                 await PlayerObserver.OnGameLost(Player.State, opponent);
                 await Player.WriteStateAsync();
+                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
             }
         }
 
@@ -108,6 +110,7 @@ namespace RockPaperOrleans.Grains
                 Player.State.WinCount += 1;
                 await PlayerObserver.OnGameWon(Player.State, opponent);
                 await Player.WriteStateAsync();
+                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
             }
         }
 
@@ -119,6 +122,7 @@ namespace RockPaperOrleans.Grains
                 Player.State.TieCount += 1;
                 await PlayerObserver.OnGameTied(Player.State, opponent);
                 await Player.WriteStateAsync();
+                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
             }
         }
     }

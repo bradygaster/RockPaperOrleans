@@ -6,7 +6,7 @@ namespace RockPaperOrleans
 {
     public class PlayerWorkerBase<TPlayer> : IHostedService where TPlayer : PlayerBase
     {
-        public IPlayerGrain PlayerGrain { get; set; }
+        public IPlayerGrain? PlayerGrain { get; set; }
         public TPlayer PlayerObserver { get; }
         public IGrainFactory GrainFactory { get; set; }
 

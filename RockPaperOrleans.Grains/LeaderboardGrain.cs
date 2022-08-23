@@ -7,7 +7,7 @@ namespace RockPaperOrleans.Grains
     public class LeaderboardGrain : Grain, ILeaderboardGrain
     {
         public HashSet<ILeaderboardGrainObserver> Observers { get; set; } = new();
-        public IManagementGrain ManagementGrain { get; set; }
+        public IManagementGrain? ManagementGrain { get; set; }
 
         public override Task OnActivateAsync()
         {
@@ -81,14 +81,22 @@ namespace RockPaperOrleans.Grains
             {
                 await leaderBoardObserver.OnLobbyUpdated(playersInLobby);
             }
-
-            var playersInGame = await GetAllPlayers();
         }
 
-        public async Task<List<Player>> GetAllPlayers()
+        public async Task PlayersOnlineUpdated(List<Player> playersOnline)
         {
-            var playerGrains = await ManagementGrain.GetDetailedGrainStatistics(types: new string[] { typeof(PlayerGrain).FullName });
-            return new List<Player>();
+            foreach (var leaderBoardObserver in Observers)
+            {
+                await leaderBoardObserver.OnPlayersOnlineUpdated(playersOnline);
+            }
+        }
+
+        public async Task PlayerScoresUpdated(Player player)
+        {
+            foreach (var leaderBoardObserver in Observers)
+            {
+                await leaderBoardObserver.OnPlayerScoresUpdated(player);
+            }
         }
     }
 }

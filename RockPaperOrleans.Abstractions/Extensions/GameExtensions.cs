@@ -12,7 +12,7 @@
             return game.Rounds > game.Turns.Count;
         }
 
-        public static string ScoreTurn(this Turn turn)
+        public static string? ScoreTurn(this Turn turn)
         {
             // if both players through X, tie game
             if (turn.Throws[0].Play == turn.Throws[1].Play)

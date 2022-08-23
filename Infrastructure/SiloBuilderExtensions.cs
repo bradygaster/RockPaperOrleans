@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.Hosting
             return builder;
         }
 
-        private static IAzureSiloBuilder CreateOrConnectToGameCluster(this ISiloBuilder builder, IConfiguration configuration)
+        private static IAzureSiloBuilder? CreateOrConnectToGameCluster(this ISiloBuilder builder, IConfiguration configuration)
         {
             builder
                 .Configure<SiloOptions>(options =>
@@ -61,7 +61,7 @@ namespace Microsoft.Extensions.Hosting
                     );
                 });
 
-            IAzureSiloBuilder result = null;
+            IAzureSiloBuilder? result = null;
 
             builder.ConfigureServices((ctx, services) =>
             {

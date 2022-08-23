@@ -22,7 +22,7 @@
                 <MudItem xs="6">
                     <MudPaper Class="mud-theme-info d-flex align-center justify-center mud-width-full py-8">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.subtitle1">@_player1?.Name</MudText>
+                            <MudText Typo="Typo.h3">@_player1?.Name</MudText>
                             <MudText Class="">@_player1?.WinCount wins, @_player1?.LossCount losses</MudText>
                         </MudStack>
                     </MudPaper>
@@ -31,7 +31,7 @@
                 <MudItem xs="6">
                     <MudPaper Class="mud-theme-info d-flex align-center justify-center mud-width-full py-8">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.subtitle1">@_player2?.Name</MudText>
+                            <MudText Typo="Typo.h3">@_player2?.Name</MudText>
                             <MudText>@_player2?.WinCount wins, @_player2?.LossCount losses</MudText>
                         </MudStack>
                     </MudPaper>
@@ -47,15 +47,15 @@
                         {
                             @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                             {
-                                <MudImage Height="280" Src="@($"{_turn.Throws[0].Play.ToString()}.png")" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player1?.Name)
                             {
-                                <MudImage Height="280" Src="@($"{_turn.Throws[0].Play.ToString()}-win.png")" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player2?.Name)
                             {
-                                <MudImage Height="280" Src="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                         }
                     </MudPaper>
@@ -71,21 +71,21 @@
                         {
                             @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                             {
-                                <MudImage Height="280" Src="@($"{_turn.Throws[1].Play.ToString()}.png")" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player2?.Name)
                             {
-                                <MudImage Height="280" Src="@($"{_turn.Throws[1].Play.ToString()}-win.png")" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player1?.Name)
                             {
-                                <MudImage Height="280" Src="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                         }
                     </MudPaper>
                 </MudItem>
 
-                @for (int i = 0; i < _game.Rounds; i++)
+                @for (int i = 0; i < _game?.Rounds; i++)
                 {
                     var index = i + 1;
                     var player1Theme = "mud-theme-info";
@@ -93,7 +93,7 @@
                     var player1Label = $"Round {index}";
                     var player2Label = $"Round {index}";
 
-                    if(_game.Turns.Count >= index)
+                    if (_game.Turns.Count >= index)
                     {
                         if (string.IsNullOrEmpty(_game.Turns[i].Winner))
                         {
@@ -142,35 +142,37 @@
 
             </MudGrid>
         </MudItem>
+
         <MudItem xs="4">
-            <MudItem xs="12">
-                <MudCard Class="mud-theme-info">
-                <MudCardHeader>
-                    <MudText Typo="Typo.h6">Lobby</MudText>
-                </MudCardHeader>
-                <MudCardContent>
-                    <MudList>
-                        @foreach (var player in _playersInLobby)
-                        {
-                            <MudListItem Icon="@Icons.Material.Outlined.AccessTimeFilled" Text="@player.Name" />
-                            <MudDivider />
-                        }
-                    </MudList>
-                </MudCardContent>
-            </MudCard>
+            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1 mb-2">
+                <MudText Typo="Typo.h4">Leaderboard</MudText>
+            </MudPaper>
+
+            @foreach (var player in _playersOnline)
+            {
+                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2">
+                    <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
+                        <MudText Typo="Typo.subtitle1">@player.Name</MudText>
+                    </MudPaper>
+                    <MudChip Text="@($"{player.WinCount} Wins")" Variant="Variant.Text" Color="Color.Success" SelectedColor="Color.Primary"></MudChip>
+                    <MudChip Text="@($"{player.LossCount} Losses")" Variant="Variant.Text" Color="Color.Error" SelectedColor="Color.Primary"></MudChip>
+                </MudPaper>
+            }
+
         </MudItem>
-        </MudItem>
+
     </MudGrid>
 
-    
+
 }
 @code
 {
-    Game _game;
-    Turn _turn;
-    Player _player1;
-    Player _player2;
+    Game? _game;
+    Turn? _turn;
+    Player? _player1;
+    Player? _player2;
     List<Player> _playersInLobby = new();
+    List<Player> _playersOnline = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -183,6 +185,9 @@
             _player2 = player2;
             StateHasChanged();
         });
+
+        /*
+         * turned these off to minimize flicker in the UI
 
         hubConnection.On<Turn, Game>("OnTurnStarted", (turn, game) =>
         {
@@ -199,6 +204,7 @@
 
             StateHasChanged();
         });
+         */
 
         hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
         {
@@ -214,9 +220,26 @@
             StateHasChanged();
         });
 
+        hubConnection.On<Player>("OnPlayerScoresUpdated", (player) =>
+        {
+            if(_playersOnline.Any(x => x == player))
+            {
+                _playersOnline.RemoveAll(x => x == player);
+                _playersOnline.Add(player);
+            }
+            _playersOnline = _playersOnline.OrderByDescending(x => x.WinCount).ToList();
+            StateHasChanged();
+        });
+
         hubConnection.On<List<Player>>("OnLobbyUpdated", (playersInLobby) =>
         {
             _playersInLobby = playersInLobby;
+            StateHasChanged();
+        });
+
+        hubConnection.On<List<Player>>("OnPlayersOnlineUpdated", (playersOnline) =>
+        {
+            _playersOnline = playersOnline.OrderByDescending(x => x.WinCount).ToList();
             StateHasChanged();
         });
 
