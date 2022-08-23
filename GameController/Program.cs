@@ -4,7 +4,6 @@ using GameController;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host
-    .ConfigureServices((services) =>
     .UseOrleans((context, siloBuilder) =>
     {
         siloBuilder
