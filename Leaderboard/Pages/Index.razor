@@ -20,7 +20,7 @@
                 }
 
                 <MudItem xs="6">
-                    <MudPaper Class="mud-theme-info d-flex align-center justify-center mud-width-full py-8">
+                    <MudPaper Class="@($"{_player1Theme} d-flex align-center justify-center mud-width-full py-1")">
                         <MudStack Class="align-center">
                             <MudText Typo="Typo.h3">@_player1?.Name</MudText>
                             <MudText Class="">@_player1?.WinCount wins, @_player1?.LossCount losses</MudText>
@@ -29,7 +29,7 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudPaper Class="mud-theme-info d-flex align-center justify-center mud-width-full py-8">
+                    <MudPaper Class="@($"{_player2Theme} d-flex align-center justify-center mud-width-full py-1")">
                         <MudStack Class="align-center">
                             <MudText Typo="Typo.h3">@_player2?.Name</MudText>
                             <MudText>@_player2?.WinCount wins, @_player2?.LossCount losses</MudText>
@@ -38,7 +38,7 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudPaper Class="--mud-palette-success-text d-flex align-center justify-center mud-width-full py-2">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
                         @if (_turn == null || !_turn.Throws.Any())
                         {
                             <MudProgressCircular Color="Color.Primary" Style="height:280px;width:280px;" Indeterminate="true" Class="object-center" />
@@ -62,7 +62,7 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudPaper Class="--mud-palette-success-text d-flex align-center justify-center mud-width-full py-2">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
                         @if (_turn == null || !_turn.Throws.Any())
                         {
                             <MudProgressCircular Color="Color.Primary" Style="height:280px;width:280px;" Indeterminate="true" Class="object-center" />
@@ -171,6 +171,8 @@
     Player? _player1;
     Player? _player2;
     List<Player> _playersOnline = new();
+    string _player1Theme = "mud-theme-info";
+    string _player2Theme = "mud-theme-info";
 
     protected override async Task OnInitializedAsync()
     {
@@ -178,6 +180,8 @@
 
         hubConnection.On<Game, Player, Player>("OnGameStarted", (game, player1, player2) =>
         {
+            _player1Theme = "mud-theme-info";
+            _player2Theme = "mud-theme-info";
             _game = game;
             _player1 = player1;
             _player2 = player2;
@@ -194,6 +198,25 @@
         hubConnection.On<Game>("OnGameCompleted", (game) =>
         {
             _game = game;
+
+            if(_game.Winner == _player1.Name)
+            {
+                _player1Theme = "mud-theme-success";
+                _player2Theme = "mud-theme-error";
+            }
+
+            if (_game.Winner == _player2.Name)
+            {
+                _player2Theme = "mud-theme-success";
+                _player1Theme = "mud-theme-error";
+            }
+
+            if (_game.Winner != _player2.Name && _game.Winner != _player1.Name)
+            {
+                _player2Theme = "mud-theme-dark";
+                _player1Theme = "mud-theme-dark";
+            }
+
             StateHasChanged();
         });
 
