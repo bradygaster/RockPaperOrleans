@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Orleans.Clustering.CosmosDB;
 using Orleans.Configuration;
 using Orleans.Hosting;
-using Orleans.Persistence.CosmosDB;
 using RockPaperOrleans;
 using System.Net;
 
@@ -25,9 +23,10 @@ namespace Microsoft.Extensions.Hosting
 
         public static ISiloBuilder PlayRockPaperOrleans(this ISiloBuilder builder, IConfiguration configuration)
         {
-            builder.CreateOrConnectToGameCluster(configuration)
-                    .UseCosmosDbClustering()
-                    .UseCosmosDbGrainStorage();
+            builder
+                .CreateOrConnectToGameCluster(configuration)
+                    .UseAzureStorageClustering()
+                    .UseAzureStorageGrainStorage();
 
             return builder;
         }
@@ -70,63 +69,6 @@ namespace Microsoft.Extensions.Hosting
             });
 
             return result;
-        }
-    }
-
-    public interface IAzureSiloBuilder
-    {
-        IAzureSiloBuilder UseCosmosDbClustering();
-        IAzureSiloBuilder UseCosmosDbGrainStorage();
-    }
-
-    public class AzureSiloBuilder : IAzureSiloBuilder
-    {
-        private ISiloBuilder SiloBuilder;
-        private IConfiguration Configuration;
-
-        public AzureSiloBuilder(ISiloBuilder builder, IConfiguration configuration)
-        {
-            SiloBuilder = builder;
-            Configuration = configuration;
-        }
-
-        public IAzureSiloBuilder UseCosmosDbClustering()
-        {
-            SiloBuilder.UseCosmosDBMembership((CosmosDBClusteringOptions clusteringOptions) =>
-            {
-                clusteringOptions.ConnectionMode = Microsoft.Azure.Cosmos.ConnectionMode.Direct;
-                clusteringOptions.AccountEndpoint = Configuration.GetValue<string>(
-                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountEndpoint
-                    );
-                clusteringOptions.AccountKey = Configuration.GetValue<string>(
-                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountKey
-                    );
-                clusteringOptions.DB = Configuration.GetValue<string>(
-                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbDatabase
-                    );
-                clusteringOptions.CanCreateResources = true;
-            });
-
-            return this;
-        }
-
-        public IAzureSiloBuilder UseCosmosDbGrainStorage()
-        {
-            SiloBuilder.AddCosmosDBGrainStorageAsDefault((CosmosDBStorageOptions cosmosOptions) =>
-            {
-                cosmosOptions.AccountEndpoint = Configuration.GetValue<string>(
-                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountEndpoint
-                    );
-                cosmosOptions.AccountKey = Configuration.GetValue<string>(
-                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbAccountKey
-                    );
-                cosmosOptions.DB = Configuration.GetValue<string>(
-                    OrleansOnAzureConfiguration.EnvironmentVariableNames.CosmosDbDatabase
-                    );
-                cosmosOptions.CanCreateResources = true;
-            });
-
-            return this;
         }
     }
 }

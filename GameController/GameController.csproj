@@ -8,14 +8,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-		<PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.6.4">
+		<PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.6.5">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.6.4" />
-		<PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.4" />
-		<PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.4" />
-		<PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.6.4" />
+		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.6.5" />
+		<PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.5" />
+		<PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.5" />
+		<PackageReference Include="Microsoft.Orleans.OrleansRuntime" Version="3.6.5" />
 		<PackageReference Include="Orleans.Clustering.CosmosDB" Version="3.0.4" />
 		<PackageReference Include="Orleans.Persistence.CosmosDB" Version="3.0.3" />
 		<PackageReference Include="OrleansDashboard" Version="3.6.2" />
