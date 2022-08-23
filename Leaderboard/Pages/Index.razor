@@ -14,8 +14,8 @@
                 @if (_game != null && _turn != null)
                 {
                     <MudItem xs="12">
-                        <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-8">
-                            <MudText Typo="Typo.h3">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
+                        <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2">
+                            <MudText Typo="Typo.h3" Class="banger">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
                         </MudPaper>
                     </MudItem>
                 }
@@ -23,8 +23,11 @@
                 <MudItem xs="6">
                     <MudPaper Class="@($"{_player1Theme} d-flex align-center justify-center mud-width-full py-1")">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.h3">@_player1?.Name</MudText>
-                            <MudText Class="">@_player1?.WinCount wins, @_player1?.LossCount losses</MudText>
+                            <MudText Typo="Typo.h4" Class="luckyGuy">@_player1?.Name</MudText>
+                            <MudStack Row="true">
+                                <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbUp" Text="@($"{_player1?.WinCount} Wins")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Success"></MudChip>
+                                <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbDown" Text="@($"{_player1?.WinCount} Losses")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Error"></MudChip>
+                            </MudStack>
                         </MudStack>
                     </MudPaper>
                 </MudItem>
@@ -32,14 +35,17 @@
                 <MudItem xs="6">
                     <MudPaper Class="@($"{_player2Theme} d-flex align-center justify-center mud-width-full py-1")">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.h3">@_player2?.Name</MudText>
-                            <MudText>@_player2?.WinCount wins, @_player2?.LossCount losses</MudText>
+                            <MudText Typo="Typo.h4" Class="luckyGuy">@_player2?.Name</MudText>
+                            <MudStack Row="true">
+                                <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbUp" Text="@($"{_player1?.WinCount} Wins")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Success"></MudChip>
+                                <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbDown" Text="@($"{_player1?.WinCount} Losses")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Error"></MudChip>
+                            </MudStack>
                         </MudStack>
                     </MudPaper>
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2" Outlined="true">
                         @if (_turn == null || !_turn.Throws.Any())
                         {
                             <MudProgressCircular Color="Color.Primary" Style="height:280px;width:280px;" Indeterminate="true" Class="object-center" />
@@ -63,7 +69,7 @@
                 </MudItem>
 
                 <MudItem xs="6">
-                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2">
+                    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2" Outlined="true">
                         @if (_turn == null || !_turn.Throws.Any())
                         {
                             <MudProgressCircular Color="Color.Primary" Style="height:280px;width:280px;" Indeterminate="true" Class="object-center" />
@@ -130,13 +136,13 @@
 
                     <MudItem xs="6">
                         <MudPaper Class="@($"{player1Theme} d-flex align-center justify-center mud-width-full py-1")">
-                            <MudText Typo="Typo.h3">@player1Label</MudText>
+                            <MudText Typo="Typo.h4" Class="banger">@player1Label</MudText>
                         </MudPaper>
                     </MudItem>
 
                     <MudItem xs="6">
                         <MudPaper Class="@($"{player2Theme} d-flex align-center justify-center mud-width-full py-1")">
-                            <MudText Typo="Typo.h3">@player2Label</MudText>
+                            <MudText Typo="Typo.h4" Class="banger">@player2Label</MudText>
                         </MudPaper>
                     </MudItem>
                 }
@@ -145,28 +151,27 @@
         </MudItem>
 
         <MudItem xs="4">
-            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1 mb-2">
-                <MudText Typo="Typo.h4">Leaderboard</MudText>
+            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2 mb-2">
+                <MudText Typo="Typo.h4" Class="banger">Leaderboard</MudText>
             </MudPaper>
 
             @foreach (var player in _playersOnline)
             {
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2">
+                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
+                    <MudChip Text="@($"{player.PercentWon}%")" Class="luckyGuy" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.subtitle1">@player.Name</MudText>
+                        <MudText Typo="Typo.h5" Class="luckyGuy">@player.Name</MudText>
                     </MudPaper>
-                    <MudChip Text="@($"{player.PercentWon}%")" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
                 </MudPaper>
             }
 
-            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1 mt-5">
-                <MudText Typo="Typo.h4">Grain Count : @_latestUpdate?.GrainsActive.ToString("N0")</MudText>
+            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2 mt-5 mb-2">
+                <MudText Typo="Typo.h4" Class="banger">Grain Count : @_latestUpdate?.GrainsActive.ToString("N0")</MudText>
             </MudPaper>
 
-            <MudPaper>
-                <MudCard>
+            <MudPaper Elevation="0">
+                <MudCard Elevation="1">
                     <MudCardContent>
-                        <MudText Typo="Typo.body1">How many Orleans Grains are running at the moment.</MudText>
                         <MudChart ChartType="ChartType.Line"
                               Class="my-0 pa-0"
                               ChartSeries="@Series"
@@ -176,32 +181,32 @@
                     </MudCardContent>
                 </MudCard>
             </MudPaper>
-            
-            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1 mt-5">
-                <MudText Typo="Typo.h4">Server Statistics</MudText>
+
+            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2 mt-5 mb-2">
+                <MudText Typo="Typo.h4" Class="banger">Server Statistics</MudText>
             </MudPaper>
 
             @if (_latestUpdate != null)
             {
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2">
+                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.subtitle1" Class="d-block">Server started</MudText>
+                        <MudText Typo="Typo.h5" Class="d-block pathway">Started</MudText>
                     </MudPaper>
-                    <MudChip Text="@($"{@_latestUpdate.DateStarted}")" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
+                    <MudChip Text="@($"{@_latestUpdate.DateStarted}")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                 </MudPaper>
 
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2">
+                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.subtitle1" Class="d-block">Server uptime</MudText>
+                        <MudText Typo="Typo.h5" Class="d-block pathway">Uptime</MudText>
                     </MudPaper>
-                    <MudChip Text="@_latestUpdate.TimeUp.ToString("hh\\:mm\\:ss")" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
+                    <MudChip Text="@_latestUpdate.TimeUp.ToString("hh\\:mm\\:ss")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                 </MudPaper>
 
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2">
+                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.subtitle1" Class="d-block">Games completed</MudText>
+                        <MudText Typo="Typo.h5" Class="d-block pathway">Games completed</MudText>
                     </MudPaper>
-                    <MudChip Text="@_latestUpdate.GamesCompleted.ToString("N0")" Variant="Variant.Text" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
+                    <MudChip Text="@_latestUpdate.GamesCompleted.ToString("N0")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                 </MudPaper>
             }
         </MudItem>
@@ -225,10 +230,9 @@
 
     private ChartOptions _options = new()
         {
-            LineStrokeWidth = 4,
             DisableLegend = true,
             InterpolationOption = InterpolationOption.NaturalSpline,
-            MaxNumYAxisTicks = 8
+            LineStrokeWidth = 8
         };
 
     protected override async Task OnInitializedAsync()
@@ -263,19 +267,19 @@
         {
             _game = game;
 
-            if (_game.Winner == _player1.Name)
+            if (_game?.Winner == _player1?.Name)
             {
                 _player1Theme = "mud-theme-success";
                 _player2Theme = "mud-theme-error";
             }
 
-            if (_game.Winner == _player2.Name)
+            if (_game?.Winner == _player2?.Name)
             {
                 _player2Theme = "mud-theme-success";
                 _player1Theme = "mud-theme-error";
             }
 
-            if (_game.Winner != _player2.Name && _game.Winner != _player1.Name)
+            if (_game?.Winner != _player2?.Name && _game.Winner != _player1?.Name)
             {
                 _player2Theme = "mud-theme-dark";
                 _player1Theme = "mud-theme-dark";
@@ -296,9 +300,9 @@
             _data.RemoveAt(0);
             _data.Add(update.GrainsActive);
             Series = new List<ChartSeries>()
-            {
+                {
                 new() { Name = "Grain Count", Data = _data.ToArray() }
-            };
+                };
             StateHasChanged();
         });
 
