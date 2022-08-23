@@ -1,5 +1,7 @@
 using Orleans;
 using GameController;
+using Orleans.Hosting;
+using static Orleans.Hosting.OrleansOnAzureConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,12 @@ builder.Host
         siloBuilder
             .PlayRockPaperOrleans(context.Configuration)
             .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false);
+
+        if (context.Configuration.GetValue<string>(EnvironmentVariableNames.ApplicationInsights)
+                is { Length: > 0 } instrumentationKey)
+        {
+            siloBuilder.AddApplicationInsightsTelemetryConsumer(instrumentationKey);
+        }
     });
 
 builder.Services.AddWebAppApplicationInsights("Game Controller");

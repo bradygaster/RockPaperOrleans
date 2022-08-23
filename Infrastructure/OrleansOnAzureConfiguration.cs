@@ -13,6 +13,7 @@
             public static string CosmosDbAccountKey => "OrleansCosmosDbAccountKey";
             public static string CosmosDbDatabase => "OrleansCosmosDbDatabase";
             public static string AzureStorageConnectionString => "AzureStorageConnectionString";
+            public static string ApplicationInsights => "APPLICATIONINSIGHTS_INSTRUMENTATIONKEY";
         }
     }
 }
