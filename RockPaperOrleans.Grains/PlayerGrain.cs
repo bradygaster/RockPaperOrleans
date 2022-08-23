@@ -95,6 +95,7 @@ namespace RockPaperOrleans.Grains
             if(PlayerObserver != null)
             {
                 Logger.LogInformation($"Recording loss for {Player.State.Name}");
+                Player.State.TotalGamesPlayed += 1;
                 Player.State.LossCount += 1;
                 await PlayerObserver.OnGameLost(Player.State, opponent);
                 await Player.WriteStateAsync();
@@ -107,6 +108,7 @@ namespace RockPaperOrleans.Grains
             if (PlayerObserver != null)
             {
                 Logger.LogInformation($"Recording win for {Player.State.Name}");
+                Player.State.TotalGamesPlayed += 1;
                 Player.State.WinCount += 1;
                 await PlayerObserver.OnGameWon(Player.State, opponent);
                 await Player.WriteStateAsync();
@@ -119,6 +121,7 @@ namespace RockPaperOrleans.Grains
             if (PlayerObserver != null)
             {
                 Logger.LogInformation($"Recording tie for {Player.State.Name}");
+                Player.State.TotalGamesPlayed += 1;
                 Player.State.TieCount += 1;
                 await PlayerObserver.OnGameTied(Player.State, opponent);
                 await Player.WriteStateAsync();

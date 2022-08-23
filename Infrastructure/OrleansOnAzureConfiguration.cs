@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace Orleans.Hosting
+﻿namespace Orleans.Hosting
 {
     public static class OrleansOnAzureConfiguration
     {
@@ -14,6 +12,7 @@ namespace Orleans.Hosting
             public static string CosmosDbAccountEndpoint => "OrleansCosmosDbAccountEndpoint";
             public static string CosmosDbAccountKey => "OrleansCosmosDbAccountKey";
             public static string CosmosDbDatabase => "OrleansCosmosDbDatabase";
+            public static string AzureStorageConnectionString => "AzureStorageConnectionString";
         }
     }
 }

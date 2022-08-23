@@ -4,6 +4,7 @@
     public class Player
     {
         public string? Name { get; set; }
+        public int TotalGamesPlayed { get; set; }
         public int WinCount { get; set; }
         public int LossCount { get; set; }
         public int TieCount { get; set; }

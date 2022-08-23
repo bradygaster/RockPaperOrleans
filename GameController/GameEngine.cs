@@ -18,7 +18,7 @@ namespace GameController
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var newGame = () => CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
-            var delay = 100;
+            var delay = 250;
 
             while (!stoppingToken.IsCancellationRequested)
             {
