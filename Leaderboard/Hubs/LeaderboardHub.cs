@@ -51,6 +51,11 @@ namespace Leaderboard.Hubs
         {
             await Hub.Clients.All.OnPlayerScoresUpdated(player);
         }
+
+        public async Task OnSystemStatusUpdated(SystemStatusUpdate update)
+        {
+            await Hub.Clients.All.OnSystemStatusUpdated(update);
+        }
     }
 
     public class LeaderboardHub : Hub<ILeaderboardGrainObserver>
@@ -88,6 +93,11 @@ namespace Leaderboard.Hubs
         public async Task OnPlayerScoresUpdated(Player player)
         {
             await Clients.All.OnPlayerScoresUpdated(player);
+        }
+
+        public async Task OnSystemStatusUpdated(SystemStatusUpdate update)
+        {
+            await Clients.All.OnSystemStatusUpdated(update);
         }
     }
 }

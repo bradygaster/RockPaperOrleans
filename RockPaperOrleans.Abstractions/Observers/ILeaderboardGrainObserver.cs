@@ -12,5 +12,6 @@ namespace RockPaperOrleans.Abstractions
         Task OnLobbyUpdated(List<Player> playersInLobby);
         Task OnPlayersOnlineUpdated(List<Player> playersOnline);
         Task OnPlayerScoresUpdated(Player player);
+        Task OnSystemStatusUpdated(SystemStatusUpdate update);
     }
 }

@@ -99,5 +99,13 @@ namespace RockPaperOrleans.Grains
                 await leaderBoardObserver.OnPlayerScoresUpdated(player);
             }
         }
+
+        public async Task UpdateSystemStatus(SystemStatusUpdate update)
+        {
+            foreach (var leaderBoardObserver in Observers)
+            {
+                await leaderBoardObserver.OnSystemStatusUpdated(update);
+            }
+        }
     }
 }
