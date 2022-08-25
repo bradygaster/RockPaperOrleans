@@ -1,4 +1,4 @@
-name: 'provision azure resources'
+name: 'provision & deploy all'
 
 on: workflow_dispatch
 
