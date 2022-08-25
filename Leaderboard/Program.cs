@@ -25,9 +25,8 @@ builder.Services.AddSignalR();
 builder.Services.AddMudServices();
 
 var app = builder.Build();
-
-app.UseForwardedHeaders();
 app.UseStaticFiles();
+app.UseForwardedHeaders();
 app.UseRouting();
 app.MapBlazorHub();
 app.MapHub<LeaderboardHub>("/hubs/leaderboard");

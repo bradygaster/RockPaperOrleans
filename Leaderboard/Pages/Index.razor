@@ -54,15 +54,15 @@
                         {
                             @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString().ToLower()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player1?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString().ToLower()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString().ToLower()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                         }
                     </MudPaper>
@@ -78,15 +78,15 @@
                         {
                             @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString().ToLower()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString().ToLower()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player1?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString().ToLower()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                         }
                     </MudPaper>
