@@ -1,8 +1,8 @@
-param location string = resourceGroup().location
-param acrResourceName string 
+param location string = resourceGroup().location 
+param repositoryImage string = 'mcr.microsoft.com/azuredocs/containerapps-helloworld:latest'
 
 resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
-  name: toLower(acrResourceName)
+  name: toLower('${resourceGroup().name}acr')
   location: location
   sku: {
     name: 'Basic'
@@ -59,33 +59,59 @@ resource env 'Microsoft.App/managedEnvironments@2022-03-01' = {
   }
 }
 
-var shared_config = [
-  {
-    name: 'ASPNETCORE_ENVIRONMENT'
-    value: 'Development'
-  }
-  {
-    name: 'AzureStorageConnectionString'
-    value: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${listKeys(storage.name, storage.apiVersion).keys[0].value};EndpointSuffix=core.windows.net')
-  }
-  {
-    name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-    value: ai.properties.InstrumentationKey
-  }
-  {
-    name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-    value: ai.properties.ConnectionString
-  }
-]
-
-module containerApps 'modules/containerapps.bicep' = {
-  name: 'rpocontainerapps'
+module gamecontroller 'gamecontroller.bicep' = {
+  name: toLower('${resourceGroup().name}gamecontroller')
   params: {
-    containerAppEnvironmentId: env.id
-    registry: acrResourceName
-    registryPassword: acr.listCredentials().passwords[0].value
-    registryUsername: acr.listCredentials().username
-    envVars: shared_config
     location: location
+    repositoryImage: repositoryImage
+    azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
+    ai: ai.properties.ConnectionString
+    registry: acr.name
+    environmentId: env.id
   }
 }
+
+module leaderboard 'leaderboard.bicep' = {
+  name: toLower('${resourceGroup().name}leaderboard')
+  params: {
+    location: location
+    repositoryImage: repositoryImage
+    azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
+    ai: ai.properties.ConnectionString
+    registry: acr.name
+    environmentId: env.id
+  }
+}
+
+module players 'players.bicep' = {
+  name: toLower('${resourceGroup().name}players')
+  params: {
+    location: location
+    repositoryImage: repositoryImage
+    azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
+    ai: ai.properties.ConnectionString
+    registry: acr.name
+    environmentId: env.id
+  }
+}
+
+module rando 'rando.bicep' = {
+  name: toLower('${resourceGroup().name}rando')
+  params: {
+    location: location
+    repositoryImage: repositoryImage
+    azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
+    ai: ai.properties.ConnectionString
+    registry: acr.name
+    environmentId: env.id
+  }
+}
+
+var k = listKeys(storage.name, storage.apiVersion).keys[0].value
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acr.properties.loginServer
+output AZURE_CONTAINER_REGISTRY_NAME string = acr.name
+output ORLEANS_AZURE_STORAGE_CONNECTION_STRING string = format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
+output APPLICATIONINSIGHTS_CONNECTION_STRING string = ai.properties.ConnectionString
+output ACA_ENVIRONMENT_ID string = env.id
+
+

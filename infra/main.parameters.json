@@ -7,9 +7,6 @@
         },
         "location": {
         "value": "${AZURE_LOCATION}"
-        },
-        "acrResourceName": {
-        "value": "${ACR_RESOURCE_NAME}"
         }
     }
 }

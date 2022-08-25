@@ -1,15 +1,15 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
 EXPOSE 80
+EXPOSE 443
+EXPOSE 30000
+EXPOSE 11111
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 COPY ["GameController/GameController.csproj", "GameController/"]
 COPY ["Infrastructure/RockPaperOrleans.csproj", "Infrastructure/"]
 COPY ["RockPaperOrleans.Abstractions/RockPaperOrleans.Abstractions.csproj", "RockPaperOrleans.Abstractions/"]
-COPY ["RockPaperOrleans.Grains/RockPaperOrleans.Grains.csproj", "RockPaperOrleans.Grains/"]
 RUN dotnet restore "GameController/GameController.csproj"
 COPY . .
 WORKDIR "/src/GameController"

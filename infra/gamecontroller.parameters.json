@@ -1,0 +1,24 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "value": "${AZURE_LOCATION}"
+        },
+        "repositoryImage": {
+            "value": "${SERVICE_GAMECONTROLLER_IMAGE_NAME}"
+        },
+        "azureStorage": {
+            "value": "${ORLEANS_AZURE_STORAGE_CONNECTION_STRING}"
+        },
+        "ai": {
+            "value": "${APPLICATIONINSIGHTS_CONNECTION_STRING}"
+        },
+        "registry": {
+            "value": "${AZURE_CONTAINER_REGISTRY_NAME}"
+        },
+        "environmentId": {
+            "value": "${ACA_ENVIRONMENT_ID}"
+        }
+    }
+}

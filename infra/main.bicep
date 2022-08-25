@@ -6,16 +6,11 @@ targetScope = 'subscription'
 param name string
 
 @minLength(1)
-@maxLength(50)
-@description('Name of the Azure Container Registry you want to create and use to store your repositories.')
-param acrResourceName string
-
-@minLength(1)
 @description('Primary location for all resources')
 param location string
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2020-06-01' = {
-    name: '${name}rg'
+    name: name
     location: location
     tags: tags
 }
@@ -28,9 +23,13 @@ module resources 'resources.bicep' = {
     name: 'rpo'
     scope: resourceGroup
     params: {
-        acrResourceName: acrResourceName
         location: location
     }
 }
 
 output AZURE_LOCATION string = location
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
+output AZURE_CONTAINER_REGISTRY_NAME string = resources.outputs.AZURE_CONTAINER_REGISTRY_NAME
+output ORLEANS_AZURE_STORAGE_CONNECTION_STRING string = resources.outputs.ORLEANS_AZURE_STORAGE_CONNECTION_STRING
+output APPLICATIONINSIGHTS_CONNECTION_STRING string = resources.outputs.APPLICATIONINSIGHTS_CONNECTION_STRING
+output ACA_ENVIRONMENT_ID string = resources.outputs.ACA_ENVIRONMENT_ID
