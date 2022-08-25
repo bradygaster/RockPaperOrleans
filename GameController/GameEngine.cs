@@ -28,7 +28,7 @@ namespace GameController
             };
 
             var UpdateSystemStatus = async (SystemStatusUpdate update) => await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).UpdateSystemStatus(update);
-            var delay = 100;
+            var delay = 250;
 
             while (!stoppingToken.IsCancellationRequested)
             {

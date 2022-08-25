@@ -54,15 +54,15 @@
                         {
                             @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString().ToLower()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player1?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString().ToLower()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[0].Play.ToString().ToLower()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                         }
                     </MudPaper>
@@ -78,15 +78,15 @@
                         {
                             @if (_turn.Winner != _player1?.Name && _turn.Winner != _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString().ToLower()}.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player2?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString().ToLower()}-win.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                             @if (_turn.Winner == _player1?.Name)
                             {
-                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
+                                <MudImage Style="height:280px;width:280px;" Src="@($"{_turn.Throws[1].Play.ToString().ToLower()}-lose.png")" Fluid="true" ObjectFit="ObjectFit.ScaleDown" Class="object-center" />
                             }
                         }
                     </MudPaper>
@@ -212,9 +212,8 @@
         </MudItem>
 
     </MudGrid>
-
-
 }
+
 @code
 {
     Game? _game;
@@ -224,6 +223,7 @@
     List<Player> _playersOnline = new();
     string _player1Theme = "mud-theme-info";
     string _player2Theme = "mud-theme-info";
+    string _signalrUrl = string.Empty;
     public List<ChartSeries> Series = new List<ChartSeries>();
     private List<double> _data = new();
     SystemStatusUpdate? _latestUpdate;
@@ -235,77 +235,87 @@
             LineStrokeWidth = 8
         };
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var hubConnection = new HubConnectionBuilder().WithUrl(_navigationManager.ToAbsoluteUri("/hubs/leaderboard")).Build();
-
-        for (int i = 0; i < 100; i++) _data.Add(0);
-
-        Series = new List<ChartSeries>()
+        if (firstRender)
         {
-            new ChartSeries() { Name = "Grain Count", Data = _data.ToArray() }
-        };
+            _signalrUrl = _navigationManager.ToAbsoluteUri("/hubs/leaderboard").AbsoluteUri;
 
-        hubConnection.On<Game, Player, Player>("OnGameStarted", (game, player1, player2) =>
-        {
-            _player1Theme = "mud-theme-info";
-            _player2Theme = "mud-theme-info";
-            _game = game;
-            _player1 = player1;
-            _player2 = player2;
-            StateHasChanged();
-        });
+            var hubConnection = new HubConnectionBuilder()
+                                        .WithAutomaticReconnect()
+                                        .WithUrl(_signalrUrl)
+                                            .Build();
 
-        hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
-        {
-            _turn = turn;
-            _game = game;
-            StateHasChanged();
-        });
+            for (int i = 0; i < 100; i++) _data.Add(0);
 
-        hubConnection.On<Game>("OnGameCompleted", (game) =>
-        {
-            _game = game;
-
-            if (_game?.Winner == _player1?.Name)
-            {
-                _player1Theme = "mud-theme-success";
-                _player2Theme = "mud-theme-error";
-            }
-
-            if (_game?.Winner == _player2?.Name)
-            {
-                _player2Theme = "mud-theme-success";
-                _player1Theme = "mud-theme-error";
-            }
-
-            if (_game?.Winner != _player2?.Name && _game.Winner != _player1?.Name)
-            {
-                _player2Theme = "mud-theme-dark";
-                _player1Theme = "mud-theme-dark";
-            }
-
-            StateHasChanged();
-        });
-
-        hubConnection.On<List<Player>>("OnPlayersOnlineUpdated", (playersOnline) =>
-        {
-            _playersOnline = playersOnline;
-            StateHasChanged();
-        });
-
-        hubConnection.On<SystemStatusUpdate>("OnSystemStatusUpdated", (update) =>
-        {
-            _latestUpdate = update;
-            _data.RemoveAt(0);
-            _data.Add(update.GrainsActive);
             Series = new List<ChartSeries>()
-                {
-                new() { Name = "Grain Count", Data = _data.ToArray() }
-                };
-            StateHasChanged();
-        });
+            {
+                new ChartSeries() { Name = "Grain Count", Data = _data.ToArray() }
+            };
 
-        await hubConnection.StartAsync();
+            hubConnection.On<Game, Player, Player>("OnGameStarted", (game, player1, player2) =>
+            {
+                _player1Theme = "mud-theme-info";
+                _player2Theme = "mud-theme-info";
+                _game = game;
+                _player1 = player1;
+                _player2 = player2;
+                StateHasChanged();
+            });
+
+            hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
+            {
+                _turn = turn;
+                _game = game;
+                StateHasChanged();
+            });
+
+            hubConnection.On<Game>("OnGameCompleted", (game) =>
+            {
+                _game = game;
+
+                if (_game?.Winner == _player1?.Name)
+                {
+                    _player1Theme = "mud-theme-success";
+                    _player2Theme = "mud-theme-error";
+                }
+
+                if (_game?.Winner == _player2?.Name)
+                {
+                    _player2Theme = "mud-theme-success";
+                    _player1Theme = "mud-theme-error";
+                }
+
+                if (_game?.Winner != _player2?.Name && _game.Winner != _player1?.Name)
+                {
+                    _player2Theme = "mud-theme-dark";
+                    _player1Theme = "mud-theme-dark";
+                }
+
+                StateHasChanged();
+            });
+
+            hubConnection.On<List<Player>>("OnPlayersOnlineUpdated", (playersOnline) =>
+            {
+                _playersOnline = playersOnline;
+                StateHasChanged();
+            });
+
+            hubConnection.On<SystemStatusUpdate>("OnSystemStatusUpdated", (update) =>
+            {
+                _latestUpdate = update;
+                _data.RemoveAt(0);
+                _data.Add(update.GrainsActive);
+                Series = new List<ChartSeries>()
+                            {
+                new() { Name = "Grain Count", Data = _data.ToArray() }
+                            };
+                StateHasChanged();
+            });
+
+            await hubConnection.StartAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 }

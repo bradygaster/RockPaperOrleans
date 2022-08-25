@@ -49,16 +49,10 @@ namespace Microsoft.Extensions.Hosting
                         OrleansOnAzureConfiguration.EnvironmentVariableNames.ServiceId
                     );
                 })
-                .Configure<EndpointOptions>(options =>
-                {
-                    options.AdvertisedIPAddress = IPAddress.Loopback;
-                    options.SiloPort = configuration.GetValue<int>(
-                        OrleansOnAzureConfiguration.EnvironmentVariableNames.SiloPort
-                    );
-                    options.GatewayPort = configuration.GetValue<int>(
-                        OrleansOnAzureConfiguration.EnvironmentVariableNames.GatewayPort
-                    );
-                });
+                .ConfigureEndpoints(
+                    siloPort: configuration.GetValue<int>(OrleansOnAzureConfiguration.EnvironmentVariableNames.SiloPort),
+                    gatewayPort: configuration.GetValue<int>(OrleansOnAzureConfiguration.EnvironmentVariableNames.GatewayPort)
+                );
 
             IAzureSiloBuilder? result = null;
 

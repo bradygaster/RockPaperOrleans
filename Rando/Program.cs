@@ -9,7 +9,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         siloBuilder
             .PlayRockPaperOrleans(context.Configuration)
             .EnlistPlayer<Rando>()
-            .EnlistPlayer<SlowRando>();
+            .EnlistPlayer<SlowRando>()
+            .EnlistPlayer<CaptainObvious>();
     })
     .ConfigureServices((services) =>
     {
@@ -33,5 +34,40 @@ public class SlowRando : PlayerBase
     {
         await Task.Delay(Random.Shared.Next(250, 1000));
         return (Play)Random.Shared.Next(0, 3);
+    }
+}
+
+
+public class CaptainObvious : PlayerBase
+{
+    private Player _opponent;
+
+    public CaptainObvious(ILogger<CaptainObvious> logger) : base(logger) { }
+
+    public override Task OnOpponentSelected(Player player, Player opponent)
+    {
+        _opponent = opponent;
+        return base.OnOpponentSelected(player, opponent);
+    }
+
+    public override Task<Play> Go()
+    {
+        // start with random
+        var result = (Play)Random.Shared.Next(0, 3);
+
+        if (_opponent.Name.ToLower().Contains("scissors"))
+        {
+            result = Play.Rock;
+        }
+        if (_opponent.Name.ToLower().Contains("rock"))
+        {
+            result = Play.Paper;
+        }
+        if (_opponent.Name.ToLower().Contains("paper"))
+        {
+            result = Play.Scissors;
+        }
+
+        return Task.FromResult(result);
     }
 }
