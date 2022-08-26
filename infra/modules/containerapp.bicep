@@ -1,27 +1,35 @@
-param location string = resourceGroup().location
-param repositoryImage string
+param name string
+param image string
+param location string
+param containerAppName string
+param ingress bool = false
 
-resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' existing = {
-  name: toLower('${resourceGroup().name}acr')
+var resourceToken = toLower(uniqueString(subscription().id, name, location))
+var tags = { 'azd-env-name': name }
+var abbrs = loadJsonContent('../abbreviations.json')
+
+resource acr 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' existing = {
+  name: '${abbrs.containerRegistryRegistries}${resourceToken}'
 }
 
 resource ai 'Microsoft.Insights/components@2020-02-02' existing = {
-  name: toLower('${resourceGroup().name}ai')
+  name: '${abbrs.insightsComponents}${resourceToken}'
 }
 
 resource env 'Microsoft.App/managedEnvironments@2022-03-01' existing = {
-  name: toLower('${resourceGroup().name}rpoenv')
+  name: '${abbrs.appManagedEnvironments}${resourceToken}'
 }
 
-resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' existing = {
-  name: toLower('${resourceGroup().name}stg')
+resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' existing = {
+  name: '${abbrs.storageStorageAccounts}${resourceToken}'
 }
 
-var key = listKeys(storage.name, storage.apiVersion).keys[0].value
-
-resource leaderboard 'Microsoft.App/containerApps@2022-01-01-preview' = {
-  name: toLower('${resourceGroup().name}leaderboard')
+// We have to use ${name}service_name for now because we don't deploy it in azd provision and azd deploy won't find it
+// But the backup search logic will find it via this name.
+resource containerapp 'Microsoft.App/containerApps@2022-03-01' = {
+  name: '${name}${containerAppName}'
   location: location
+  tags: union(tags, { 'azd-service-name': containerAppName })
   properties: {
     managedEnvironmentId: env.id
     configuration: {
@@ -39,16 +47,16 @@ resource leaderboard 'Microsoft.App/containerApps@2022-01-01-preview' = {
           passwordSecretRef: 'container-registry-password'
         }
       ]
-      ingress: {
-        external: true
+      ingress: { 
+        external: ingress
         targetPort: 80
       }
     }
     template: {
       containers: [
         {
-          image: repositoryImage
-          name: 'leaderboard'
+          image: image
+          name: containerAppName
           env: [
             {
               name: 'ASPNETCORE_ENVIRONMENT'
@@ -56,7 +64,7 @@ resource leaderboard 'Microsoft.App/containerApps@2022-01-01-preview' = {
             }
             {
               name: 'AzureStorageConnectionString'
-              value: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${key};EndpointSuffix=core.windows.net')
+              value: 'DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${storage.listKeys().keys[0].value};EndpointSuffix=${environment().suffixes.storage}'
             }
             {
               name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -80,4 +88,3 @@ resource leaderboard 'Microsoft.App/containerApps@2022-01-01-preview' = {
     }
   }
 }
-
