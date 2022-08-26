@@ -3,6 +3,7 @@ param image string
 param location string
 param containerAppName string
 param ingress bool = false
+param port int = 80
 
 var resourceToken = toLower(uniqueString(subscription().id, name, location))
 var tags = { 'azd-env-name': name }
@@ -49,7 +50,7 @@ resource containerapp 'Microsoft.App/containerApps@2022-03-01' = {
       ]
       ingress: { 
         external: ingress
-        targetPort: 80
+        targetPort: port
       }
     }
     template: {
