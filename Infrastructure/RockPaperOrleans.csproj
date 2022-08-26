@@ -14,6 +14,7 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.6.5" />
+		<PackageReference Include="Microsoft.Orleans.OrleansTelemetryConsumers.AI" Version="3.6.5" />
 		<PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="3.6.5" />
 		<PackageReference Include="Microsoft.Orleans.Runtime.Abstractions" Version="3.6.5" />
 		<PackageReference Include="Microsoft.Orleans.OrleansProviders" Version="3.6.5" />
