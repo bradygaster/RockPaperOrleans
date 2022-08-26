@@ -3,34 +3,38 @@
 name: RockPaperOrleans
 services:
   gamecontroller:
-    project: ./GameController
+    project: src/GameController
     dist: build
     language: csharp
     host: containerapp
+    module: modules/gamecontroller
     docker:
       path: ./Dockerfile
       context: ../
   leaderboard:
-    project: ./Leaderboard
+    project: src/Leaderboard
     dist: build
     language: csharp
     host: containerapp
+    module: modules/leaderboard
     docker:
       path: ./Dockerfile
       context: ../
   players:
-    project: ./Players
+    project: src/Players
     dist: build
     language: csharp
     host: containerapp
+    module: modules/players
     docker:
       path: ./Dockerfile
       context: ../
   rando:
-    project: ./Rando
+    project: src/Rando
     dist: build
     language: csharp
     host: containerapp
+    module: modules/rando
     docker:
       path: ./Dockerfile
       context: ../

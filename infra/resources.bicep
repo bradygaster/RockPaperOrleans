@@ -1,7 +1,11 @@
-param location string = resourceGroup().location 
+param location string
+param resourceToken string
+param tags object
+var abbrs = loadJsonContent('abbreviations.json')
 
-resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
-  name: toLower('${resourceGroup().name}acr')
+resource acr 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' = {
+  name: '${abbrs.containerRegistryRegistries}${resourceToken}'
+  tags: tags
   location: location
   sku: {
     name: 'Basic'
@@ -11,18 +15,28 @@ resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' = {
   }
 }
 
-resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: toLower('${resourceGroup().name}stg')
+resource storage 'Microsoft.Storage/storageAccounts@2021-09-01' = {
+  name: '${abbrs.storageStorageAccounts}${resourceToken}'
   location: location
+  tags: tags
   kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'
   }
+  properties: {
+    minimumTlsVersion: 'TLS1_2'
+    allowBlobPublicAccess: false
+    networkAcls: {
+      bypass: 'AzureServices'
+      defaultAction: 'Allow'
+    }
+  }
 }
 
-resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: toLower('${resourceGroup().name}logs')
+resource logs 'Microsoft.OperationalInsights/workspaces@2021-12-01-preview' = {
+  name: '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
   location: location
+  tags: tags
   properties: any({
     retentionInDays: 30
     features: {
@@ -35,8 +49,9 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
 }
 
 resource ai 'Microsoft.Insights/components@2020-02-02' = {
-  name: toLower('${resourceGroup().name}ai')
+  name: '${abbrs.insightsComponents}${resourceToken}'
   location: location
+  tags: tags
   kind: 'web'
   properties: {
     Application_Type: 'web'
@@ -45,8 +60,9 @@ resource ai 'Microsoft.Insights/components@2020-02-02' = {
 }
 
 resource env 'Microsoft.App/managedEnvironments@2022-03-01' = {
-  name: toLower('${resourceGroup().name}rpoenv')
+  name: '${abbrs.appManagedEnvironments}${resourceToken}'
   location: location
+  tags: tags
   properties: {
     appLogsConfiguration: {
       destination: 'log-analytics'
@@ -58,3 +74,4 @@ resource env 'Microsoft.App/managedEnvironments@2022-03-01' = {
   }
 }
 
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acr.properties.loginServer

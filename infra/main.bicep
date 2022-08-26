@@ -9,28 +9,25 @@ param name string
 @description('Primary location for all resources')
 param location string
 
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2020-06-01' = {
-    name: name
+var resourceToken = toLower(uniqueString(subscription().id, name, location))
+var tags = { 'azd-env-name': name }
+var abbrs = loadJsonContent('abbreviations.json')
+
+resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+    name: '${abbrs.resourcesResourceGroups}${name}'
     location: location
     tags: tags
 }
 
-var tags = {
-    'azd-env-name': name
-}
-
 module resources 'resources.bicep' = {
-    name: 'rpo'
-    scope: resourceGroup
+    name: 'resources'
+    scope: rg
     params: {
         location: location
+        resourceToken: resourceToken
+        tags: tags
     }
 }
 
-resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' existing = {
-    name: toLower('${resourceGroup.name}acr')
-    scope: resourceGroup
-}
-
 output AZURE_LOCATION string = location
-output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acr.properties.loginServer
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
