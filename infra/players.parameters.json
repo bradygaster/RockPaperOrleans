@@ -14,6 +14,9 @@
         "ai": {
             "value": "${APPLICATIONINSIGHTS_CONNECTION_STRING}"
         },
+        "aiKey": {
+            "value": "${APPLICATIONINSIGHTS_INSTRUMENTATIONKEY}"
+        },
         "registry": {
             "value": "${AZURE_CONTAINER_REGISTRY_NAME}"
         },

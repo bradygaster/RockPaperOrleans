@@ -54,6 +54,12 @@ namespace Microsoft.Extensions.Hosting
                     gatewayPort: configuration.GetValue<int>(OrleansOnAzureConfiguration.EnvironmentVariableNames.GatewayPort)
                 );
 
+            if (configuration.GetValue<string>(OrleansOnAzureConfiguration.EnvironmentVariableNames.ApplicationInsights)
+                is { Length: > 0 } instrumentationKey)
+            {
+                builder.AddApplicationInsightsTelemetryConsumer(instrumentationKey);
+            }
+
             IAzureSiloBuilder? result = null;
 
             builder.ConfigureServices((ctx, services) =>

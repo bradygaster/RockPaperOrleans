@@ -66,6 +66,7 @@ module gamecontroller 'gamecontroller.bicep' = {
     repositoryImage: repositoryImage
     azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
     ai: ai.properties.ConnectionString
+    aiKey: ai.properties.InstrumentationKey
     registry: acr.name
     environmentId: env.id
   }
@@ -78,6 +79,7 @@ module leaderboard 'leaderboard.bicep' = {
     repositoryImage: repositoryImage
     azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
     ai: ai.properties.ConnectionString
+    aiKey: ai.properties.InstrumentationKey
     registry: acr.name
     environmentId: env.id
   }
@@ -90,6 +92,7 @@ module players 'players.bicep' = {
     repositoryImage: repositoryImage
     azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
     ai: ai.properties.ConnectionString
+    aiKey: ai.properties.InstrumentationKey
     registry: acr.name
     environmentId: env.id
   }
@@ -102,6 +105,7 @@ module rando 'rando.bicep' = {
     repositoryImage: repositoryImage
     azureStorage: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
     ai: ai.properties.ConnectionString
+    aiKey: ai.properties.InstrumentationKey
     registry: acr.name
     environmentId: env.id
   }
@@ -112,6 +116,7 @@ output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acr.properties.loginServer
 output AZURE_CONTAINER_REGISTRY_NAME string = acr.name
 output ORLEANS_AZURE_STORAGE_CONNECTION_STRING string = format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${k};EndpointSuffix=core.windows.net')
 output APPLICATIONINSIGHTS_CONNECTION_STRING string = ai.properties.ConnectionString
+output APPLICATIONINSIGHTS_INSTRUMENTATIONKEY string = ai.properties.InstrumentationKey
 output ACA_ENVIRONMENT_ID string = env.id
 
 

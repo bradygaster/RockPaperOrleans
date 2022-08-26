@@ -2,6 +2,7 @@ param location string = resourceGroup().location
 param repositoryImage string
 param azureStorage string 
 param ai string
+param aiKey string
 param registry string
 param environmentId string 
 
@@ -47,6 +48,10 @@ resource rando 'Microsoft.App/containerApps@2022-01-01-preview' = {
             {
               name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
               value: ai
+            }
+            {
+              name: 'APPLICATIONINSIGHTS_INSTRUMENTATIONKEY'
+              value: aiKey
             }
             {
               name: 'ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS'
