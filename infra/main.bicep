@@ -27,10 +27,10 @@ module resources 'resources.bicep' = {
     }
 }
 
+resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' existing = {
+    name: toLower('${resourceGroup.name}acr')
+    scope: resourceGroup
+}
+
 output AZURE_LOCATION string = location
-output AZURE_CONTAINER_REGISTRY_ENDPOINT string = resources.outputs.AZURE_CONTAINER_REGISTRY_ENDPOINT
-output AZURE_CONTAINER_REGISTRY_NAME string = resources.outputs.AZURE_CONTAINER_REGISTRY_NAME
-output ORLEANS_AZURE_STORAGE_CONNECTION_STRING string = resources.outputs.ORLEANS_AZURE_STORAGE_CONNECTION_STRING
-output APPLICATIONINSIGHTS_INSTRUMENTATIONKEY string = resources.outputs.APPLICATIONINSIGHTS_INSTRUMENTATIONKEY
-output APPLICATIONINSIGHTS_CONNECTION_STRING string = resources.outputs.APPLICATIONINSIGHTS_CONNECTION_STRING
-output ACA_ENVIRONMENT_ID string = resources.outputs.ACA_ENVIRONMENT_ID
+output AZURE_CONTAINER_REGISTRY_ENDPOINT string = acr.properties.loginServer

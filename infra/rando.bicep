@@ -1,20 +1,29 @@
 param location string = resourceGroup().location
 param repositoryImage string
-param azureStorage string 
-param ai string
-param aiKey string
-param registry string
-param environmentId string 
 
-resource acr 'Microsoft.ContainerRegistry/registries@2021-12-01-preview' existing = {
-  name: registry
+resource acr 'Microsoft.ContainerRegistry/registries@2021-09-01' existing = {
+  name: toLower('${resourceGroup().name}acr')
 }
+
+resource ai 'Microsoft.Insights/components@2020-02-02' existing = {
+  name: toLower('${resourceGroup().name}ai')
+}
+
+resource env 'Microsoft.App/managedEnvironments@2022-03-01' existing = {
+  name: toLower('${resourceGroup().name}rpoenv')
+}
+
+resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' existing = {
+  name: toLower('${resourceGroup().name}stg')
+}
+
+var key = listKeys(storage.name, storage.apiVersion).keys[0].value
 
 resource rando 'Microsoft.App/containerApps@2022-01-01-preview' = {
   name: toLower('${resourceGroup().name}rando')
   location: location
   properties: {
-    managedEnvironmentId: environmentId
+    managedEnvironmentId: env.id
     configuration: {
       activeRevisionsMode: 'single'
       secrets: [
@@ -25,8 +34,8 @@ resource rando 'Microsoft.App/containerApps@2022-01-01-preview' = {
       ]
       registries: [
         {
-          server: '${registry}.azurecr.io'
-          username: registry
+          server: '${acr.name}.azurecr.io'
+          username: acr.name
           passwordSecretRef: 'container-registry-password'
         }
       ]
@@ -43,15 +52,15 @@ resource rando 'Microsoft.App/containerApps@2022-01-01-preview' = {
             }
             {
               name: 'AzureStorageConnectionString'
-              value: azureStorage
+              value: format('DefaultEndpointsProtocol=https;AccountName=${storage.name};AccountKey=${key};EndpointSuffix=core.windows.net')
             }
             {
               name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-              value: ai
+              value: ai.properties.ConnectionString
             }
             {
               name: 'APPLICATIONINSIGHTS_INSTRUMENTATIONKEY'
-              value: aiKey
+              value: ai.properties.InstrumentationKey
             }
             {
               name: 'ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS'

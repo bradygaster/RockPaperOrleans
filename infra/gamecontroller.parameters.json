@@ -7,21 +7,6 @@
         },
         "repositoryImage": {
             "value": "${SERVICE_GAMECONTROLLER_IMAGE_NAME}"
-        },
-        "azureStorage": {
-            "value": "${ORLEANS_AZURE_STORAGE_CONNECTION_STRING}"
-        },
-        "ai": {
-            "value": "${APPLICATIONINSIGHTS_CONNECTION_STRING}"
-        },
-        "aiKey": {
-            "value": "${APPLICATIONINSIGHTS_INSTRUMENTATIONKEY}"
-        },
-        "registry": {
-            "value": "${AZURE_CONTAINER_REGISTRY_NAME}"
-        },
-        "environmentId": {
-            "value": "${ACA_ENVIRONMENT_ID}"
         }
     }
 }
