@@ -11,5 +11,6 @@ module containerApp 'containerapp.bicep' = {
     location: location
     containerAppName: containerAppName
     image: image
+    port: 30003
   }
 }
