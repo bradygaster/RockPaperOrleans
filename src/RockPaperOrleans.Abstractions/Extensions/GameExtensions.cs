@@ -36,20 +36,20 @@
             var paper = turn.Throws.FirstOrDefault(x => x.Play == Play.Paper);
             var scissors = turn.Throws.FirstOrDefault(x => x.Play == Play.Scissors);
 
-            // paper covers rock
-            if (paper != null && rock != null)
-                return paper.Player;
+            return (rock, paper, scissors) switch
+            {
+				// paper covers rock
+				{ paper: not null, rock: not null } => paper.Player,
 
-            // rock breaks scissors
-            if(rock != null && scissors != null)
-                return rock.Player;
+				// rock breaks scissors
+				{ rock: not null, scissors: not null } => rock.Player,
 
-            // scissors cut paper
-            if(scissors != null && paper != null)
-                return scissors.Player;
+				// scissors cut paper
+				{ scissors: not null, paper: not null } => scissors.Player,
 
-            // no idea how we'd ever get here
-            return null;
+				// no idea how we'd ever get here
+				_ => null
+			};
         }
     }
 }
