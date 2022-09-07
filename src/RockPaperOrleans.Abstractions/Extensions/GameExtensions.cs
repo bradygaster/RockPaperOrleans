@@ -13,8 +13,6 @@
             {
                 return 0;
             }
-
-            return 0;
         }
 
         public static bool HasPlayers(this Game game)
