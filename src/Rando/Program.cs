@@ -52,21 +52,13 @@ public class CaptainObvious : PlayerBase
 
     public override Task<Play> Go()
     {
-        // start with random
-        var result = (Play)Random.Shared.Next(0, 3);
-
-        if (_opponent.Name.ToLower().Contains("scissors"))
+        var result = (_opponent) switch
         {
-            result = Play.Rock;
-        }
-        if (_opponent.Name.ToLower().Contains("rock"))
-        {
-            result = Play.Paper;
-        }
-        if (_opponent.Name.ToLower().Contains("paper"))
-        {
-            result = Play.Scissors;
-        }
+            Player _ when _opponent.Name.ToLower().Contains("scissors") => Play.Rock,
+            Player _ when _opponent.Name.ToLower().Contains("rock") => Play.Paper,
+            Player _ when _opponent.Name.ToLower().Contains("paper") => Play.Scissors,
+            _ => (Play)Random.Shared.Next(0, 3)
+        };
 
         return Task.FromResult(result);
     }
