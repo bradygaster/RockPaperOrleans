@@ -25,6 +25,8 @@ namespace Microsoft.Extensions.Hosting
         {
             builder
                 .CreateOrConnectToGameCluster(configuration)
+                    //.UseCosmosDbClustering()
+                    //.UseCosmosDbGrainStorage()
                     .UseAzureStorageClustering()
                     .UseAzureStorageGrainStorage();
 
