@@ -23,7 +23,7 @@ To get this project up and running on your own machine and in your own Azure sub
 
 Here's what RPO looks like when you have it up and running. In this screenshot, we're using the dark theme, and we have all the default players (at the time of v1's release) running in the app. 
 
-![Rock, Paper, Orleans running in the browser.](docs\media\rpo.png)
+![Rock, Paper, Orleans running in the browser.](docs/media/rpo.png)
 
 
 
