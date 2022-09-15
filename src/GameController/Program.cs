@@ -10,7 +10,10 @@ builder.Host
     {
         siloBuilder
             .PlayRockPaperOrleans(context.Configuration)
-            .UseDashboard(dashboardOptions => dashboardOptions.HostSelf = false);
+            .UseDashboard(dashboardOptions => {
+                dashboardOptions.HostSelf = false;
+                dashboardOptions.HideTrace = true;
+            });
 
         if (context.Configuration.GetValue<string>(EnvironmentVariableNames.ApplicationInsights)
                 is { Length: > 0 } instrumentationKey)
