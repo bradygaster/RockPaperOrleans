@@ -38,3 +38,12 @@ services:
     docker:
       path: ./Dockerfile
       context: ../
+  rascals:
+    project: src/Rascals
+    dist: build
+    language: csharp
+    host: containerapp
+    module: modules/Rascals
+    docker:
+      path: ./Dockerfile
+      context: ../
