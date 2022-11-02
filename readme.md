@@ -2,8 +2,6 @@
 
 Rock, Paper, Orleans (RPO) is a game built using dotnet, Orleans, and runs in Azure. The idea behind RPO is that you write a "player bot" in which you implement your player logic. The game engine essentially runs forever as a dotnet Worker service (which we may tweak later to run as an Orleans timer). Players wait in a lobby, and are matchmade each round randomly. The game is played, the winner and loser recorded, and the next game started. 
 
-RPO is hosted by Brady Gaster at https://rockpaperorleans.net. 
-
 
 
 ## Prerequisites
