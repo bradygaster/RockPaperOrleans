@@ -7,7 +7,7 @@ services:
     dist: build
     language: csharp
     host: containerapp
-    module: modules/gamecontroller
+    module: app/gamecontroller
     docker:
       path: ./Dockerfile
       context: ../
@@ -16,7 +16,7 @@ services:
     dist: build
     language: csharp
     host: containerapp
-    module: modules/leaderboard
+    module: app/leaderboard
     docker:
       path: ./Dockerfile
       context: ../
@@ -25,7 +25,7 @@ services:
     dist: build
     language: csharp
     host: containerapp
-    module: modules/players
+    module: app/players
     docker:
       path: ./Dockerfile
       context: ../
@@ -34,7 +34,7 @@ services:
     dist: build
     language: csharp
     host: containerapp
-    module: modules/rando
+    module: app/rando
     docker:
       path: ./Dockerfile
       context: ../
@@ -43,7 +43,7 @@ services:
     dist: build
     language: csharp
     host: containerapp
-    module: modules/Rascals
+    module: app/rascals
     docker:
       path: ./Dockerfile
       context: ../
