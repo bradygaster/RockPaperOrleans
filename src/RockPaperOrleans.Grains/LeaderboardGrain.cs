@@ -9,7 +9,7 @@ namespace RockPaperOrleans.Grains
         public HashSet<ILeaderboardGrainObserver> Observers { get; set; } = new();
         public IManagementGrain? ManagementGrain { get; set; }
 
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
             ManagementGrain = GrainFactory.GetGrain<IManagementGrain>(0);
             return Task.CompletedTask;

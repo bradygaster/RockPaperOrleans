@@ -1,33 +1,26 @@
-using Orleans;
 using GameController;
-using Orleans.Hosting;
-using static Orleans.Hosting.OrleansOnAzureConfiguration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Host
-    .UseOrleans((context, siloBuilder) =>
+builder.AddServiceDefaults();
+
+builder.AddKeyedRedisClient("redis");
+builder.UseOrleans(siloBuilder =>
+{
+    if (builder.Environment.IsDevelopment())
     {
-        siloBuilder
-            .PlayRockPaperOrleans(context.Configuration)
-            .UseDashboard(dashboardOptions => {
-                dashboardOptions.HostSelf = false;
-                dashboardOptions.HideTrace = true;
-            });
+        siloBuilder.ConfigureEndpoints(
+            Random.Shared.Next(10_000, 50_000),
+            Random.Shared.Next(10_000, 50_000)
+        );
+    }
+});
 
-        if (context.Configuration.GetValue<string>(EnvironmentVariableNames.ApplicationInsights)
-                is { Length: > 0 } instrumentationKey)
-        {
-            siloBuilder.AddApplicationInsightsTelemetryConsumer(instrumentationKey);
-        }
-    });
-
-builder.Services.AddWebAppApplicationInsights("Game Controller");
-builder.Services.AddServicesForSelfHostedDashboard();
 builder.Services.AddHostedService<GameEngine>();
 
 var app = builder.Build();
-app.UseOrleansDashboard();
+
+app.MapDefaultEndpoints();
 
 app.Run();
 

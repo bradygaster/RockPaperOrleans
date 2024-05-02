@@ -20,57 +20,5 @@ namespace Microsoft.Extensions.Hosting
 
             return builder;
         }
-
-        public static ISiloBuilder PlayRockPaperOrleans(this ISiloBuilder builder, IConfiguration configuration)
-        {
-            builder
-                .CreateOrConnectToGameCluster(configuration)
-                    //.UseCosmosDbClustering()
-                    //.UseCosmosDbGrainStorage()
-                    .UseAzureStorageClustering()
-                    .UseAzureStorageGrainStorage();
-
-            return builder;
-        }
-
-        private static IAzureSiloBuilder? CreateOrConnectToGameCluster(this ISiloBuilder builder, IConfiguration configuration)
-        {
-            builder
-                .Configure<SiloOptions>(options =>
-                {
-                    options.SiloName = string.Format(configuration.GetValue<string>(
-                        OrleansOnAzureConfiguration.EnvironmentVariableNames.SiloNameTemplate
-                    ), Environment.MachineName);
-                })
-                .Configure<ClusterOptions>(options =>
-                {
-                    options.ClusterId = configuration.GetValue<string>(
-                        OrleansOnAzureConfiguration.EnvironmentVariableNames.ClusterId
-                    );
-                    options.ServiceId = configuration.GetValue<string>(
-                        OrleansOnAzureConfiguration.EnvironmentVariableNames.ServiceId
-                    );
-                })
-                .ConfigureEndpoints(
-                    siloPort: configuration.GetValue<int>(OrleansOnAzureConfiguration.EnvironmentVariableNames.SiloPort),
-                    gatewayPort: configuration.GetValue<int>(OrleansOnAzureConfiguration.EnvironmentVariableNames.GatewayPort)
-                );
-
-            if (configuration.GetValue<string>(OrleansOnAzureConfiguration.EnvironmentVariableNames.ApplicationInsights)
-                is { Length: > 0 } instrumentationKey)
-            {
-                builder.AddApplicationInsightsTelemetryConsumer(instrumentationKey);
-            }
-
-            IAzureSiloBuilder? result = null;
-
-            builder.ConfigureServices((ctx, services) =>
-            {
-                result = new AzureSiloBuilder(builder, ctx.Configuration);
-                services.AddSingleton<IAzureSiloBuilder>(result);
-            });
-
-            return result;
-        }
     }
 }

@@ -7,8 +7,7 @@ namespace RockPaperOrleans.Grains
 {
     public class PlayerGrain : Grain, IPlayerGrain
     {
-        public PlayerGrain(
-            [PersistentState(nameof(PlayerGrain))] IPersistentState<Player> player,
+        public PlayerGrain([PersistentState("Players", storageName: "Players")] IPersistentState<Player> player,
             ILogger<PlayerGrain> logger)
         {
             Player = player;
@@ -19,11 +18,12 @@ namespace RockPaperOrleans.Grains
         public ILogger<PlayerGrain> Logger { get; set; }
         public IPlayerObserver? PlayerObserver { get; set; }
 
-        public override async Task OnActivateAsync()
+        public override async Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            Player.State.Name = this.GetGrainIdentity().PrimaryKeyString;
+            Player.State.Name = this.GetPrimaryKeyString();
+            //Player.State.Name = this.GetGrainIdentity().PrimaryKeyString;
 
-            await base.OnActivateAsync();
+            await base.OnActivateAsync(cancellationToken);
         }
 
         public async Task<Play> Go()

@@ -20,7 +20,7 @@ namespace RockPaperOrleans
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             PlayerGrain = GrainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name);
-            var reference = await GrainFactory.CreateObjectReference<IPlayerObserver>(PlayerObserver);
+            var reference = GrainFactory.CreateObjectReference<IPlayerObserver>(PlayerObserver);
             await PlayerGrain.SignIn(reference);
         }
 

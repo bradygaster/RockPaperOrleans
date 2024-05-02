@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsAspireHost>true</IsAspireHost>
+		<UserSecretsId>e12c6502-41f3-48f7-ab62-d004938da2da</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Aspire.Hosting.AppHost" Version="8.1.0-preview.1.24251.12" />
+		<PackageReference Include="Aspire.Hosting.Orleans" Version="8.1.0-preview.1.24251.12" />
+		<PackageReference Include="Aspire.Hosting.Redis" Version="8.1.0-preview.1.24251.12" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\GameController\GameController.csproj" />
+		<ProjectReference Include="..\Leaderboard\Leaderboard.csproj" />
+		<ProjectReference Include="..\Players\Players.csproj" />
+		<ProjectReference Include="..\Rando\Rando.csproj" />
+		<ProjectReference Include="..\Rascals\Rascals.csproj" />
+	</ItemGroup>
+
+</Project>

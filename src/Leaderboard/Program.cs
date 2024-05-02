@@ -4,19 +4,24 @@ using MudBlazor.Services;
 using Orleans;
 using RockPaperOrleans.Abstractions;
 
-await Task.Delay(10000); // for debugging, give the silo time to warm up
-
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseOrleans((context, siloBuilder) =>
+
+builder.AddServiceDefaults();
+builder.AddKeyedRedisClient("redis");
+builder.UseOrleans(siloBuilder =>
 {
-    siloBuilder
-        .PlayRockPaperOrleans(context.Configuration);
+    if (builder.Environment.IsDevelopment())
+    {
+        siloBuilder.ConfigureEndpoints(
+            Random.Shared.Next(10_000, 50_000),
+            Random.Shared.Next(10_000, 50_000)
+        );
+    }
 });
 
 StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
 // Add services to the container.
-builder.Services.AddWebAppApplicationInsights("Leaderboard");
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<ILeaderboardGrainObserver, LeaderboardObserver>();
@@ -25,6 +30,8 @@ builder.Services.AddSignalR();
 builder.Services.AddMudServices();
 
 var app = builder.Build();
+
+app.MapDefaultEndpoints();
 app.UseStaticFiles();
 app.UseForwardedHeaders();
 app.UseRouting();
@@ -49,14 +56,14 @@ public class LeaderboardObserverWorker : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-        var reference = await GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
+        var reference = GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
         await Leaderboard.Subscribe(reference);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
         Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-        var reference = await GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
+        var reference = GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
         await Leaderboard.UnSubscribe(reference);
     }
 }

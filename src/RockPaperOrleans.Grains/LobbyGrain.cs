@@ -12,8 +12,8 @@ namespace RockPaperOrleans.Grains
         public ILogger<LobbyGrain> Logger { get; set; }
 
         public LobbyGrain(
-            [PersistentState(nameof(LobbyGrain))] IPersistentState<List<Player>> playersInLobby, 
-            [PersistentState(nameof(LobbyGrain))] IPersistentState<List<Player>> playersSignedIn,
+            [PersistentState("Lobby", storageName: "Lobby")] IPersistentState<List<Player>> playersInLobby, 
+            [PersistentState("Lobby", storageName: "Lobby")] IPersistentState<List<Player>> playersSignedIn,
             ILogger<LobbyGrain> logger)
         {
             PlayersInLobby = playersInLobby;

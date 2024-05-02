@@ -260,14 +260,14 @@
                 _game = game;
                 _player1 = player1;
                 _player2 = player2;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
             {
                 _turn = turn;
                 _game = game;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<Game>("OnGameCompleted", (game) =>
@@ -291,14 +291,14 @@
                     _player2Theme = "mud-theme-dark";
                     _player1Theme = "mud-theme-dark";
                 }
-
-                StateHasChanged();
+                
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<List<Player>>("OnPlayersOnlineUpdated", (playersOnline) =>
             {
                 _playersOnline = playersOnline;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<SystemStatusUpdate>("OnSystemStatusUpdated", (update) =>
@@ -306,11 +306,12 @@
                 _latestUpdate = update;
                 _data.RemoveAt(0);
                 _data.Add(update.GrainsActive);
-                Series = new List<ChartSeries>()
-                            {
-                new() { Name = "Grain Count", Data = _data.ToArray() }
-                            };
-                StateHasChanged();
+
+                Series = new List<ChartSeries>() {
+                    new() { Name = "Grain Count", Data = _data.ToArray() }
+                };
+
+                InvokeAsync(StateHasChanged);
             });
 
             await hubConnection.StartAsync();

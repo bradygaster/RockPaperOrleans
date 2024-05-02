@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Orleans;
-using Orleans.Configuration;
 using Orleans.Runtime;
 using RockPaperOrleans.Abstractions;
 
@@ -13,18 +11,19 @@ namespace RockPaperOrleans.Grains
         private ILogger<GameGrain> Logger;
 
         public GameGrain(
-            [PersistentState(nameof(GameGrain))] IPersistentState<Game> game,
+            [PersistentState("Games", storageName: "Games")] IPersistentState<Game> game,
             ILogger<GameGrain> logger)
         {
             Game = game;
             Logger = logger;
         }
 
-        public override Task OnActivateAsync()
+        public override Task OnActivateAsync(CancellationToken cancellationToken)
         {
-            Game.State.Id = this.GetGrainIdentity().PrimaryKey;
+            Game.State.Id = this.GetPrimaryKey();
+            //Game.State.Id = this.GetGrainIdentity().PrimaryKey;
 
-            return base.OnActivateAsync();
+            return base.OnActivateAsync(cancellationToken);
         }
 
         public Task<Game> GetGame()

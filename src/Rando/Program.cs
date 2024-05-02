@@ -1,24 +1,32 @@
 using RockPaperOrleans;
 using RockPaperOrleans.Abstractions;
 
-await Task.Delay(20000); // for debugging, give the silo time to warm up
+var builder = WebApplication.CreateBuilder(args);
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .UseOrleans((context, siloBuilder) =>
-    {
-        siloBuilder
-            .PlayRockPaperOrleans(context.Configuration)
-            .EnlistPlayer<Rando>()
-            .EnlistPlayer<SlowRando>()
-            .EnlistPlayer<CaptainObvious>();
-    })
-    .ConfigureServices((services) =>
-    {
-        services.AddWorkerAppApplicationInsights("Rando Silo");
-    })
-    .Build();
+builder.AddServiceDefaults();
 
-await host.RunAsync();
+builder.AddKeyedRedisClient("redis");
+builder.UseOrleans(siloBuilder =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        siloBuilder.ConfigureEndpoints(
+            Random.Shared.Next(10_000, 50_000),
+            Random.Shared.Next(10_000, 50_000)
+        );
+    }
+
+    siloBuilder
+        .EnlistPlayer<Rando>()
+        .EnlistPlayer<SlowRando>()
+        .EnlistPlayer<CaptainObvious>();
+});
+
+var app = builder.Build();
+
+app.MapDefaultEndpoints();
+
+app.Run();
 
 public class Rando : PlayerBase
 {
