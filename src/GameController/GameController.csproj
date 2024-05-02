@@ -26,7 +26,6 @@
 	<ItemGroup>
 		<Using Include="RockPaperOrleans" />
 		<Using Include="RockPaperOrleans.Abstractions" />
-		<Using Include="RockPaperOrleans.Grains" />
 	</ItemGroup>
 
 	<ItemGroup>
