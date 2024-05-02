@@ -1,6 +1,0 @@
-name: RPO
-    version: 1.0.0
-    summary: Azure Web App Environment
-    description: Provisions the infrastructure to deploy RPO to Azure
-    runner: Bicep
-    templatePath: main.bicep

@@ -1,11 +1,10 @@
-﻿namespace RockPaperOrleans.Abstractions
+﻿namespace RockPaperOrleans.Abstractions;
+
+[Serializable]
+public enum Play
 {
-    [Serializable]
-    public enum Play
-    {
-        Unknown = -1,
-        Rock = 0,
-        Paper = 1,
-        Scissors = 2
-    }
+    Unknown = -1,
+    Rock = 0,
+    Paper = 1,
+    Scissors = 2
 }

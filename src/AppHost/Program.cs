@@ -22,4 +22,10 @@ builder.AddProject<Projects.Rando>("rando")
 builder.AddProject<Projects.Rascals>("rascals")
        .WithReference(orleans);
 
+builder.AddProject<Projects.MrPresumptive>("mrpresumptive")
+       .WithReference(orleans);
+
+builder.AddProject<Projects.RoundRobin>("roundrobin")
+       .WithReference(orleans);
+
 builder.Build().Run();

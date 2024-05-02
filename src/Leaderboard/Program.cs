@@ -1,8 +1,6 @@
 using Leaderboard.Hubs;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using MudBlazor.Services;
-using Orleans;
-using RockPaperOrleans.Abstractions;
 
 var builder = WebApplication.CreateBuilder(args);
 

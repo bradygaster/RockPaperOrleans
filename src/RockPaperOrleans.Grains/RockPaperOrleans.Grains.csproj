@@ -20,4 +20,12 @@
 	  <Orleans_CodeGenInputs Remove="LeaderboardGrain.cs" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Using Include="RockPaperOrleans" />
+		<Using Include="RockPaperOrleans.Abstractions" />
+		<Using Include="RockPaperOrleans.Grains" />
+		<Using Include="Microsoft.Extensions.Logging" />
+		<Using Include="Orleans.Runtime" />
+	</ItemGroup>
+
 </Project>

@@ -1,6 +1,3 @@
-using RockPaperOrleans;
-using RockPaperOrleans.Abstractions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -17,11 +14,9 @@ builder.UseOrleans(siloBuilder =>
     }
 
 	siloBuilder
-		.EnlistPlayer<RockPaperScissors>()
 		.EnlistPlayer<NeverScissors>()
 		.EnlistPlayer<NeverRock>()
-		.EnlistPlayer<NeverPaper>()
-        .EnlistPlayer<RoundRobin>();
+		.EnlistPlayer<NeverPaper>();
 });
 
 var app = builder.Build();
@@ -29,32 +24,6 @@ var app = builder.Build();
 app.MapDefaultEndpoints();
 
 app.Run();
-
-public class RockPaperScissors : PlayerBase
-{
-	public RockPaperScissors(ILogger<RockPaperScissors> logger) : base(logger) { }
-
-	public override Task<Play> Go() => Task.FromResult((Play)Random.Shared.Next(0, 3));
-}
-
-public class RoundRobin : PlayerBase
-{
-	public RoundRobin(ILogger<RoundRobin> logger) : base(logger) { }
-
-	private static readonly Play[] availablePlays = new[] { Play.Paper, Play.Rock, Play.Scissors };
-	private static int index = -1;
-
-	public override Task<Play> Go()
-	{
-		index++;
-		if (index == availablePlays.Length)
-		{
-			index = 0;
-		}
-
-		return Task.FromResult(availablePlays[index]);
-	}
-}
 
 public class NeverPaper : PlayerBase
 {

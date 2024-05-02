@@ -18,9 +18,11 @@
 	<ItemGroup>
 		<ProjectReference Include="..\GameController\GameController.csproj" />
 		<ProjectReference Include="..\Leaderboard\Leaderboard.csproj" />
+		<ProjectReference Include="..\MrPresumptive\MrPresumptive.csproj" />
 		<ProjectReference Include="..\Players\Players.csproj" />
 		<ProjectReference Include="..\Rando\Rando.csproj" />
 		<ProjectReference Include="..\Rascals\Rascals.csproj" />
+		<ProjectReference Include="..\RoundRobin\RoundRobin.csproj" />
 	</ItemGroup>
 
 </Project>

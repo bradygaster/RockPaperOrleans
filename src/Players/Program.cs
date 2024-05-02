@@ -1,6 +1,3 @@
-using RockPaperOrleans;
-using RockPaperOrleans.Abstractions;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
