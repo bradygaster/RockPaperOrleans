@@ -1,21 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddKeyedAzureTableClient("clustering");
-builder.AddKeyedAzureBlobClient("grainstorage");
-builder.UseOrleans(siloBuilder =>
-{
-    if (builder.Environment.IsDevelopment())
-    {
-        siloBuilder.ConfigureEndpoints(
-            Random.Shared.Next(10_000, 50_000),
-            Random.Shared.Next(10_000, 50_000)
-        );
-    }
-
-    siloBuilder
-        .EnlistPlayer<MrPresumptive>();
-});
+builder.AddRockPaperOrleans(siloBuilder => siloBuilder.AddPlayer<MrPresumptive>());
 
 var app = builder.Build();
 
