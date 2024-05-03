@@ -5,7 +5,8 @@ using MudBlazor.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddKeyedRedisClient("redis");
+builder.AddKeyedAzureTableClient("clustering");
+builder.AddKeyedAzureBlobClient("grainstorage");
 builder.UseOrleans(siloBuilder =>
 {
     if (builder.Environment.IsDevelopment())

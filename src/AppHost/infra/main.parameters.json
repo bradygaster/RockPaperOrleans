@@ -1,0 +1,19 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "orleans_cluster_cluster_id": {
+        "value": "${AZURE_ORLEANS_CLUSTER_CLUSTER_ID}"
+      },
+      "orleans_cluster_service_id": {
+        "value": "${AZURE_ORLEANS_CLUSTER_SERVICE_ID}"
+      },
+      "environmentName": {
+        "value": "${AZURE_ENV_NAME}"
+      },
+      "location": {
+        "value": "${AZURE_LOCATION}"
+      }
+    }
+  }
+  

@@ -11,16 +11,18 @@
 		<PackageReference Include="MudBlazor" Version="6.19.1" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Orleans.Sdk" Version="8.1.0" />
-		<PackageReference Include="Microsoft.Orleans.Clustering.Redis" Version="8.1.0" />
-		<PackageReference Include="Microsoft.Orleans.Persistence.Redis" Version="8.1.0" />
 		<PackageReference Include="Microsoft.Orleans.Server" Version="8.1.0" />
-		<PackageReference Include="Aspire.StackExchange.Redis" Version="8.1.0-preview.1.24251.12" />
+		<PackageReference Include="Aspire.Azure.Storage.Blobs" Version="8.1.0-preview.1.24252.1" />
+		<PackageReference Include="Aspire.Azure.Data.Tables" Version="8.1.0-preview.1.24252.1" />
+		<PackageReference Include="Microsoft.Orleans.Clustering.AzureStorage" Version="8.1.0" />
+		<PackageReference Include="Microsoft.Orleans.Persistence.AzureStorage" Version="8.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Defaults\Defaults.csproj" />
 		<ProjectReference Include="..\Infrastructure\RockPaperOrleans.csproj" />
 		<ProjectReference Include="..\RockPaperOrleans.Abstractions\RockPaperOrleans.Abstractions.csproj" />
+		<ProjectReference Include="..\RockPaperOrleans.Grains\RockPaperOrleans.Grains.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
