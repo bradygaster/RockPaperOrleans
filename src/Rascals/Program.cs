@@ -12,11 +12,11 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class NeverPaper : PlayerBase
+public class NeverPaper : IPlayerGrain
 {
 	private static readonly Play[] availablePlays = new[] { Play.Rock, Play.Scissors };
 
-	public override Task<Play> Go()
+	public Task<Play> Go(Player opponent)
 	{
 		var result = availablePlays[Random.Shared.Next(0, 1)];
 
@@ -24,11 +24,11 @@ public class NeverPaper : PlayerBase
 	}
 }
 
-public class NeverRock : PlayerBase
+public class NeverRock : IPlayerGrain
 {
 	private static readonly Play[] availablePlays = new[] { Play.Paper, Play.Scissors };
 
-	public override Task<Play> Go()
+	public Task<Play> Go(Player opponent)
 	{
 		var result = availablePlays[Random.Shared.Next(0, 1)];
 
@@ -36,11 +36,11 @@ public class NeverRock : PlayerBase
 	}
 }
 
-public class NeverScissors : PlayerBase
+public class NeverScissors : IPlayerGrain
 {
 	private static readonly Play[] availablePlays = new[] { Play.Paper, Play.Rock };
 
-	public override Task<Play> Go()
+	public Task<Play> Go(Player opponent)
 	{
 		var result = availablePlays[Random.Shared.Next(0, 1)];
 

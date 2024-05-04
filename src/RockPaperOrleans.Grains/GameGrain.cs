@@ -53,11 +53,11 @@ public class GameGrain : Grain, IGameGrain
 
             // notify the players
             await GrainFactory
-                    .GetGrain<IPlayerGrain>(players.Item1.Name)
+                    .GetGrain<IPlayerSessionGrain>(players.Item1.Name)
                         .OpponentSelected(players.Item2);
 
             await GrainFactory
-                    .GetGrain<IPlayerGrain>(players.Item2.Name)
+                    .GetGrain<IPlayerSessionGrain>(players.Item2.Name)
                         .OpponentSelected(players.Item1);
 
             // notify the leaderboard
@@ -68,8 +68,8 @@ public class GameGrain : Grain, IGameGrain
 
     public async Task Go()
     {
-        var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
-        var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);
+        var player1Grain = GrainFactory.GetGrain<IPlayerSessionGrain>(Game.State.Player1);
+        var player2Grain = GrainFactory.GetGrain<IPlayerSessionGrain>(Game.State.Player2);
         var leaderBoard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
 
         if (!(await player1Grain.IsPlayerOnline()
@@ -96,11 +96,11 @@ public class GameGrain : Grain, IGameGrain
         turn.Winner = turn.ScoreTurn();
 
         await GrainFactory
-                .GetGrain<IPlayerGrain>(Game.State.Player1)
+                .GetGrain<IPlayerSessionGrain>(Game.State.Player1)
                     .TurnComplete(turn);
 
         await GrainFactory
-                .GetGrain<IPlayerGrain>(Game.State.Player2)
+                .GetGrain<IPlayerSessionGrain>(Game.State.Player2)
                     .TurnComplete(turn);
 
         await GrainFactory
@@ -110,8 +110,8 @@ public class GameGrain : Grain, IGameGrain
 
     public async Task ScoreGame()
     {
-        var player1Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player1);
-        var player2Grain = GrainFactory.GetGrain<IPlayerGrain>(Game.State.Player2);
+        var player1Grain = GrainFactory.GetGrain<IPlayerSessionGrain>(Game.State.Player1);
+        var player2Grain = GrainFactory.GetGrain<IPlayerSessionGrain>(Game.State.Player2);
         var player1 = await player1Grain.Get();
         var player2 = await player2Grain.Get();
 

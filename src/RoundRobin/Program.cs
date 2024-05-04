@@ -1,8 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddRockPaperOrleans(siloBuilder =>
-    siloBuilder.AddPlayer<RoundRobin>());
+builder.AddRockPaperOrleans(siloBuilder => siloBuilder.AddPlayer<RoundRobin>());
 
 var app = builder.Build();
 
@@ -10,12 +9,12 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class RoundRobin : PlayerBase
+public class RoundRobin : IPlayerGrain
 {
     private static readonly Play[] availablePlays = new[] { Play.Paper, Play.Rock, Play.Scissors };
     private static int index = -1;
 
-    public override Task<Play> Go()
+    public Task<Play> Go(Player opponent)
     {
         index++;
         if (index == availablePlays.Length)

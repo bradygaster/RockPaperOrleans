@@ -2,11 +2,11 @@
 
 namespace RockPaperOrleans;
 
-public class PlayerWorkerBase<TPlayer>(TPlayer playerObserver,
-        IGrainFactory grainFactory) : IHostedService where TPlayer : PlayerBase
+public class PlayerWorkerBase<TPlayer>(IGrainFactory grainFactory) 
+    : IHostedService where TPlayer : IPlayerGrain
 {
+    public IPlayerSessionGrain? PlayerSessionGrain { get; set; }
     public IPlayerGrain? PlayerGrain { get; set; }
-    public TPlayer PlayerObserver { get; } = playerObserver;
     public IGrainFactory GrainFactory { get; set; } = grainFactory;
 
     public async Task StartAsync(CancellationToken cancellationToken)
@@ -15,9 +15,9 @@ public class PlayerWorkerBase<TPlayer>(TPlayer playerObserver,
         {
             try
             {
-                PlayerGrain = GrainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name);
-                var reference = GrainFactory.CreateObjectReference<IPlayerObserver>(PlayerObserver);
-                await PlayerGrain.SignIn(reference);
+                PlayerSessionGrain = GrainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
+                PlayerGrain = GrainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
+                await PlayerSessionGrain.SignIn(PlayerGrain);
                 return;
             }
             catch (Exception ex)
@@ -29,6 +29,6 @@ public class PlayerWorkerBase<TPlayer>(TPlayer playerObserver,
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await PlayerGrain.SignOut();
+        await PlayerSessionGrain.SignOut();
     }
 }

@@ -20,7 +20,7 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
         };
 
         var UpdateSystemStatus = async (SystemStatusUpdate update) => await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).UpdateSystemStatus(update);
-        var delay = 250;
+        var delay = 100;
 
         while (!stoppingToken.IsCancellationRequested)
         {

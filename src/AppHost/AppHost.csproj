@@ -24,6 +24,7 @@
 		<ProjectReference Include="..\Rando\Rando.csproj" />
 		<ProjectReference Include="..\Rascals\Rascals.csproj" />
 		<ProjectReference Include="..\RoundRobin\RoundRobin.csproj" />
+		<ProjectReference Include="..\SlowPoke\SlowPoke.csproj" />
 	</ItemGroup>
 
 </Project>

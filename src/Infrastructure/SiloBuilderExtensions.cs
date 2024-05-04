@@ -19,11 +19,10 @@ public static class SiloBuilderExtensions
         return builder;
     }
 
-    public static ISiloBuilder AddPlayer<TPlayer>(this ISiloBuilder builder) where TPlayer : PlayerBase
+    public static ISiloBuilder AddPlayer<TPlayer>(this ISiloBuilder builder) where TPlayer : IPlayerGrain
     {
         builder.ConfigureServices(services =>
         {
-            services.AddSingleton<TPlayer>();
             services.AddHostedService<PlayerWorkerBase<TPlayer>>();
         });
 

@@ -1,9 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddRockPaperOrleans(siloBuilder =>
-    siloBuilder.AddPlayer<Rando>()
-               .AddPlayer<SlowRando>());
+builder.AddRockPaperOrleans(siloBuilder => siloBuilder.AddPlayer<Rando>());
 
 var app = builder.Build();
 
@@ -11,17 +9,7 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class Rando : PlayerBase
+public class Rando : IPlayerGrain
 {
-    public override Task<Play> Go() => Task.FromResult((Play)Random.Shared.Next(0, 3));
-}
-
-// simulate a player taking a few seconds to run
-public class SlowRando : PlayerBase
-{
-    public override async Task<Play> Go()
-    {
-        await Task.Delay(Random.Shared.Next(250, 3000));
-        return (Play)Random.Shared.Next(0, 3);
-    }
+    public Task<Play> Go(Player opponent) => Task.FromResult((Play)Random.Shared.Next(0, 3));
 }

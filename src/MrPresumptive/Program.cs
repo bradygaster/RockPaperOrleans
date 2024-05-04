@@ -9,17 +9,15 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class MrPresumptive : PlayerBase
+public class MrPresumptive : IPlayerGrain
 {
-    private Player _opponent;
-
-    public override Task<Play> Go()
+    public Task<Play> Go(Player opponent)
     {
-        var result = (_opponent) switch
+        var result = (opponent) switch
         {
-            Player _ when _opponent.Name.ToLower().Contains("scissors") => Play.Rock,
-            Player _ when _opponent.Name.ToLower().Contains("rock") => Play.Paper,
-            Player _ when _opponent.Name.ToLower().Contains("paper") => Play.Scissors,
+            Player _ when opponent.Name.ToLower().Contains("scissors") => Play.Rock,
+            Player _ when opponent.Name.ToLower().Contains("rock") => Play.Paper,
+            Player _ when opponent.Name.ToLower().Contains("paper") => Play.Scissors,
             _ => (Play)Random.Shared.Next(0, 3)
         };
 

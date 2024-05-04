@@ -13,20 +13,17 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class AlwaysPaper : PlayerBase
+public class AlwaysPaper : IPlayerGrain
 {
-    public override Task<Play> Go()
-        => Task.FromResult(Play.Paper);
+    public Task<Play> Go(Player opponent) => Task.FromResult(Play.Paper);
 }
 
-public class AlwaysRock : PlayerBase
+public class AlwaysRock : IPlayerGrain
 {
-    public override Task<Play> Go()
-        => Task.FromResult(Play.Rock);
+    public Task<Play> Go(Player opponent) => Task.FromResult(Play.Rock);
 }
 
-public class AlwaysScissors : PlayerBase
+public class AlwaysScissors : IPlayerGrain
 {
-    public override Task<Play> Go()
-        => Task.FromResult(Play.Scissors);
+    public Task<Play> Go(Player opponent) => Task.FromResult(Play.Scissors);
 }
