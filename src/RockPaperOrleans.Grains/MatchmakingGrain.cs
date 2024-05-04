@@ -14,7 +14,7 @@ public class MatchmakingGrain : Grain, IMatchmakingGrain
         var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
         var lobby = await lobbyGrain.GetPlayersInLobby();
 
-        Logger.LogInformation($"There are {lobby.Count} players in the lobby.");
+        Logger.LogInformation($"RPO: There are {lobby.Count} players in the lobby.");
 
         if (!(lobby.Count >= 2))
         {

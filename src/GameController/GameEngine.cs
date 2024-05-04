@@ -2,16 +2,10 @@
 
 namespace GameController;
 
-public class GameEngine : BackgroundService
+public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) : BackgroundService
 {
-    public GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger)
-    {
-        GrainFactory = grainFactory;
-        Logger = logger;
-    }
-
-    public IGrainFactory GrainFactory { get; set; }
-    public ILogger<GameEngine> Logger { get; set; }
+    public IGrainFactory GrainFactory { get; set; } = grainFactory;
+    public ILogger<GameEngine> Logger { get; set; } = logger;
     public IGameGrain? CurrentGameGrain { get; set; }
     public ILeaderboardGrain? LeaderboardGrain { get; set; }
     public DateTime DateStarted { get; private set; }
@@ -30,43 +24,50 @@ public class GameEngine : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            // start a new game if we don't have one yet
-            if (CurrentGameGrain == null) StartNewGame();
-
-            var currentGame = await CurrentGameGrain.GetGame();
-
-            // select players if they're unselected so far
-            if (currentGame.Player1 == null && currentGame.Player2 == null)
+            try
             {
-                await CurrentGameGrain.SelectPlayers();
-            }
-            else
-            {
-                if (currentGame.Rounds > currentGame.Turns.Count)
+                // start a new game if we don't have one yet
+                if (CurrentGameGrain == null) StartNewGame();
+
+                var currentGame = await CurrentGameGrain.GetGame();
+
+                // select players if they're unselected so far
+                if (currentGame.Player1 == null && currentGame.Player2 == null)
                 {
-                    await CurrentGameGrain.Go();
-                    await Task.Delay(delay);
-                    await CurrentGameGrain.ScoreTurn();
+                    await CurrentGameGrain.SelectPlayers();
                 }
                 else
                 {
-                    await CurrentGameGrain.ScoreGame();
-                    await Task.Delay(delay);
-                    StartNewGame();
+                    if (currentGame.Rounds > currentGame.Turns.Count)
+                    {
+                        await CurrentGameGrain.Go();
+                        await Task.Delay(delay);
+                        await CurrentGameGrain.ScoreTurn();
+                    }
+                    else
+                    {
+                        await CurrentGameGrain.ScoreGame();
+                        await Task.Delay(delay);
+                        StartNewGame();
+                    }
                 }
+
+                // send a system status update
+                var grainCount = await GrainFactory.GetGrain<IManagementGrain>(0).GetTotalActivationCount();
+                await UpdateSystemStatus(new SystemStatusUpdate
+                {
+                    DateStarted = DateStarted,
+                    GamesCompleted = GamesCompleted,
+                    TimeUp = DateStarted - DateTime.Now,
+                    GrainsActive = grainCount
+                });
+
+                await Task.Delay(delay);
             }
-
-            // send a system status update
-            var grainCount = await GrainFactory.GetGrain<IManagementGrain>(0).GetTotalActivationCount();
-            await UpdateSystemStatus(new SystemStatusUpdate
+            catch (Exception ex)
             {
-                DateStarted = DateStarted,
-                GamesCompleted = GamesCompleted,
-                TimeUp = DateStarted - DateTime.Now,
-                GrainsActive = grainCount
-            });
-
-            await Task.Delay(delay);
+                Logger.LogError(ex, "RPO: GameEngine error:");
+            }
         }
     }
 

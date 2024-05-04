@@ -17,7 +17,6 @@ public class GameGrain : Grain, IGameGrain
     public override Task OnActivateAsync(CancellationToken cancellationToken)
     {
         Game.State.Id = this.GetPrimaryKey();
-        //Game.State.Id = this.GetGrainIdentity().PrimaryKey;
 
         return base.OnActivateAsync(cancellationToken);
     }
@@ -32,19 +31,19 @@ public class GameGrain : Grain, IGameGrain
     {
         var game = await GetGame();
 
-        Logger.LogInformation($"Getting the matchmaker for Game {Game.State.Id}");
+        Logger.LogInformation($"RPO: Getting the matchmaker for Game {Game.State.Id}");
         var matchmaker = GrainFactory.GetGrain<IMatchmakingGrain>(Guid.Empty);
 
-        Logger.LogInformation($"Getting players for Game {Game.State.Id}");
+        Logger.LogInformation($"RPO: Getting players for Game {Game.State.Id}");
         var players = await matchmaker.ChoosePlayers();
 
         if (players == null)
         {
-            Logger.LogInformation("There aren't enough players in the lobby to field a game.");
+            Logger.LogInformation("RPO: There aren't enough players in the lobby to field a game.");
         }
         else
         {
-            Logger.LogInformation($"Players {players.Item1.Name} and {players.Item2.Name} selected for Game {Game.State.Id}.");
+            Logger.LogInformation($"RPO: Players {players.Item1.Name} and {players.Item2.Name} selected for Game {Game.State.Id}.");
 
             // start the game
             game.Player1 = players.Item1.Name;
@@ -119,29 +118,29 @@ public class GameGrain : Grain, IGameGrain
         var player1WinCount = Game.State.Turns.Count(x => x.Winner == player1.Name);
         var player2WinCount = Game.State.Turns.Count(x => x.Winner == player2.Name);
 
-        Logger.LogInformation($"{player1.Name} won {player1WinCount} out of {Game.State.Rounds} rounds.");
-        Logger.LogInformation($"{player2.Name} won {player2WinCount} out of {Game.State.Rounds} rounds.");
+        Logger.LogInformation($"RPO: {player1.Name} won {player1WinCount} out of {Game.State.Rounds} rounds.");
+        Logger.LogInformation($"RPO: {player2.Name} won {player2WinCount} out of {Game.State.Rounds} rounds.");
 
         if (player1WinCount > player2WinCount)
         {
             await player1Grain.RecordWin(player2);
             await player2Grain.RecordLoss(player1);
             Game.State.Winner = player1.Name;
-            Logger.LogInformation($"{player1.Name} wins.");
+            Logger.LogInformation($"RPO: {player1.Name} wins.");
         }
         if (player2WinCount > player1WinCount)
         {
             await player2Grain.RecordWin(player1);
             await player1Grain.RecordLoss(player2);
             Game.State.Winner = player2.Name;
-            Logger.LogInformation($"{player2.Name} wins.");
+            Logger.LogInformation($"RPO: {player2.Name} wins.");
         }
         if (player2WinCount == player1WinCount)
         {
             await player2Grain.RecordTie(player1);
             await player1Grain.RecordTie(player2);
             Game.State.Winner = "Tie";
-            Logger.LogInformation($"{player1.Name} ties with {player2.Name}.");
+            Logger.LogInformation($"RPO: {player1.Name} ties with {player2.Name}.");
         }
 
         await SetGame(Game.State);

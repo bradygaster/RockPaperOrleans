@@ -30,6 +30,7 @@
 		<Using Include="RockPaperOrleans.Abstractions" />
 		<Using Include="Microsoft.Extensions.Logging" />
 		<Using Include="Microsoft.Extensions.Hosting" />
+		<Using Include="Leaderboard" />
 		<Using Include="Microsoft.Extensions.DependencyInjection" />
 	</ItemGroup>
 

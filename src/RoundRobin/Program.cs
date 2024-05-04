@@ -12,8 +12,6 @@ app.Run();
 
 public class RoundRobin : PlayerBase
 {
-    public RoundRobin(ILogger<RoundRobin> logger) : base(logger) { }
-
     private static readonly Play[] availablePlays = new[] { Play.Paper, Play.Rock, Play.Scissors };
     private static int index = -1;
 

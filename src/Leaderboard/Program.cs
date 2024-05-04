@@ -29,23 +29,32 @@ app.MapFallbackToPage("/_Host");
 
 app.Run();
 
-public class LeaderboardObserverWorker : IHostedService
+public class LeaderboardObserverWorker(ILeaderboardGrainObserver leaderboardObserver,
+        IGrainFactory grainFactory,
+        ILogger<LeaderboardObserverWorker> logger) : IHostedService
 {
-    public ILeaderboardGrainObserver LeaderboardObserver { get; }
-    public IGrainFactory GrainFactory { get; set; }
+    private readonly ILogger<LeaderboardObserverWorker> logger = logger;
+    public ILeaderboardGrainObserver LeaderboardObserver { get; } = leaderboardObserver;
+    public IGrainFactory GrainFactory { get; set; } = grainFactory;
     public ILeaderboardGrain? Leaderboard { get; private set; }
 
-    public LeaderboardObserverWorker(ILeaderboardGrainObserver leaderboardObserver,
-        IGrainFactory grainFactory)
-    {
-        LeaderboardObserver = leaderboardObserver;
-        GrainFactory = grainFactory;
-    }
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-        var reference = GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
-        await Leaderboard.Subscribe(reference);
+        while (true)
+        {
+            try
+            {
+                Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+                var reference = GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
+                await Leaderboard.Subscribe(reference);
+                return;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "RPO: LeaderboardObserverWorker error:");
+                await Task.Delay(1000);
+            }
+        }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

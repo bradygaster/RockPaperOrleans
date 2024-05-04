@@ -1,23 +1,30 @@
-﻿namespace RockPaperOrleans;
+﻿using Microsoft.Extensions.Logging;
 
-public class PlayerWorkerBase<TPlayer> : IHostedService where TPlayer : PlayerBase
+namespace RockPaperOrleans;
+
+public class PlayerWorkerBase<TPlayer>(TPlayer playerObserver,
+        IGrainFactory grainFactory) : IHostedService where TPlayer : PlayerBase
 {
     public IPlayerGrain? PlayerGrain { get; set; }
-    public TPlayer PlayerObserver { get; }
-    public IGrainFactory GrainFactory { get; set; }
-
-    public PlayerWorkerBase(TPlayer playerObserver,
-        IGrainFactory grainFactory)
-    {
-        PlayerObserver = playerObserver;
-        GrainFactory = grainFactory;
-    }
+    public TPlayer PlayerObserver { get; } = playerObserver;
+    public IGrainFactory GrainFactory { get; set; } = grainFactory;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        PlayerGrain = GrainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name);
-        var reference = GrainFactory.CreateObjectReference<IPlayerObserver>(PlayerObserver);
-        await PlayerGrain.SignIn(reference);
+        while (true)
+        {
+            try
+            {
+                PlayerGrain = GrainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name);
+                var reference = GrainFactory.CreateObjectReference<IPlayerObserver>(PlayerObserver);
+                await PlayerGrain.SignIn(reference);
+                return;
+            }
+            catch (Exception ex)
+            {
+                await Task.Delay(1000);
+            }
+        }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

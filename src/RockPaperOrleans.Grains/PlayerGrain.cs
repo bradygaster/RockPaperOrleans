@@ -16,7 +16,6 @@ public class PlayerGrain : Grain, IPlayerGrain
     public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
         Player.State.Name = this.GetPrimaryKeyString();
-        //Player.State.Name = this.GetGrainIdentity().PrimaryKeyString;
 
         await base.OnActivateAsync(cancellationToken);
     }
@@ -36,13 +35,12 @@ public class PlayerGrain : Grain, IPlayerGrain
 
     public async Task SignIn(IPlayerObserver observer)
     {
-        Logger.LogInformation($"Player {Player.State.Name} has signed in in to play.");
+        Logger.LogInformation($"RPO: Player {Player.State.Name} has signed in in to play.");
 
         if (observer != null)
         {
             PlayerObserver = observer;
             Player.State.IsActive = true;
-            await PlayerObserver.OnPlayerSignedIn(Player.State);
 
             var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
             await lobbyGrain.SignIn(Player.State);
@@ -55,7 +53,7 @@ public class PlayerGrain : Grain, IPlayerGrain
     {
         Player.State.IsActive = false;
 
-        Logger.LogInformation($"Player {Player.State.Name} has signed out.");
+        Logger.LogInformation($"RPO: Player {Player.State.Name} has signed out.");
 
         PlayerObserver = null;
 
@@ -69,19 +67,14 @@ public class PlayerGrain : Grain, IPlayerGrain
 
     public async Task OpponentSelected(Player opponent)
     {
-        Logger.LogInformation($"{Player.State.Name}'s opponent is {opponent.Name}.");
-        if (PlayerObserver != null)
-        {
-            await PlayerObserver.OnOpponentSelected(Player.State, opponent);
-        }
+        Logger.LogInformation($"RPO: {Player.State.Name}'s opponent is {opponent.Name}.");
     }
 
     public async Task TurnComplete(Turn turn)
     {
         if (PlayerObserver != null)
         {
-            Logger.LogInformation($"Turn complete.");
-            await PlayerObserver.OnTurnCompleted(turn);
+            Logger.LogInformation($"RPO: Turn complete.");
         }
     }
 
@@ -89,12 +82,11 @@ public class PlayerGrain : Grain, IPlayerGrain
     {
         if(PlayerObserver != null)
         {
-            Logger.LogInformation($"Recording loss for {Player.State.Name}");
+            Logger.LogInformation($"RPO: Recording loss for {Player.State.Name}");
             Player.State.TotalGamesPlayed += 1;
             Player.State.LossCount += 1;
             Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
             await Player.WriteStateAsync();
-            await PlayerObserver.OnGameLost(Player.State, opponent);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
         }
     }
@@ -103,12 +95,11 @@ public class PlayerGrain : Grain, IPlayerGrain
     {
         if (PlayerObserver != null)
         {
-            Logger.LogInformation($"Recording win for {Player.State.Name}");
+            Logger.LogInformation($"RPO: Recording win for {Player.State.Name}");
             Player.State.TotalGamesPlayed += 1;
             Player.State.WinCount += 1;
             Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
             await Player.WriteStateAsync();
-            await PlayerObserver.OnGameWon(Player.State, opponent);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
         }
     }
@@ -117,12 +108,11 @@ public class PlayerGrain : Grain, IPlayerGrain
     {
         if (PlayerObserver != null)
         {
-            Logger.LogInformation($"Recording tie for {Player.State.Name}");
+            Logger.LogInformation($"RPO: Recording tie for {Player.State.Name}");
             Player.State.TotalGamesPlayed += 1;
             Player.State.TieCount += 1;
             Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
             await Player.WriteStateAsync();
-            await PlayerObserver.OnGameTied(Player.State, opponent);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
         }
     }

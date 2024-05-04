@@ -19,10 +19,10 @@ builder.AddProject<Projects.Leaderboard>("leaderboard")
        .WithReference(orleans)
        .WithExternalHttpEndpoints();
 
-builder.AddProject<Projects.Players>("players").WithReference(orleans);
-builder.AddProject<Projects.Rando>("rando").WithReference(orleans);
-builder.AddProject<Projects.Rascals>("rascals").WithReference(orleans);
-builder.AddProject<Projects.MrPresumptive>("mrpresumptive").WithReference(orleans);
 builder.AddProject<Projects.RoundRobin>("roundrobin").WithReference(orleans);
+builder.AddProject<Projects.MrPresumptive>("mrpresumptive").WithReference(orleans);
+//builder.AddProject<Projects.Rando>("rando").WithReference(orleans);
+//builder.AddProject<Projects.Players>("players").WithReference(orleans);
+//builder.AddProject<Projects.Rascals>("rascals").WithReference(orleans);
 
 builder.Build().Run();

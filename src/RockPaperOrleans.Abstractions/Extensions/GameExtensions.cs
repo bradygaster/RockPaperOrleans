@@ -38,17 +38,17 @@ public static class GameExtensions
 
         return (rock, paper, scissors) switch
         {
-				// paper covers rock
-				{ paper: not null, rock: not null } => paper.Player,
+			// paper covers rock
+			{ paper: not null, rock: not null } => paper.Player,
 
-				// rock breaks scissors
-				{ rock: not null, scissors: not null } => rock.Player,
+			// rock breaks scissors
+			{ rock: not null, scissors: not null } => rock.Player,
 
-				// scissors cut paper
-				{ scissors: not null, paper: not null } => scissors.Player,
+			// scissors cut paper
+			{ scissors: not null, paper: not null } => scissors.Player,
 
-				// no idea how we'd ever get here
-				_ => null
-			};
+			// no idea how we'd ever get here
+			_ => null
+		};
     }
 }
