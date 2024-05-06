@@ -1,64 +1,55 @@
 ﻿using Orleans.Runtime;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 
 namespace GameController;
 
 public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) : BackgroundService
 {
-    public IGrainFactory GrainFactory { get; set; } = grainFactory;
-    public ILogger<GameEngine> Logger { get; set; } = logger;
-    public IGameGrain? CurrentGameGrain { get; set; }
-    public ILeaderboardGrain? LeaderboardGrain { get; set; }
-    public DateTime DateStarted { get; private set; }
-    public int GamesCompleted { get; set; }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-
-        var UpdateSystemStatus = async (SystemStatusUpdate update) => await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).UpdateSystemStatus(update);
-        var delay = 100;
-
+        var dateStarted = DateTime.UtcNow;
+        var uptimeStopwatch = Stopwatch.StartNew();
+        var gamesCompleted = 0;
+        var currentGameGrain = grainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
+        var delay = TimeSpan.FromMilliseconds(100);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                // start a new game if we don't have one yet
-                if (CurrentGameGrain is null)
-                {
-                    StartNewGame();
-                }
-
-                var currentGame = await CurrentGameGrain.GetGame();
+                var currentGame = await currentGameGrain.GetGame();
 
                 // Select players if they're unselected so far
                 if (currentGame.Player1 is null || currentGame.Player2 is null)
                 {
-                    await CurrentGameGrain.SelectPlayers();
+                    await currentGameGrain.SelectPlayers();
                 }
                 else
                 {
                     if (currentGame.Rounds > currentGame.Turns.Count)
                     {
-                        await CurrentGameGrain.Go();
+                        await currentGameGrain.Go();
                         await Task.Delay(delay, stoppingToken);
-                        await CurrentGameGrain.ScoreTurn();
+                        await currentGameGrain.ScoreTurn();
                     }
                     else
                     {
-                        await CurrentGameGrain.ScoreGame();
+                        await currentGameGrain.ScoreGame();
                         await Task.Delay(delay, stoppingToken);
-                        ++GamesCompleted;
-                        StartNewGame();
+                        ++gamesCompleted;
+
+                        // Start a new game.
+                        currentGameGrain = grainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
                     }
                 }
 
                 // Send a system status update
-                var grainCount = await GrainFactory.GetGrain<IManagementGrain>(0).GetTotalActivationCount();
-                await UpdateSystemStatus(new SystemStatusUpdate
+                var grainCount = await grainFactory.GetGrain<IManagementGrain>(0).GetTotalActivationCount();
+                var leaderboardGrain = grainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+                await leaderboardGrain.UpdateSystemStatus(new SystemStatusUpdate
                 {
-                    DateStarted = DateStarted,
-                    GamesCompleted = GamesCompleted,
-                    TimeUp = DateStarted - DateTime.Now,
+                    DateStarted = dateStarted,
+                    GamesCompleted = gamesCompleted,
+                    TimeUp = uptimeStopwatch.Elapsed,
                     GrainsActive = grainCount
                 });
 
@@ -66,20 +57,8 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "RPO: GameEngine error.");
+                logger.LogError(ex, "RPO: GameEngine error.");
             }
         }
-    }
-
-    [MemberNotNull(nameof(CurrentGameGrain))]
-    private void StartNewGame()
-    {
-        CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
-    }
-
-    public override Task StartAsync(CancellationToken cancellationToken)
-    {
-        DateStarted = DateTime.Now;
-        return base.StartAsync(cancellationToken);
     }
 }

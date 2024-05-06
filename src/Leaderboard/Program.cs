@@ -29,38 +29,34 @@ app.MapFallbackToPage("/_Host");
 
 app.Run();
 
-public class LeaderboardObserverWorker(ILeaderboardGrainObserver leaderboardObserver,
-        IGrainFactory grainFactory,
-        ILogger<LeaderboardObserverWorker> logger) : IHostedService
+public class LeaderboardObserverWorker(
+    ILeaderboardGrainObserver leaderboardObserver,
+    IGrainFactory grainFactory,
+    ILogger<LeaderboardObserverWorker> logger) : IHostedService
 {
-    private readonly ILogger<LeaderboardObserverWorker> logger = logger;
-    public ILeaderboardGrainObserver LeaderboardObserver { get; } = leaderboardObserver;
-    public IGrainFactory GrainFactory { get; set; } = grainFactory;
-    public ILeaderboardGrain? Leaderboard { get; private set; }
-
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         while (true)
         {
             try
             {
-                Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-                var reference = GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
-                await Leaderboard.Subscribe(reference);
+                var leaderboard = grainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+                var reference = grainFactory.CreateObjectReference<ILeaderboardGrainObserver>(leaderboardObserver);
+                await leaderboard.Subscribe(reference);
                 return;
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "RPO: LeaderboardObserverWorker error:");
-                await Task.Delay(1000);
+                logger.LogError(ex, "RPO: LeaderboardObserverWorker error.");
+                await Task.Delay(1000, cancellationToken);
             }
         }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        Leaderboard = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-        var reference = GrainFactory.CreateObjectReference<ILeaderboardGrainObserver>(LeaderboardObserver);
-        await Leaderboard.UnSubscribe(reference);
+        var leaderboard = grainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+        var reference = grainFactory.CreateObjectReference<ILeaderboardGrainObserver>(leaderboardObserver);
+        await leaderboard.UnSubscribe(reference);
     }
 }
