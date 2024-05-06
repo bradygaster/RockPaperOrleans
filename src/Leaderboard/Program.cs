@@ -32,31 +32,29 @@ app.Run();
 public class LeaderboardObserverWorker(
     ILeaderboardGrainObserver leaderboardObserver,
     IGrainFactory grainFactory,
-    ILogger<LeaderboardObserverWorker> logger) : IHostedService
+    ILogger<LeaderboardObserverWorker> logger) : BackgroundService
 {
-    public async Task StartAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (true)
+        var leaderboard = grainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+        var reference = grainFactory.CreateObjectReference<ILeaderboardGrainObserver>(leaderboardObserver);
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                var leaderboard = grainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-                var reference = grainFactory.CreateObjectReference<ILeaderboardGrainObserver>(leaderboardObserver);
                 await leaderboard.Subscribe(reference);
-                return;
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "RPO: LeaderboardObserverWorker error.");
-                await Task.Delay(1000, cancellationToken);
+                if (!stoppingToken.IsCancellationRequested)
+                {
+                    await Task.Delay(1000, stoppingToken);
+                }
             }
         }
-    }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
-    {
-        var leaderboard = grainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
-        var reference = grainFactory.CreateObjectReference<ILeaderboardGrainObserver>(leaderboardObserver);
         await leaderboard.UnSubscribe(reference);
     }
 }

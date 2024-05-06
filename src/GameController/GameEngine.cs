@@ -58,6 +58,10 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
             catch (Exception ex)
             {
                 logger.LogError(ex, "RPO: GameEngine error.");
+                if (!stoppingToken.IsCancellationRequested)
+                {
+                    await Task.Delay(delay, stoppingToken);
+                }
             }
         }
     }

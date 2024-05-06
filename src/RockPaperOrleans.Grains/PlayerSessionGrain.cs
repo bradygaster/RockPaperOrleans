@@ -28,15 +28,17 @@ public class PlayerSessionGrain(
 
     public async Task SignIn(IPlayerGrain playerGrain)
     {
-        logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", player.State.Name);
-
-        _playerGrain = playerGrain;
-        player.State.IsActive = true;
+        if (!playerGrain.Equals(_playerGrain))
+        {
+            logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", player.State.Name);
+            _playerGrain = playerGrain;
+            player.State.IsActive = true;
+            await player.WriteStateAsync();
+        }
 
         var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
         await lobbyGrain.SignIn(player.State);
         await lobbyGrain.EnterLobby(player.State);
-        await player.WriteStateAsync();
     }
 
     public async Task SignOut()
