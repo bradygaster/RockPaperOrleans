@@ -23,7 +23,7 @@ public class PlayerSessionGrain : Grain, IPlayerSessionGrain
 
     public async Task<Play> Go()
     {
-        if (PlayerGrain != null)
+        if (PlayerGrain is not null && Opponent is not null)
         {
             return await PlayerGrain.Go(Opponent);
         }
@@ -36,7 +36,7 @@ public class PlayerSessionGrain : Grain, IPlayerSessionGrain
 
     public async Task SignIn(IPlayerGrain playerGrain)
     {
-        Logger.LogInformation($"RPO: Player {Player.State.Name} has signed in in to play.");
+        Logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", Player.State.Name);
 
         PlayerGrain = playerGrain;
         Player.State.IsActive = true;
@@ -51,7 +51,7 @@ public class PlayerSessionGrain : Grain, IPlayerSessionGrain
     {
         Player.State.IsActive = false;
 
-        Logger.LogInformation($"RPO: Player {Player.State.Name} has signed out.");
+        Logger.LogInformation("RPO: Player {PlayerName} has signed out.", Player.State.Name);
 
         PlayerGrain = null;
 
@@ -63,20 +63,22 @@ public class PlayerSessionGrain : Grain, IPlayerSessionGrain
     public Task<bool> IsPlayerOnline()
         => Task.FromResult<bool>(Player.State.IsActive);
 
-    public async Task OpponentSelected(Player opponent)
+    public Task OpponentSelected(Player opponent)
     {
         Opponent = opponent;
-        Logger.LogInformation($"RPO: {Player.State.Name}'s opponent is {opponent.Name}.");
+        Logger.LogInformation("RPO: {PlayerName}'s opponent is {OpponentName}.", Player.State.Name, opponent.Name);
+        return Task.CompletedTask;
     }
 
-    public async Task TurnComplete(Turn turn)
+    public Task TurnComplete(Turn turn)
     {
         Logger.LogInformation($"RPO: Turn complete.");
+        return Task.CompletedTask;
     }
 
     public async Task RecordLoss(Player opponent)
     {
-        Logger.LogInformation($"RPO: Recording loss for {Player.State.Name}");
+        Logger.LogInformation("RPO: Recording loss for {PlayerName}", Player.State.Name);
         Player.State.TotalGamesPlayed += 1;
         Player.State.LossCount += 1;
         Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
@@ -86,7 +88,7 @@ public class PlayerSessionGrain : Grain, IPlayerSessionGrain
 
     public async Task RecordWin(Player opponent)
     {
-        Logger.LogInformation($"RPO: Recording win for {Player.State.Name}");
+        Logger.LogInformation("RPO: Recording win for {PlayerName}", Player.State.Name);
         Player.State.TotalGamesPlayed += 1;
         Player.State.WinCount += 1;
         Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
@@ -96,7 +98,7 @@ public class PlayerSessionGrain : Grain, IPlayerSessionGrain
 
     public async Task RecordTie(Player opponent)
     {
-        Logger.LogInformation($"RPO: Recording tie for {Player.State.Name}");
+        Logger.LogInformation("RPO: Recording tie for {PlayerName}", Player.State.Name);
         Player.State.TotalGamesPlayed += 1;
         Player.State.TieCount += 1;
         Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();

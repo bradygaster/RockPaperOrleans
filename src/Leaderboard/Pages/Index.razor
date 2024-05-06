@@ -274,22 +274,25 @@
             {
                 _game = game;
 
-                if (_game?.Winner == _player1?.Name)
+                if (game is not null)
                 {
-                    _player1Theme = "mud-theme-success";
-                    _player2Theme = "mud-theme-error";
-                }
+                    if (game.Winner == _player1?.Name)
+                    {
+                        _player1Theme = "mud-theme-success";
+                        _player2Theme = "mud-theme-error";
+                    }
 
-                if (_game?.Winner == _player2?.Name)
-                {
-                    _player2Theme = "mud-theme-success";
-                    _player1Theme = "mud-theme-error";
-                }
+                    if (game.Winner == _player2?.Name)
+                    {
+                        _player2Theme = "mud-theme-success";
+                        _player1Theme = "mud-theme-error";
+                    }
 
-                if (_game?.Winner != _player2?.Name && _game.Winner != _player1?.Name)
-                {
-                    _player2Theme = "mud-theme-dark";
-                    _player1Theme = "mud-theme-dark";
+                    if (game.Winner != _player2?.Name && game.Winner != _player1?.Name)
+                    {
+                        _player2Theme = "mud-theme-dark";
+                        _player1Theme = "mud-theme-dark";
+                    }
                 }
                 
                 InvokeAsync(StateHasChanged);

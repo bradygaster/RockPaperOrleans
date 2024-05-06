@@ -1,4 +1,5 @@
-﻿namespace RockPaperOrleans.Abstractions;
+﻿
+namespace RockPaperOrleans.Abstractions;
 
 [GenerateSerializer]
 public class Player
@@ -17,8 +18,9 @@ public class Player
     public int PercentWon { get; set; }
     [Id(6)]
     public bool IsActive { get; set; }
-    public override bool Equals(object? obj)
-        => this.Name.ToLower().Equals((obj as Player)?.Name);
-    public override int GetHashCode()
-        => this.Name.ToLower().GetHashCode();
+
+    public override bool Equals(object? obj) => obj is Player player &&
+               Name == player.Name;
+
+    public override int GetHashCode() => HashCode.Combine(Name);
 }

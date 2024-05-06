@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿namespace RockPaperOrleans;
 
-namespace RockPaperOrleans;
-
-public class PlayerWorkerBase<TPlayer>(IGrainFactory grainFactory) 
+public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<PlayerWorker<TPlayer>> logger) 
     : IHostedService where TPlayer : IPlayerGrain
 {
     public IPlayerSessionGrain? PlayerSessionGrain { get; set; }
@@ -17,18 +15,22 @@ public class PlayerWorkerBase<TPlayer>(IGrainFactory grainFactory)
             {
                 PlayerSessionGrain = GrainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
                 PlayerGrain = GrainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
-                await PlayerSessionGrain.SignIn(PlayerGrain);
+                await PlayerSessionGrain.SignIn(PlayerGrain).ConfigureAwait(false);
                 return;
             }
             catch (Exception ex)
             {
-                await Task.Delay(1000);
+                logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
+                await Task.Delay(1000, cancellationToken);
             }
         }
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)
     {
-        await PlayerSessionGrain.SignOut();
+        if (PlayerSessionGrain is not null)
+        {
+            await PlayerSessionGrain.SignOut().ConfigureAwait(false);
+        }
     }
 }
