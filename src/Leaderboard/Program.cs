@@ -50,7 +50,7 @@ public class LeaderboardObserverWorker(
                 if (!stoppingToken.IsCancellationRequested)
                 {
                     logger.LogError(ex, "RPO: LeaderboardObserverWorker error.");
-                    await Task.Delay(1000, stoppingToken);
+                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
                 }
             }
         }
