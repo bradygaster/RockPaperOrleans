@@ -2,5 +2,5 @@
 
 public interface IMatchmakingGrain : IGrainWithGuidKey
 {
-    Task<Tuple<Player, Player>?> ChoosePlayers();
+    Task<(Player One, Player Two)?> ChoosePlayers();
 }

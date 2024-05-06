@@ -1,108 +1,100 @@
 ﻿namespace RockPaperOrleans.Grains;
 
-public class PlayerSessionGrain : Grain, IPlayerSessionGrain
+public class PlayerSessionGrain(
+    [PersistentState("Players", storageName: "Players")] IPersistentState<Player> player,
+    ILogger<PlayerSessionGrain> logger) : Grain, IPlayerSessionGrain
 {
-    public PlayerSessionGrain([PersistentState("Players", storageName: "Players")] IPersistentState<Player> player,
-        ILogger<PlayerSessionGrain> logger)
-    {
-        Player = player;
-        Logger = logger;
-    }
-
-    private IPersistentState<Player> Player { get; set; }
-    public ILogger<PlayerSessionGrain> Logger { get; set; }
-    public Player? Opponent { get; set; }
-    public IPlayerGrain? PlayerGrain { get; set; }
+    private Player? _opponent;
+    private IPlayerGrain? _playerGrain;
 
     public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
-        Player.State.Name = this.GetPrimaryKeyString();
+        player.State.Name = this.GetPrimaryKeyString();
 
         await base.OnActivateAsync(cancellationToken);
     }
 
     public async Task<Play> Go()
     {
-        if (PlayerGrain is not null && Opponent is not null)
+        if (_playerGrain is not null && _opponent is not null)
         {
-            return await PlayerGrain.Go(Opponent);
+            return await _playerGrain.Go(_opponent);
         }
 
         return Play.Unknown;
     }
 
-    public Task<Player> Get()
-        => Task.FromResult(Player.State);
+    public Task<Player> Get() => Task.FromResult(player.State);
 
     public async Task SignIn(IPlayerGrain playerGrain)
     {
-        Logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", Player.State.Name);
+        logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", player.State.Name);
 
-        PlayerGrain = playerGrain;
-        Player.State.IsActive = true;
+        _playerGrain = playerGrain;
+        player.State.IsActive = true;
 
         var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-        await lobbyGrain.SignIn(Player.State);
-        await lobbyGrain.EnterLobby(Player.State);
-        await Player.WriteStateAsync();
+        await lobbyGrain.SignIn(player.State);
+        await lobbyGrain.EnterLobby(player.State);
+        await player.WriteStateAsync();
     }
 
     public async Task SignOut()
     {
-        Player.State.IsActive = false;
+        player.State.IsActive = false;
 
-        Logger.LogInformation("RPO: Player {PlayerName} has signed out.", Player.State.Name);
+        logger.LogInformation("RPO: Player {PlayerName} has signed out.", player.State.Name);
 
-        PlayerGrain = null;
+        _playerGrain = null;
 
         var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
-        await lobbyGrain.SignOut(Player.State);
-        await Player.WriteStateAsync();
+        await lobbyGrain.SignOut(player.State);
+        await player.WriteStateAsync();
     }
 
     public Task<bool> IsPlayerOnline()
-        => Task.FromResult<bool>(Player.State.IsActive);
+        => Task.FromResult(player.State.IsActive);
 
     public Task OpponentSelected(Player opponent)
     {
-        Opponent = opponent;
-        Logger.LogInformation("RPO: {PlayerName}'s opponent is {OpponentName}.", Player.State.Name, opponent.Name);
+        _opponent = opponent;
+        logger.LogInformation("RPO: {PlayerName}'s opponent is {OpponentName}.", player.State.Name, opponent.Name);
         return Task.CompletedTask;
     }
 
     public Task TurnComplete(Turn turn)
     {
-        Logger.LogInformation($"RPO: Turn complete.");
+        logger.LogInformation($"RPO: Turn complete.");
         return Task.CompletedTask;
     }
 
     public async Task RecordLoss(Player opponent)
     {
-        Logger.LogInformation("RPO: Recording loss for {PlayerName}", Player.State.Name);
-        Player.State.TotalGamesPlayed += 1;
-        Player.State.LossCount += 1;
-        Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
-        await Player.WriteStateAsync();
-        await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
+        logger.LogInformation("RPO: Recording loss for {PlayerName}", player.State.Name);
+        player.State.TotalGamesPlayed += 1;
+        player.State.LossCount += 1;
+        player.State.PercentWon = (int)player.State.CalculateWinPercentage();
+        await player.WriteStateAsync();
+        await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(player.State);
     }
 
     public async Task RecordWin(Player opponent)
     {
-        Logger.LogInformation("RPO: Recording win for {PlayerName}", Player.State.Name);
-        Player.State.TotalGamesPlayed += 1;
-        Player.State.WinCount += 1;
-        Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
-        await Player.WriteStateAsync();
-        await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
+        logger.LogInformation("RPO: Recording win for {PlayerName}", player.State.Name);
+        player.State.TotalGamesPlayed += 1;
+        player.State.WinCount += 1;
+        player.State.PercentWon = (int)player.State.CalculateWinPercentage();
+        await player.WriteStateAsync();
+        await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(player.State);
     }
 
     public async Task RecordTie(Player opponent)
     {
-        Logger.LogInformation("RPO: Recording tie for {PlayerName}", Player.State.Name);
-        Player.State.TotalGamesPlayed += 1;
-        Player.State.TieCount += 1;
-        Player.State.PercentWon = (int)Player.State.CalculateWinPercentage();
-        await Player.WriteStateAsync();
-        await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(Player.State);
+        logger.LogInformation("RPO: Recording tie for {PlayerName}", player.State.Name);
+        player.State.TotalGamesPlayed += 1;
+        player.State.TieCount += 1;
+        player.State.PercentWon = (int)player.State.CalculateWinPercentage();
+        await player.WriteStateAsync();
+        await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(player.State);
     }
 }

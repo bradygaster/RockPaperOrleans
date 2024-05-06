@@ -2,28 +2,17 @@
 
 public class LeaderboardGrain : Grain, ILeaderboardGrain
 {
-    public HashSet<ILeaderboardGrainObserver> Observers { get; set; } = new();
-    public IManagementGrain? ManagementGrain { get; set; }
-
-    public override Task OnActivateAsync(CancellationToken cancellationToken)
-    {
-        ManagementGrain = GrainFactory.GetGrain<IManagementGrain>(0);
-        return Task.CompletedTask;
-    }
+    private readonly HashSet<ILeaderboardGrainObserver> _observers = [];
 
     public Task Subscribe(ILeaderboardGrainObserver observer)
     {
-        if (!Observers.Contains(observer))
-        {
-            Observers.Add(observer);
-        }
-
+        _observers.Add(observer);
         return Task.CompletedTask;
     }
 
     public async Task GameStarted(Game game, Player player1, Player player2)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnGameStarted(game, player1, player2);
         }
@@ -31,7 +20,7 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public async Task TurnStarted(Turn turn, Game game)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnTurnStarted(turn, game);
         }
@@ -39,7 +28,7 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public async Task TurnCompleted(Turn turn, Game game)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnTurnCompleted(turn, game);
         }
@@ -47,7 +36,7 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public async Task TurnScored(Turn turn, Game game)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnTurnScored(turn, game);
         }
@@ -55,7 +44,7 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public async Task GameCompleted(Game game)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnGameCompleted(game);
         }
@@ -63,17 +52,13 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public Task UnSubscribe(ILeaderboardGrainObserver observer)
     {
-        if (Observers.Contains(observer))
-        {
-            Observers.Remove(observer);
-        }
-
+        _observers.Remove(observer);
         return Task.CompletedTask;
     }
 
     public async Task LobbyUpdated(List<Player> playersInLobby)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnLobbyUpdated(playersInLobby);
         }
@@ -81,16 +66,16 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public async Task PlayersOnlineUpdated(List<Player> playersOnline)
     {
-        foreach (var leaderBoardObserver in Observers)
+        playersOnline = [.. playersOnline.OrderByDescending(x => x.PercentWon)];
+        foreach (var leaderBoardObserver in _observers)
         {
-            playersOnline = playersOnline.OrderByDescending(x => x.PercentWon).ToList();
             await leaderBoardObserver.OnPlayersOnlineUpdated(playersOnline);
         }
     }
 
     public async Task PlayerScoresUpdated(Player player)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnPlayerScoresUpdated(player);
         }
@@ -98,7 +83,7 @@ public class LeaderboardGrain : Grain, ILeaderboardGrain
 
     public async Task UpdateSystemStatus(SystemStatusUpdate update)
     {
-        foreach (var leaderBoardObserver in Observers)
+        foreach (var leaderBoardObserver in _observers)
         {
             await leaderBoardObserver.OnSystemStatusUpdated(update);
         }
