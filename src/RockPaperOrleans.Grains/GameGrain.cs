@@ -48,7 +48,7 @@ public class GameGrain : Grain, IGameGrain
             // start the game
             game.Player1 = players.Item1.Name;
             game.Player2 = players.Item2.Name;
-            game.Started = DateTime.Now;
+            game.Started = DateTime.UtcNow;
             await SetGame(game);
 
             // notify the players

@@ -6,7 +6,7 @@ public class Game
     [Id(0)]
     public Guid Id { get; set; } = Guid.NewGuid();
     [Id(1)]
-    public DateTime Started { get; set; } = DateTime.Now;
+    public DateTime Started { get; set; } = DateTime.UtcNow;
     [Id(2)]
     public DateTime Ended { get; set; } = DateTime.MaxValue;
     [Id(3)]

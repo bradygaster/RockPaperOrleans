@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-
-namespace Microsoft.Extensions.Hosting;
+﻿namespace Microsoft.Extensions.Hosting;
 
 public static class SiloBuilderExtensions
 {
@@ -10,10 +8,7 @@ public static class SiloBuilderExtensions
         builder.AddKeyedAzureBlobClient("grainstorage");
         builder.UseOrleans(siloBuilder =>
         {
-            if(action != null)
-            {
-                action(siloBuilder);
-            }
+            action?.Invoke(siloBuilder);
         });
 
         return builder;
