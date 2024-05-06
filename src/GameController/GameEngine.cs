@@ -1,4 +1,5 @@
 ﻿using Orleans.Runtime;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GameController;
 
@@ -13,11 +14,6 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var StartNewGame = () =>
-        {
-            CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
-            GamesCompleted += 1;
-        };
 
         var UpdateSystemStatus = async (SystemStatusUpdate update) => await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).UpdateSystemStatus(update);
         var delay = 100;
@@ -27,12 +23,15 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
             try
             {
                 // start a new game if we don't have one yet
-                if (CurrentGameGrain == null) StartNewGame();
+                if (CurrentGameGrain is null)
+                {
+                    StartNewGame();
+                }
 
                 var currentGame = await CurrentGameGrain.GetGame();
 
-                // select players if they're unselected so far
-                if (currentGame.Player1 == null && currentGame.Player2 == null)
+                // Select players if they're unselected so far
+                if (currentGame.Player1 is null || currentGame.Player2 is null)
                 {
                     await CurrentGameGrain.SelectPlayers();
                 }
@@ -41,18 +40,19 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
                     if (currentGame.Rounds > currentGame.Turns.Count)
                     {
                         await CurrentGameGrain.Go();
-                        await Task.Delay(delay);
+                        await Task.Delay(delay, stoppingToken);
                         await CurrentGameGrain.ScoreTurn();
                     }
                     else
                     {
                         await CurrentGameGrain.ScoreGame();
-                        await Task.Delay(delay);
+                        await Task.Delay(delay, stoppingToken);
+                        ++GamesCompleted;
                         StartNewGame();
                     }
                 }
 
-                // send a system status update
+                // Send a system status update
                 var grainCount = await GrainFactory.GetGrain<IManagementGrain>(0).GetTotalActivationCount();
                 await UpdateSystemStatus(new SystemStatusUpdate
                 {
@@ -62,13 +62,19 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
                     GrainsActive = grainCount
                 });
 
-                await Task.Delay(delay);
+                await Task.Delay(delay, stoppingToken);
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "RPO: GameEngine error:");
+                Logger.LogError(ex, "RPO: GameEngine error.");
             }
         }
+    }
+
+    [MemberNotNull(nameof(CurrentGameGrain))]
+    private void StartNewGame()
+    {
+        CurrentGameGrain = GrainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)

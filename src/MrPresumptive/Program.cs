@@ -13,11 +13,11 @@ public class MrPresumptive : IPlayerGrain
 {
     public Task<Play> Go(Player opponent)
     {
-        var result = (opponent) switch
+        var result = opponent.Name switch
         {
-            Player _ when opponent.Name.ToLower().Contains("scissors") => Play.Rock,
-            Player _ when opponent.Name.ToLower().Contains("rock") => Play.Paper,
-            Player _ when opponent.Name.ToLower().Contains("paper") => Play.Scissors,
+            { } name when name.Contains("scissors", StringComparison.OrdinalIgnoreCase) => Play.Rock,
+            { } name when name.Contains("rock", StringComparison.OrdinalIgnoreCase) => Play.Paper,
+            { } name when name.Contains("paper", StringComparison.OrdinalIgnoreCase) => Play.Scissors,
             _ => (Play)Random.Shared.Next(0, 3)
         };
 

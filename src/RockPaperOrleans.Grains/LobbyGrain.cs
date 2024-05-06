@@ -23,7 +23,7 @@ public class LobbyGrain : Grain, ILobbyGrain
     {
         if (!PlayersSignedIn.State.Any(x => x.Name == player.Name))
         {
-            Logger.LogInformation($"RPO: {player.Name} has entered the game.");
+            Logger.LogInformation("RPO: {PlayerName} has entered the game.", player.Name);
             PlayersSignedIn.State.Add(player);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayersOnlineUpdated(PlayersSignedIn.State);
         }
@@ -33,7 +33,7 @@ public class LobbyGrain : Grain, ILobbyGrain
     {
         if (!PlayersInLobby.State.Any(x => x.Name == player.Name))
         {
-            Logger.LogInformation($"RPO: {player.Name} has entered the lobby.");
+            Logger.LogInformation("RPO: {PlayerName} has entered the lobby.", player.Name);
             PlayersInLobby.State.Add(player);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(PlayersInLobby.State);
 
@@ -46,7 +46,7 @@ public class LobbyGrain : Grain, ILobbyGrain
     {
         if (PlayersInLobby.State.Any(x => x.Name == player.Name))
         {
-            Logger.LogInformation($"RPO: {player.Name} has left the lobby and entered the game.");
+            Logger.LogInformation("RPO: {PlayerName} has left the lobby and entered the game.", player.Name);
             PlayersInLobby.State.RemoveAll(x => x.Name == player.Name);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(PlayersInLobby.State);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayersOnlineUpdated(PlayersSignedIn.State);
@@ -57,14 +57,14 @@ public class LobbyGrain : Grain, ILobbyGrain
     {
         if (PlayersInLobby.State.Any(x => x.Name == player.Name))
         {
-            Logger.LogInformation($"RPO: {player.Name} has left the lobby.");
+            Logger.LogInformation("RPO: {PlayerName} has left the lobby.", player.Name);
             PlayersInLobby.State.RemoveAll(x => x.Name == player.Name);
             await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(PlayersInLobby.State);
         }
 
         if (PlayersSignedIn.State.Any(x => x.Name == player.Name))
         {
-            Logger.LogInformation($"RPO: {player.Name} has left the game.");
+            Logger.LogInformation("RPO: {PlayerName} has left the game.", player.Name);
             PlayersSignedIn.State.RemoveAll(x => x.Name == player.Name);
         }
 

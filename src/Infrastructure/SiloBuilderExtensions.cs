@@ -23,7 +23,7 @@ public static class SiloBuilderExtensions
     {
         builder.ConfigureServices(services =>
         {
-            services.AddHostedService<PlayerWorkerBase<TPlayer>>();
+            services.AddHostedService<PlayerWorker<TPlayer>>();
         });
 
         return builder;
