@@ -47,9 +47,9 @@ public class LeaderboardObserverWorker(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "RPO: LeaderboardObserverWorker error.");
                 if (!stoppingToken.IsCancellationRequested)
                 {
+                    logger.LogError(ex, "RPO: LeaderboardObserverWorker error.");
                     await Task.Delay(1000, stoppingToken);
                 }
             }

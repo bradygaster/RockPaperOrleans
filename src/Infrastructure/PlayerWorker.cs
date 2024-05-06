@@ -16,9 +16,9 @@ public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<Pl
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
                 if (!stoppingToken.IsCancellationRequested)
                 {
+                    logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
                     await Task.Delay(1000, stoppingToken);
                 }
             }
