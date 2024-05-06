@@ -6,7 +6,7 @@ public static class GameExtensions
     {
         try
         {
-            double pct = (double)player.WinCount / (double)player.TotalGamesPlayed;
+            double pct = player.WinCount / (double)player.TotalGamesPlayed;
             return Math.Round(pct * 100, 0);
         }
         catch
