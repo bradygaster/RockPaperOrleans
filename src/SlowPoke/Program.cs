@@ -14,7 +14,7 @@ public class SlowPoke : IPlayerGrain
     public async Task<Play> Go(Player opponent)
     {
         // Simulate a slow player
-        await Task.Delay(Random.Shared.Next(500, 3000));
+        await Task.Delay(Random.Shared.Next(500, 1500));
         return (Play)Random.Shared.Next(0, 3);
     }
 }

@@ -11,7 +11,7 @@ public class GameEngine(IGrainFactory grainFactory, ILogger<GameEngine> logger) 
         var uptimeStopwatch = Stopwatch.StartNew();
         var gamesCompleted = 0;
         var currentGameGrain = grainFactory.GetGrain<IGameGrain>(Guid.NewGuid());
-        var delay = TimeSpan.FromMilliseconds(100);
+        var delay = TimeSpan.FromMilliseconds(256);
         while (!stoppingToken.IsCancellationRequested)
         {
             try
