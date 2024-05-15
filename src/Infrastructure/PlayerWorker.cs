@@ -21,7 +21,7 @@ public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<Pl
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
+                logger.LogWarning(ex, "Error registering player {PlayerType}. Game Engine may not be up yet. Trying again in 1 second.", typeof(TPlayer));
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
