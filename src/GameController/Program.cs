@@ -1,15 +1,14 @@
-using GameController;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
 builder.AddRockPaperOrleans();
-
-builder.Services.AddHostedService<GameEngine>();
+builder.AddApplicationComponents();
 
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
+app.AddSwaggerDuringDevelopment();
+app.MapGameControllerEndpoints();
 
 app.Run();
 

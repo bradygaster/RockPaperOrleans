@@ -1,32 +1,40 @@
 ﻿namespace RockPaperOrleans;
 
-public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<PlayerWorker<TPlayer>> logger) 
+public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<PlayerWorker<TPlayer>> logger)
     : BackgroundService where TPlayer : IPlayerGrain
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var playerSessionGrain = grainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
-        var playerGrain = grainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            try
+            var playerSessionGrain = grainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
+            var playerGrain = grainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
+            while (!stoppingToken.IsCancellationRequested)
             {
-                await playerSessionGrain.SignIn(playerGrain).ConfigureAwait(false);
-                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-            }
-            catch (Exception ex)
-            {
-                if (!stoppingToken.IsCancellationRequested)
+                try
                 {
-                    logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
-                    await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                    await playerSessionGrain.SignIn(playerGrain).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
+                }
+                catch (Exception ex)
+                {
+                    if (!stoppingToken.IsCancellationRequested)
+                    {
+                        logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
+                        await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
+                    }
                 }
             }
-        }
 
-        if (playerSessionGrain is not null)
+            if (playerSessionGrain is not null)
+            {
+                await playerSessionGrain.SignOut().ConfigureAwait(false);
+            }
+        }
+        catch
         {
-            await playerSessionGrain.SignOut().ConfigureAwait(false);
+            await Task.Delay(1000);
+            await ExecuteAsync(stoppingToken).ConfigureAwait(false);
         }
     }
 }
