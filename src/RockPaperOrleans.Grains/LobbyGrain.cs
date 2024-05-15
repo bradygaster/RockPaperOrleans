@@ -1,88 +1,84 @@
-﻿using Microsoft.Extensions.Logging;
-using Orleans;
-using Orleans.Runtime;
-using RockPaperOrleans.Abstractions;
+﻿namespace RockPaperOrleans.Grains;
 
-namespace RockPaperOrleans.Grains
+public class LobbyGrain : Grain, ILobbyGrain
 {
-    public class LobbyGrain : Grain, ILobbyGrain
+    private readonly IPersistentState<List<Player>> _playersInLobby;
+    private readonly IPersistentState<List<Player>> _playersSignedIn;
+    private readonly ILogger<LobbyGrain> _logger;
+    private readonly ILeaderboardGrain _leaderboardGrain;
+
+    public LobbyGrain(
+        [PersistentState("InLobby", storageName: "Lobby")] IPersistentState<List<Player>> playersInLobby, 
+        [PersistentState("SignedIn", storageName: "Lobby")] IPersistentState<List<Player>> playersSignedIn,
+        ILogger<LobbyGrain> logger)
     {
-        private IPersistentState<List<Player>> PlayersInLobby { get; set; }
-        private IPersistentState<List<Player>> PlayersSignedIn { get; set; }
-        public ILogger<LobbyGrain> Logger { get; set; }
+        _playersInLobby = playersInLobby;
+        _playersSignedIn = playersSignedIn;
+        _logger = logger;
+        _leaderboardGrain = GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty);
+    }
 
-        public LobbyGrain(
-            [PersistentState(nameof(LobbyGrain))] IPersistentState<List<Player>> playersInLobby, 
-            [PersistentState(nameof(LobbyGrain))] IPersistentState<List<Player>> playersSignedIn,
-            ILogger<LobbyGrain> logger)
+    public Task<List<Player>> GetPlayersInLobby() 
+        => Task.FromResult(_playersInLobby.State);
+
+    public async Task SignIn(Player player)
+    {
+        if (!_playersSignedIn.State.Any(x => x.Name == player.Name))
         {
-            PlayersInLobby = playersInLobby;
-            PlayersSignedIn = playersSignedIn;
-            Logger = logger;
+            _logger.LogInformation("RPO: {PlayerName} has entered the game.", player.Name);
+            _playersSignedIn.State.Add(player);
+            await _leaderboardGrain.PlayersOnlineUpdated(_playersSignedIn.State);
+        }
+    }
+
+    public async Task EnterLobby(Player player)
+    {
+        if (!_playersInLobby.State.Any(x => x.Name == player.Name))
+        {
+            _logger.LogInformation("RPO: {PlayerName} has entered the lobby.", player.Name);
+            _playersInLobby.State.Add(player);
+            await _leaderboardGrain.LobbyUpdated(_playersInLobby.State);
+
+            UpdatePlayerLeaderboardRecord(player);
+            await _leaderboardGrain.PlayersOnlineUpdated(_playersSignedIn.State);
+        }
+    }
+
+    public async Task EnterGame(Player player)
+    {
+        if (_playersInLobby.State.Any(x => x.Name == player.Name))
+        {
+            _logger.LogInformation("RPO: {PlayerName} has left the lobby and entered the game.", player.Name);
+            _playersInLobby.State.RemoveAll(x => x.Name == player.Name);
+            await _leaderboardGrain.LobbyUpdated(_playersInLobby.State);
+            await _leaderboardGrain.PlayersOnlineUpdated(_playersSignedIn.State);
+        }
+    }
+
+    public async Task SignOut(Player player)
+    {
+        if (_playersInLobby.State.Any(x => x.Name == player.Name))
+        {
+            _logger.LogInformation("RPO: {PlayerName} has left the lobby.", player.Name);
+            _playersInLobby.State.RemoveAll(x => x.Name == player.Name);
+            await _leaderboardGrain.LobbyUpdated(_playersInLobby.State);
         }
 
-        public Task<List<Player>> GetPlayersInLobby() 
-            => Task.FromResult(PlayersInLobby.State);
-
-        public async Task SignIn(Player player)
+        if (_playersSignedIn.State.Any(x => x.Name == player.Name))
         {
-            if (!PlayersSignedIn.State.Any(x => x.Name == player.Name))
-            {
-                Logger.LogInformation($"{player.Name} has entered the game.");
-                PlayersSignedIn.State.Add(player);
-                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayersOnlineUpdated(PlayersSignedIn.State);
-            }
+            _logger.LogInformation("RPO: {PlayerName} has left the game.", player.Name);
+            _playersSignedIn.State.RemoveAll(x => x.Name == player.Name);
         }
 
-        public async Task EnterLobby(Player player)
+        await _leaderboardGrain.PlayersOnlineUpdated(_playersSignedIn.State);
+    }
+
+    private void UpdatePlayerLeaderboardRecord(Player player)
+    {
+        if (_playersSignedIn.State.Any(x => x.Name == player.Name))
         {
-            if (!PlayersInLobby.State.Any(x => x.Name == player.Name))
-            {
-                Logger.LogInformation($"{player.Name} has entered the lobby.");
-                PlayersInLobby.State.Add(player);
-                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(PlayersInLobby.State);
-
-                UpdatePlayerLeaderboardRecord(player);
-                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayersOnlineUpdated(PlayersSignedIn.State);
-            }
-        }
-
-        public async Task EnterGame(Player player)
-        {
-            if (PlayersInLobby.State.Any(x => x.Name == player.Name))
-            {
-                Logger.LogInformation($"{player.Name} has left the lobby.");
-                PlayersInLobby.State.RemoveAll(x => x.Name == player.Name);
-                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(PlayersInLobby.State);
-                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayersOnlineUpdated(PlayersSignedIn.State);
-            }
-        }
-
-        public async Task SignOut(Player player)
-        {
-            if (PlayersInLobby.State.Any(x => x.Name == player.Name))
-            {
-                Logger.LogInformation($"{player.Name} has left the lobby.");
-                PlayersInLobby.State.RemoveAll(x => x.Name == player.Name);
-                await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).LobbyUpdated(PlayersInLobby.State);
-            }
-
-            if (PlayersSignedIn.State.Any(x => x.Name == player.Name))
-            {
-                Logger.LogInformation($"{player.Name} has left the game.");
-                PlayersSignedIn.State.RemoveAll(x => x.Name == player.Name);
-            }
-
-            await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayersOnlineUpdated(PlayersSignedIn.State);
-        }
-
-        private void UpdatePlayerLeaderboardRecord(Player player)
-        {
-            if (PlayersSignedIn.State.Any(x => x.Name == player.Name))
-            {
-                PlayersSignedIn.State.RemoveAll(x => x.Name == player.Name);
-                PlayersSignedIn.State.Add(player);
-            }
+            _playersSignedIn.State.RemoveAll(x => x.Name == player.Name);
+            _playersSignedIn.State.Add(player);
         }
     }
 }

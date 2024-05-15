@@ -15,7 +15,7 @@
                 {
                     <MudItem xs="12">
                         <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2">
-                            <MudText Typo="Typo.h3" Class="banger">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
+                            <MudText Typo="Typo.h4" Class="luckyGuy">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
                         </MudPaper>
                     </MudItem>
                 }
@@ -147,6 +147,63 @@
                     </MudItem>
                 }
 
+
+                <MudItem xs="6">
+                    <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1">
+                        <MudStack Class="align-center">
+                            <MudText Typo="Typo.h4" Class="luckyGuy">Grain Count : @_latestUpdate?.GrainsActive.ToString("N0")</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1">
+                        <MudStack Class="align-center">
+                            <MudText Typo="Typo.h4" Class="luckyGuy">Server Statistics</MudText>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6">
+                    <MudPaper Elevation="0">
+                        <MudCard Elevation="1">
+                            <MudCardContent>
+                                <MudChart ChartType="ChartType.Line"
+                                          Class="my-0 pa-0"
+                                          ChartSeries="@Series"
+                                          Width="100%"
+                                          Height="100%"
+                                          ChartOptions="@_options"></MudChart>
+                            </MudCardContent>
+                        </MudCard>
+                    </MudPaper>
+                </MudItem>
+
+                <MudItem xs="6">
+                    @if (_latestUpdate != null)
+                    {
+                        <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
+                            <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
+                                <MudText Typo="Typo.h5" Class="d-block pathway">Started</MudText>
+                            </MudPaper>
+                            <MudChip Text="@($"{@_latestUpdate.DateStarted}")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
+                        </MudPaper>
+
+                        <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
+                            <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
+                                <MudText Typo="Typo.h5" Class="d-block pathway">Uptime</MudText>
+                            </MudPaper>
+                            <MudChip Text="@_latestUpdate.TimeUp.ToString("hh\\:mm\\:ss")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
+                        </MudPaper>
+
+                        <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
+                            <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
+                                <MudText Typo="Typo.h5" Class="d-block pathway">Games completed</MudText>
+                            </MudPaper>
+                            <MudChip Text="@_latestUpdate.GamesCompleted.ToString("N0")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
+                        </MudPaper>
+                    }
+                </MudItem>
             </MudGrid>
         </MudItem>
 
@@ -162,51 +219,6 @@
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
                         <MudText Typo="Typo.h5" Class="luckyGuy">@player.Name</MudText>
                     </MudPaper>
-                </MudPaper>
-            }
-
-            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2 mt-5 mb-2">
-                <MudText Typo="Typo.h4" Class="banger">Grain Count : @_latestUpdate?.GrainsActive.ToString("N0")</MudText>
-            </MudPaper>
-
-            <MudPaper Elevation="0">
-                <MudCard Elevation="1">
-                    <MudCardContent>
-                        <MudChart ChartType="ChartType.Line"
-                              Class="my-0 pa-0"
-                              ChartSeries="@Series"
-                              Width="100%"
-                              Height="100%"
-                              ChartOptions="@_options"></MudChart>
-                    </MudCardContent>
-                </MudCard>
-            </MudPaper>
-
-            <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2 mt-5 mb-2">
-                <MudText Typo="Typo.h4" Class="banger">Server Statistics</MudText>
-            </MudPaper>
-
-            @if (_latestUpdate != null)
-            {
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
-                    <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.h5" Class="d-block pathway">Started</MudText>
-                    </MudPaper>
-                    <MudChip Text="@($"{@_latestUpdate.DateStarted}")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
-                </MudPaper>
-
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
-                    <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.h5" Class="d-block pathway">Uptime</MudText>
-                    </MudPaper>
-                    <MudChip Text="@_latestUpdate.TimeUp.ToString("hh\\:mm\\:ss")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
-                </MudPaper>
-
-                <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
-                    <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.h5" Class="d-block pathway">Games completed</MudText>
-                    </MudPaper>
-                    <MudChip Text="@_latestUpdate.GamesCompleted.ToString("N0")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                 </MudPaper>
             }
         </MudItem>
@@ -260,45 +272,48 @@
                 _game = game;
                 _player1 = player1;
                 _player2 = player2;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<Turn, Game>("OnTurnScored", (turn, game) =>
             {
                 _turn = turn;
                 _game = game;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<Game>("OnGameCompleted", (game) =>
             {
                 _game = game;
 
-                if (_game?.Winner == _player1?.Name)
+                if (game is not null)
                 {
-                    _player1Theme = "mud-theme-success";
-                    _player2Theme = "mud-theme-error";
-                }
+                    if (game.Winner == _player1?.Name)
+                    {
+                        _player1Theme = "mud-theme-success";
+                        _player2Theme = "mud-theme-error";
+                    }
 
-                if (_game?.Winner == _player2?.Name)
-                {
-                    _player2Theme = "mud-theme-success";
-                    _player1Theme = "mud-theme-error";
-                }
+                    if (game.Winner == _player2?.Name)
+                    {
+                        _player2Theme = "mud-theme-success";
+                        _player1Theme = "mud-theme-error";
+                    }
 
-                if (_game?.Winner != _player2?.Name && _game.Winner != _player1?.Name)
-                {
-                    _player2Theme = "mud-theme-dark";
-                    _player1Theme = "mud-theme-dark";
+                    if (game.Winner != _player2?.Name && game.Winner != _player1?.Name)
+                    {
+                        _player2Theme = "mud-theme-dark";
+                        _player1Theme = "mud-theme-dark";
+                    }
                 }
-
-                StateHasChanged();
+                
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<List<Player>>("OnPlayersOnlineUpdated", (playersOnline) =>
             {
                 _playersOnline = playersOnline;
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
             });
 
             hubConnection.On<SystemStatusUpdate>("OnSystemStatusUpdated", (update) =>
@@ -306,11 +321,12 @@
                 _latestUpdate = update;
                 _data.RemoveAt(0);
                 _data.Add(update.GrainsActive);
-                Series = new List<ChartSeries>()
-                            {
-                new() { Name = "Grain Count", Data = _data.ToArray() }
-                            };
-                StateHasChanged();
+
+                Series = new List<ChartSeries>() {
+                    new() { Name = "Grain Count", Data = _data.ToArray() }
+                };
+
+                InvokeAsync(StateHasChanged);
             });
 
             await hubConnection.StartAsync();

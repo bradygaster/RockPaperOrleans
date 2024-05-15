@@ -1,0 +1,77 @@
+location: {{ .Env.AZURE_LOCATION }}
+identity:
+  type: UserAssigned
+  userAssignedIdentities:
+    ? "{{ .Env.AZURE_CONTAINER_REGISTRY_MANAGED_IDENTITY_ID }}"
+    : {}
+properties:
+  environmentId: {{ .Env.AZURE_CONTAINER_APPS_ENVIRONMENT_ID }}
+  configuration:
+    activeRevisionsMode: single
+    ingress:
+      additionalPortMappings:
+        - targetPort: 8009
+          external: false
+      external: false
+      targetPort: {{ targetPortOrDefault 8008 }}
+      transport: tcp
+      allowInsecure: false
+    registries:
+      - server: {{ .Env.AZURE_CONTAINER_REGISTRY_ENDPOINT }}
+        identity: {{ .Env.AZURE_CONTAINER_REGISTRY_MANAGED_IDENTITY_ID }}
+    secrets:
+      - name: connectionstrings--clustering
+        value: '{{ .Env.STORAGE_TABLEENDPOINT }}'
+      - name: connectionstrings--grainstorage
+        value: '{{ .Env.STORAGE_BLOBENDPOINT }}'
+  template:
+    containers:
+      - image: {{ .Image }}
+        name: rascals
+        env:
+          - name: AZURE_CLIENT_ID
+            value: {{ .Env.MANAGED_IDENTITY_CLIENT_ID }}
+          - name: ASPNETCORE_FORWARDEDHEADERS_ENABLED
+            value: "true"
+          - name: OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EVENT_LOG_ATTRIBUTES
+            value: "true"
+          - name: OTEL_DOTNET_EXPERIMENTAL_OTLP_EMIT_EXCEPTION_LOG_ATTRIBUTES
+            value: "true"
+          - name: OTEL_DOTNET_EXPERIMENTAL_OTLP_RETRY
+            value: in_memory
+          - name: Orleans__ClusterId
+            value: '{{ parameter "orleans_cluster_cluster_id" }}'
+          - name: Orleans__Clustering__ProviderType
+            value: AzureTableStorage
+          - name: Orleans__Clustering__ServiceKey
+            value: clustering
+          - name: Orleans__EnableDistributedTracing
+            value: "true"
+          - name: Orleans__Endpoints__GatewayPort
+            value: "8009"
+          - name: Orleans__Endpoints__SiloPort
+            value: "8008"
+          - name: Orleans__GrainStorage__Games__ProviderType
+            value: AzureBlobStorage
+          - name: Orleans__GrainStorage__Games__ServiceKey
+            value: grainstorage
+          - name: Orleans__GrainStorage__Lobby__ProviderType
+            value: AzureBlobStorage
+          - name: Orleans__GrainStorage__Lobby__ServiceKey
+            value: grainstorage
+          - name: Orleans__GrainStorage__Players__ProviderType
+            value: AzureBlobStorage
+          - name: Orleans__GrainStorage__Players__ServiceKey
+            value: grainstorage
+          - name: Orleans__ServiceId
+            value: '{{ parameter "orleans_cluster_service_id" }}'
+          - name: ConnectionStrings__clustering
+            secretRef: connectionstrings--clustering
+          - name: ConnectionStrings__grainstorage
+            secretRef: connectionstrings--grainstorage
+    scale:
+      minReplicas: 1
+      maxReplicas: 1
+tags:
+  azd-service-name: rascals
+  aspire-resource-name: rascals

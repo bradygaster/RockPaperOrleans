@@ -1,45 +1,29 @@
-using RockPaperOrleans;
-using RockPaperOrleans.Abstractions;
+var builder = WebApplication.CreateBuilder(args);
 
-await Task.Delay(20000); // for debugging, give the silo time to warm up
+builder.AddServiceDefaults();
 
-IHost host = Host.CreateDefaultBuilder(args)
-    .UseOrleans((context, siloBuilder) =>
-    {
-        siloBuilder
-            .PlayRockPaperOrleans(context.Configuration)
-            .EnlistPlayer<AlwaysPaper>()
-            .EnlistPlayer<AlwaysRock>()
-            .EnlistPlayer<AlwaysScissors>();
-    })
-    .ConfigureServices((services) =>
-    {
-        services.AddWorkerAppApplicationInsights("Players Silo");
-    })
-    .Build();
+builder.AddRockPaperOrleans(siloBuilder => 
+    siloBuilder.AddPlayer<AlwaysPaper>()
+               .AddPlayer<AlwaysRock>()
+               .AddPlayer<AlwaysScissors>());
 
-await host.RunAsync();
+var app = builder.Build();
 
-public class AlwaysPaper : PlayerBase
+app.MapDefaultEndpoints();
+
+app.Run();
+
+public class AlwaysPaper : IPlayerGrain
 {
-    public AlwaysPaper(ILogger<AlwaysPaper> logger) : base(logger) { }
-
-    public override Task<Play> Go()
-        => Task.FromResult(Play.Paper);
+    public Task<Play> Go(Player opponent) => Task.FromResult(Play.Paper);
 }
 
-public class AlwaysRock : PlayerBase
+public class AlwaysRock : IPlayerGrain
 {
-    public AlwaysRock(ILogger<AlwaysRock> logger) : base(logger) { }
-
-    public override Task<Play> Go()
-        => Task.FromResult(Play.Rock);
+    public Task<Play> Go(Player opponent) => Task.FromResult(Play.Rock);
 }
 
-public class AlwaysScissors : PlayerBase
+public class AlwaysScissors : IPlayerGrain
 {
-    public AlwaysScissors(ILogger<AlwaysScissors> logger) : base(logger) { }
-
-    public override Task<Play> Go()
-        => Task.FromResult(Play.Scissors);
+    public Task<Play> Go(Player opponent) => Task.FromResult(Play.Scissors);
 }

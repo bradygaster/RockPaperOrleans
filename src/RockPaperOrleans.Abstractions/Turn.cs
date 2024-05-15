@@ -1,9 +1,10 @@
-﻿namespace RockPaperOrleans.Abstractions
+﻿namespace RockPaperOrleans.Abstractions;
+
+[GenerateSerializer]
+public class Turn
 {
-    [Serializable]
-    public class Turn
-    {
-        public List<Throw> Throws { get; set; } = new();
-        public string? Winner { get; set; }
-    }
+    [Id(0)]
+    public List<Throw> Throws { get; set; } = new();
+    [Id(1)]
+    public string? Winner { get; set; }
 }
