@@ -64,10 +64,14 @@ public class PlayerSessionGrain(
         return Task.CompletedTask;
     }
 
-    public Task TurnComplete(Turn turn)
+    public async Task TurnComplete(Turn turn)
     {
         logger.LogInformation($"RPO: Turn complete.");
-        return Task.CompletedTask;
+        
+        if(_playerGrain is not null)
+        {
+            await _playerGrain.OnTurnCompleted(turn);
+        }
     }
 
     public async Task RecordLoss(Player opponent)

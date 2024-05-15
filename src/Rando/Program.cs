@@ -9,7 +9,7 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class Rando : IPlayerGrain
+public class Rando : BasePlayerGrain
 {
-    public Task<Play> Go(Player opponent) => Task.FromResult((Play)Random.Shared.Next(0, 3));
+    public override Task<Play> Go(Player opponent) => Task.FromResult((Play)Random.Shared.Next(0, 3));
 }

@@ -9,9 +9,9 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class MrPresumptive : IPlayerGrain
+public class MrPresumptive : BasePlayerGrain
 {
-    public Task<Play> Go(Player opponent)
+    public override Task<Play> Go(Player opponent)
     {
         var result = opponent.Name switch
         {

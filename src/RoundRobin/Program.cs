@@ -9,12 +9,12 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class RoundRobin : IPlayerGrain
+public class RoundRobin : BasePlayerGrain
 {
     private static readonly Play[] availablePlays = [Play.Paper, Play.Rock, Play.Scissors];
     private static int index = -1;
 
-    public Task<Play> Go(Player opponent)
+    public override Task<Play> Go(Player opponent)
     {
         index = (index + 1) % availablePlays.Length;
         return Task.FromResult(availablePlays[index]);

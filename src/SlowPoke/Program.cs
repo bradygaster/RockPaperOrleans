@@ -9,9 +9,9 @@ app.MapDefaultEndpoints();
 
 app.Run();
 
-public class SlowPoke : IPlayerGrain
+public class SlowPoke : BasePlayerGrain
 {
-    public async Task<Play> Go(Player opponent)
+    public override async Task<Play> Go(Player opponent)
     {
         // Simulate a slow player
         await Task.Delay(Random.Shared.Next(500, 1500));
