@@ -4,8 +4,8 @@ public static class SiloBuilderExtensions
 {
     public static WebApplicationBuilder AddRockPaperOrleans(this WebApplicationBuilder builder, Action<ISiloBuilder>? action = null)
     {
-        builder.AddKeyedAzureTableClient("clustering");
-        builder.AddKeyedAzureBlobClient("grainstorage");
+        builder.AddKeyedAzureTableClient("clustering", _ => _.DisableTracing = true);
+        builder.AddKeyedAzureBlobClient("grainstorage", _ => _.DisableTracing = true);
         builder.UseOrleans(siloBuilder =>
         {
             action?.Invoke(siloBuilder);
