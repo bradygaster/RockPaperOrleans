@@ -1,40 +1,37 @@
 ﻿namespace RockPaperOrleans;
 
 public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<PlayerWorker<TPlayer>> logger)
-    : BackgroundService where TPlayer : IPlayerGrain
+    : IHostedService where TPlayer : IPlayerGrain
 {
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        try
-        {
-            var playerSessionGrain = grainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
-            var playerGrain = grainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                try
-                {
-                    await playerSessionGrain.SignIn(playerGrain).ConfigureAwait(false);
-                    await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-                }
-                catch (Exception ex)
-                {
-                    if (!stoppingToken.IsCancellationRequested)
-                    {
-                        logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
-                        await Task.Delay(TimeSpan.FromSeconds(1), stoppingToken);
-                    }
-                }
-            }
+    private IPlayerSessionGrain playerSessionGrain;
+    private IPlayerGrain playerGrain;
 
-            if (playerSessionGrain is not null)
+    public async Task StartAsync(CancellationToken cancellationToken)
+    {
+        bool keepTrying = true;
+
+        while(keepTrying)
+        {
+            try
             {
-                await playerSessionGrain.SignOut().ConfigureAwait(false);
+                playerSessionGrain = grainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
+                playerGrain = grainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
+                await playerSessionGrain.SignIn(playerGrain).ConfigureAwait(false);
+                keepTrying = false;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error registering player {PlayerType}.", typeof(TPlayer));
+                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
-        catch
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        if (playerSessionGrain is not null)
         {
-            await Task.Delay(1000);
-            await ExecuteAsync(stoppingToken).ConfigureAwait(false);
+            await playerSessionGrain.SignOut().ConfigureAwait(false);
         }
     }
 }
