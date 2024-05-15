@@ -58,7 +58,8 @@ namespace Microsoft.Extensions.Hosting
                     tracing.AddAspNetCoreInstrumentation()
                            .AddHttpClientInstrumentation()
                            .AddSource("Microsoft.Orleans.Application")
-                           .AddSource("Microsoft.Orleans.Runtime");
+                           //.AddSource("Microsoft.Orleans.Runtime")
+                           ;
                 });
 
             builder.AddOpenTelemetryExporters();
