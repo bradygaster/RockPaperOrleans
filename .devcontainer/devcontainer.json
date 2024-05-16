@@ -13,21 +13,24 @@
         "ghcr.io/devcontainers/features/docker-from-docker:1": {
             "version": "20.10"
         },
-        "ghcr.io/devcontainers/features/dotnet:1": {
-            "version": "6.0"
+        "ghcr.io/devcontainers/features/dotnet:2.0.5": {
+            "version": "8.0"
         },
         "ghcr.io/devcontainers/features/github-cli:1": {
             "version": "2"
         }
     },
-    "extensions": [
-        "ms-azuretools.azure-dev",
-        "ms-azuretools.vscode-bicep",
-        "ms-azuretools.vscode-docker",
-        "ms-dotnettools.csharp",
-        "ms-dotnettools.vscode-dotnet-runtime",
-        "ms-azuretools.vscode-azurefunctions"
-    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.azure-dev",
+                "ms-azuretools.vscode-bicep",
+                "ms-azuretools.vscode-docker",
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.vscode-dotnet-runtime"
+            ]
+        }
+    },
     "postCreateCommand": "",
     "remoteUser": "vscode"
 }
