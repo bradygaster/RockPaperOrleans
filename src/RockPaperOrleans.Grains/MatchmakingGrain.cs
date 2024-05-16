@@ -14,7 +14,10 @@ public class MatchmakingGrain(ILogger<MatchmakingGrain> logger) : Grain, IMatchm
             return default;
         }
 
-        var players = Random.Shared.GetItems(lobby.ToArray(), 2);
+        var pickPlayers = new Func<Player[]>(() => Random.Shared.GetItems(lobby.ToArray(), 2));
+
+        var players = pickPlayers();
+        while (players[0].Name == players[1].Name) players = pickPlayers();
 
         await lobbyGrain.EnterGame(players[0]);
         await lobbyGrain.EnterGame(players[1]);
