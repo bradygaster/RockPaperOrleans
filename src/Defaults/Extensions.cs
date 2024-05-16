@@ -56,7 +56,7 @@ namespace Microsoft.Extensions.Hosting
                 .WithTracing(tracing =>
                 {
                     tracing.AddAspNetCoreInstrumentation()
-                           .AddHttpClientInstrumentation()
+                           //.AddHttpClientInstrumentation()
                            .AddSource("Microsoft.Orleans.Application")
                            //.AddSource("Microsoft.Orleans.Runtime")
                            ;
