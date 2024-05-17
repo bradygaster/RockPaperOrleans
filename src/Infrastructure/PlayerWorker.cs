@@ -1,16 +1,18 @@
-﻿namespace RockPaperOrleans;
+﻿using System.Threading;
+
+namespace RockPaperOrleans;
 
 public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<PlayerWorker<TPlayer>> logger)
-    : IHostedService where TPlayer : IPlayerGrain
+    : BackgroundService where TPlayer : IPlayerGrain
 {
     private IPlayerSessionGrain playerSessionGrain;
     private IPlayerGrain playerGrain;
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    private async Task SignPlayerIn(CancellationToken cancellationToken)
     {
         bool keepTrying = true;
 
-        while(keepTrying)
+        while (keepTrying)
         {
             try
             {
@@ -27,11 +29,25 @@ public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<Pl
         }
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (playerSessionGrain is not null)
+        while (!stoppingToken.IsCancellationRequested)
         {
-            await playerSessionGrain.SignOut().ConfigureAwait(false);
+            if (playerSessionGrain == null)
+            {
+                await SignPlayerIn(stoppingToken);
+            }
+            else
+            {
+                var isPlayerOnline = await playerSessionGrain.IsPlayerOnline();
+
+                if (!isPlayerOnline)
+                {
+                    await SignPlayerIn(stoppingToken);
+                }
+            }
+
+            await Task.Delay(TimeSpan.FromMinutes(1));
         }
     }
 }
