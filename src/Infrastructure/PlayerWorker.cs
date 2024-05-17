@@ -1,12 +1,9 @@
-﻿using System.Threading;
-
-namespace RockPaperOrleans;
+﻿namespace RockPaperOrleans;
 
 public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<PlayerWorker<TPlayer>> logger)
     : BackgroundService where TPlayer : IPlayerGrain
 {
     private IPlayerSessionGrain playerSessionGrain;
-    private IPlayerGrain playerGrain;
 
     private async Task SignPlayerIn(CancellationToken cancellationToken)
     {
@@ -17,8 +14,7 @@ public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<Pl
             try
             {
                 playerSessionGrain = grainFactory.GetGrain<IPlayerSessionGrain>(typeof(TPlayer).Name);
-                playerGrain = grainFactory.GetGrain<IPlayerGrain>(typeof(TPlayer).Name, grainClassNamePrefix: typeof(TPlayer).Name);
-                await playerSessionGrain.SignIn(playerGrain).ConfigureAwait(false);
+                await playerSessionGrain.SignIn().ConfigureAwait(false);
                 keepTrying = false;
             }
             catch (Exception ex)
@@ -40,8 +36,9 @@ public sealed class PlayerWorker<TPlayer>(IGrainFactory grainFactory, ILogger<Pl
             else
             {
                 var isPlayerOnline = await playerSessionGrain.IsPlayerOnline();
+                var isPlayerKicked = await playerSessionGrain.IsPlayerKicked();
 
-                if (!isPlayerOnline)
+                if (!isPlayerOnline && !isPlayerKicked)
                 {
                     await SignPlayerIn(stoppingToken);
                 }

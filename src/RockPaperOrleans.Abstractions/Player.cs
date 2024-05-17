@@ -18,6 +18,8 @@ public class Player
     public int PercentWon { get; set; }
     [Id(6)]
     public bool IsActive { get; set; }
+    [Id(7)]
+    public bool IsKicked { get; set; }
 
     public override bool Equals(object? obj) => obj is Player player &&
                Name == player.Name;

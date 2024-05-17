@@ -2,10 +2,12 @@
 
 public class PlayerSessionGrain(
     [PersistentState("Players", storageName: "Players")] IPersistentState<Player> player,
-    ILogger<PlayerSessionGrain> logger) : Grain, IPlayerSessionGrain
+    ILogger<PlayerSessionGrain> logger,
+    IGrainFactory grainFactory) : Grain, IPlayerSessionGrain
 {
     private Player? _opponent;
     private IPlayerGrain? _playerGrain;
+    private readonly IGrainFactory _grainFactory = grainFactory;
 
     public override async Task OnActivateAsync(CancellationToken cancellationToken)
     {
@@ -26,15 +28,12 @@ public class PlayerSessionGrain(
 
     public Task<Player> Get() => Task.FromResult(player.State);
 
-    public async Task SignIn(IPlayerGrain playerGrain)
+    public async Task SignIn()
     {
-        if (!playerGrain.Equals(_playerGrain))
-        {
-            logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", player.State.Name);
-            _playerGrain = playerGrain;
-            player.State.IsActive = true;
-            await player.WriteStateAsync();
-        }
+        _playerGrain = _grainFactory.GetGrain<IPlayerGrain>(player.State.Name, grainClassNamePrefix: player.State.Name);
+        logger.LogInformation("RPO: Player {PlayerName} has signed in in to play.", player.State.Name);
+        player.State.IsActive = true;
+        await player.WriteStateAsync();
 
         var lobbyGrain = GrainFactory.GetGrain<ILobbyGrain>(Guid.Empty);
         await lobbyGrain.SignIn(player.State);
@@ -102,5 +101,19 @@ public class PlayerSessionGrain(
         player.State.PercentWon = (int)player.State.CalculateWinPercentage();
         await player.WriteStateAsync();
         await GrainFactory.GetGrain<ILeaderboardGrain>(Guid.Empty).PlayerScoresUpdated(player.State);
+    }
+
+    public Task<bool> IsPlayerKicked() => Task.FromResult(player.State.IsKicked);
+
+    public async Task KickPlayer()
+    {
+        player.State.IsKicked = true;
+        await SignOut();
+    }
+
+    public async Task UnkickPlayer()
+    {
+        player.State.IsKicked = false;
+        await SignIn();
     }
 }

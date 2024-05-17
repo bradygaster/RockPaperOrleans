@@ -55,6 +55,24 @@ public static class WebApplicationExtensions
                return operation;
            });
 
+        app.MapPost("kickPlayer", (GameEngineStateController gameEngineController, string playerName) => gameEngineController.KickPlayer(playerName))
+           .WithOpenApi(operation =>
+           {
+               operation.Summary = "Kick player";
+               operation.Description = "Kick an individual player out of the game loop, but does not terminate the player process or ban them from re-joining.";
+               operation.OperationId = "kickPlayer";
+               return operation;
+           });
+
+        app.MapPost("unkickPlayer", (GameEngineStateController gameEngineController, string playerName) => gameEngineController.UnkickPlayer(playerName))
+           .WithOpenApi(operation =>
+           {
+               operation.Summary = "Unkick player";
+               operation.Description = "Let an individual player into the game loop.";
+               operation.OperationId = "unkickPlayer";
+               return operation;
+           });
+
         return app;
     }
     public static WebApplication AddSwaggerDuringDevelopment(this WebApplication app)
