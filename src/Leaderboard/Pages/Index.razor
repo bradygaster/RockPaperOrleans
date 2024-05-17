@@ -15,7 +15,7 @@
                 {
                     <MudItem xs="12">
                         <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-2">
-                            <MudText Typo="Typo.h4" Class="luckyGuy">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
+                            <MudText Typo="Typo.h4" Class="lucky">Round @(_game.Turns.Count) of @_game.Rounds</MudText>
                         </MudPaper>
                     </MudItem>
                 }
@@ -23,7 +23,7 @@
                 <MudItem xs="6">
                     <MudPaper Class="@($"{_player1Theme} d-flex align-center justify-center mud-width-full py-1")">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.h4" Class="luckyGuy">@_player1?.Name</MudText>
+                            <MudText Typo="Typo.h4" Class="lucky">@_player1?.Name</MudText>
                             <MudStack Row="true">
                                 <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbUp" Text="@($"{_player1?.WinCount} Wins")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Success"></MudChip>
                                 <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbDown" Text="@($"{_player1?.LossCount} Losses")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Error"></MudChip>
@@ -35,7 +35,7 @@
                 <MudItem xs="6">
                     <MudPaper Class="@($"{_player2Theme} d-flex align-center justify-center mud-width-full py-1")">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.h4" Class="luckyGuy">@_player2?.Name</MudText>
+                            <MudText Typo="Typo.h4" Class="lucky">@_player2?.Name</MudText>
                             <MudStack Row="true">
                                 <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbUp" Text="@($"{_player2?.WinCount} Wins")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Success"></MudChip>
                                 <MudChip Class="banger" Icon="@Icons.Material.Filled.ThumbDown" Text="@($"{_player2?.LossCount} Losses")" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Error"></MudChip>
@@ -151,7 +151,7 @@
                 <MudItem xs="6">
                     <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.h4" Class="luckyGuy">Grain Count : @_latestUpdate?.GrainsActive.ToString("N0")</MudText>
+                            <MudText Typo="Typo.h4" Class="lucky">Grain Count : @_latestUpdate?.GrainsActive.ToString("N0")</MudText>
                         </MudStack>
                     </MudPaper>
                 </MudItem>
@@ -159,7 +159,7 @@
                 <MudItem xs="6">
                     <MudPaper Class="mud-theme-primary d-flex align-center justify-center mud-width-full py-1">
                         <MudStack Class="align-center">
-                            <MudText Typo="Typo.h4" Class="luckyGuy">Server Statistics</MudText>
+                            <MudText Typo="Typo.h4" Class="lucky">Server Statistics</MudText>
                         </MudStack>
                     </MudPaper>
                 </MudItem>
@@ -186,21 +186,21 @@
                             <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
                                 <MudText Typo="Typo.h5" Class="d-block pathway">Started</MudText>
                             </MudPaper>
-                            <MudChip Text="@($"{@_latestUpdate.DateStarted}")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
+                            <MudChip Text="@($"{@_latestUpdate.DateStarted}")" Class="lucky" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                         </MudPaper>
 
                         <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
                             <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
                                 <MudText Typo="Typo.h5" Class="d-block pathway">Uptime</MudText>
                             </MudPaper>
-                            <MudChip Text="@_latestUpdate.TimeUp.ToString("hh\\:mm\\:ss")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
+                            <MudChip Text="@_latestUpdate.TimeUp.ToString("hh\\:mm\\:ss")" Class="lucky" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                         </MudPaper>
 
                         <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
                             <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
                                 <MudText Typo="Typo.h5" Class="d-block pathway">Games completed</MudText>
                             </MudPaper>
-                            <MudChip Text="@_latestUpdate.GamesCompleted.ToString("N0")" Class="luckyGuy" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
+                            <MudChip Text="@_latestUpdate.GamesCompleted.ToString("N0")" Class="lucky" Style="font-size: 1.5em;" Variant="Variant.Filled" Color="Color.Info"></MudChip>
                         </MudPaper>
                     }
                 </MudItem>
@@ -215,9 +215,9 @@
             @foreach (var player in _playersOnline)
             {
                 <MudPaper Class="d-flex flex-grow-1 pa-1 mb-2" Elevation="0">
-                    <MudChip Text="@($"{player.PercentWon}%")" Class="luckyGuy" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
+                    <MudChip Text="@($"{player.PercentWon}%")" Class="lucky" Style="font-size: 2em;" Variant="Variant.Filled" Color="Color.Info" SelectedColor="Color.Primary"></MudChip>
                     <MudPaper Class="flex-grow-1 pl-2" Elevation="0">
-                        <MudText Typo="Typo.h5" Class="luckyGuy">@player.Name</MudText>
+                        <MudText Typo="Typo.h5" Class="lucky">@player.Name</MudText>
                     </MudPaper>
                 </MudPaper>
             }
